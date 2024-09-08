@@ -9,7 +9,9 @@
   },
   "private": true,
   "dependencies": {
+    "@hashgraph/sdk": "^2.50.0",
     "axios": "^1.7.7",
-    "ts-node": "^10.9.2"
+    "ts-node": "^10.9.2",
+    "viem": "^2.21.2"
   }
 }
