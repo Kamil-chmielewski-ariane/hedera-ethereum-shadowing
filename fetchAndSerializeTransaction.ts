@@ -10,10 +10,8 @@ export const fetchAndSerializeTransaction = async (txnHash: string): Promise<any
     })
 
     try {
-        console.log('Raw transaction hex:' + response.data.result + '\n');
         return response.data.result;
     } catch (error) {
-        console.error('Error fetching raw transaction:', error);
         throw new Error('Error fetching raw transaction:' + JSON.stringify(error));
     }
 };

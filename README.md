@@ -14,7 +14,7 @@ We then assign the elements retrieved from the getTransaction function to two ob
 Finally, using the serializeTransaction function, we serialize the unsignedTx and signature objects into a hex string format.
 
 0. zainincjalizowac hedera local node na podstawie genesis block 
--> konta mogą się powtarzać, stworzyć funkcję do mintowania tokenów na podstawie balance dla danego konta
+-> stworzyć funkcję do mintowania tokenów na podstawie balance dla danego konta
 -> local node hedery powinien mieć debug 
 
 
