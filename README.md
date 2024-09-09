@@ -12,3 +12,18 @@ The function takes a parameter transactionToken, which represents the transactio
 Using the getTransaction function, we retrieve an object based on the provided transaction hash.
 We then assign the elements retrieved from the getTransaction function to two objects: unsignedTx and signature.
 Finally, using the serializeTransaction function, we serialize the unsignedTx and signature objects into a hex string format.
+
+0. zainincjalizowac hedera local node na podstawie genesis block 
+-> konta mogą się powtarzać, stworzyć funkcję do mintowania tokenów na podstawie balance dla danego konta
+-> local node hedery powinien mieć debug 
+
+
+
+1. zaciągamy wsystkie transakcje z blocku n
+2. dla każdej transakcji sprawdzamy czy istnieje takie konto
+-> jeśli nie -> tworzymy konto
+-> jeśli tak -> ignore
+3. getRawTransactionBody from erigon
+4. sendRawTransaction to hedera local node
+5. Obsłużyć nagrodę za blok
+6. Powtórzyć dla blok + 1
