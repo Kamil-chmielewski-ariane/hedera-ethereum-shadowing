@@ -21,13 +21,14 @@ async function createHederaAccount(options : accountType ) {
 
     const newAccount = await new AccountCreateTransaction()
         .setKey(PrivateKey.fromString('302e020100300506032b65700422042091132178e72057a1d7528025956fe39b0b847f200ab59b2fdd367017f3087137'))
-        .setAlias(`0x3282791d6fd713f1e94f4bfd565eaa78b3a0599d`)
-        .setInitialBalance(new Hbar(parseInt('1337000000000000000000') / 1000000000))
+        .setInitialBalance(new Hbar(1))
         .execute(client)
 
     const receipt = await newAccount.getReceipt(client);
 
     const newAccountId = receipt.accountId;
+
+    console.log('receipt', receipt)
 
     console.log("The new account ID is " + newAccountId);
 
