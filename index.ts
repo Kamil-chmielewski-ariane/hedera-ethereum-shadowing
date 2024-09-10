@@ -19,18 +19,12 @@ const genesisTransactions = getAllGenesisData();
 const client = Client.forNetwork(node).setMirrorNetwork("127.0.0.1:5600");
 const accountId = new AccountId(2);
 client.setOperator(accountId, '302e020100300506032b65700422042091132178e72057a1d7528025956fe39b0b847f200ab59b2fdd367017f3087137')
-genesisTransactions.forEach(transaction => {
-    sendHbarToAlias(transaction.toAccount, transaction.amount)
-})
+iterateThoughGenesisTransactions(genesisTransactions);
 
 async function iterateThoughGenesisTransactions(genesisTransactions: GenesisData[]) {
-    genesisTransactions.forEach(transaction => {
-        try {
-            await sendHbarToAlias(transaction.toAccount, transaction.amount);
-        } catch (e) {
-            console.log(e)
-        }
-    })
+    for (const transaction of genesisTransactions) {
+        await sendHbarToAlias(transaction.toAccount, transaction.amount);
+    }
 }
 
 async function sendHbarToAlias(evmAddress: string, amountHBar: number) {
