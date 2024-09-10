@@ -8,6 +8,7 @@ import {
     TransferTransaction
 } from "@hashgraph/sdk";
 import {base32} from 'rfc4648';
+import { getTransactionByBlockNumber } from './fetchAndSerializeTransaction';
 
 type accountType = Record<string, {balance: string}>;
 
@@ -25,12 +26,15 @@ async function iterateThoughGenesisTransactions(genesisTransactions: GenesisData
     for (const transaction of genesisTransactions) {
         await sendHbarToAlias(transaction.toAccount, transaction.amount);
     }
+    let blockNumber = 5966639;
+    let result = await getTransactionByBlockNumber(blockNumber.toString(16));
+    console.log(result);
 }
 
 async function sendHbarToAlias(evmAddress: string, amountHBar: number) {
     try {
         console.log(`Running transaction ${accountId}, ${evmAddress}`);
-        const transaction = await new TransferTransaction()
+        const transaction = new TransferTransaction()
           .addHbarTransfer(accountId, new Hbar(-amountHBar))
           .addHbarTransfer(evmAddress, new Hbar(amountHBar));
 
