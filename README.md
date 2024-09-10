@@ -24,6 +24,6 @@ Finally, using the serializeTransaction function, we serialize the unsignedTx an
 -> jeśli nie -> tworzymy konto
 -> jeśli tak -> ignore
 3. getRawTransactionBody from erigon
-4. sendRawTransaction to hedera local node
+4. getRawTransaction to hedera local node
 5. Obsłużyć nagrodę za blok
 6. Powtórzyć dla blok + 1

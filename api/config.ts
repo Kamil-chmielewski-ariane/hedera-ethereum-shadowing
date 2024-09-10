@@ -1,7 +1,7 @@
 import axios from 'axios';
 
-export const axiosInstance = axios.create({
-    baseURL: 'http://localhost:8545/',
+export const axiosInstanceErigon = axios.create({
+    baseURL: 'http://localhost:9545/',
     headers: {
         'Content-Type': 'application/json',
     },

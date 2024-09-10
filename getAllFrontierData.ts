@@ -1,5 +1,6 @@
 import frontier from './frontier.json'
 import genesis from './genesis_block_transactions.json'
+import {Account, Genesis} from "./types";
 
 export class GenesisData {
     toAccount: string;
@@ -11,18 +12,14 @@ export class GenesisData {
     }
 }
 
-export const getAllFrontierData = () => {
-    const accounts: Record<string, { balance: string }> = frontier.alloc
-    // for (const key in accounts) {
-    //     const balance = accounts[key].balance;
-    //     console.log("Key: " + key + " Balance: " + balance)
-    // }
+export function getAllFrontierData() {
+    const accounts: Account = frontier.alloc
     return accounts;
 }
 
-export const getAllGenesisData = () => {
-    let genesisData = new Array();
-    genesis.forEach(element => {
+export function getAllGenesisData () {
+    let genesisData: Genesis[] = [];
+    genesis.map(element => {
         let genData = new GenesisData(element.to, element.amount);
         genesisData.push(genData);
     });
