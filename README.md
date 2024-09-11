@@ -23,3 +23,21 @@ Finally, using the serializeTransaction function, we serialize the unsignedTx an
 - Obsłużyc zwrot podatku po wykonaniu transakcji.
 - Obsłużyć wysyłkę nagrody po utworzeniu kolejnego bloku.
 - Znaleźć w rpc metodę sprawdzające czy dane konto istnieje
+
+
+## Setup tunnel to the Node VM
+
+1. Set env variable with remote host
+```bash
+export TUNNEL_HOST=user@IP_ADDR
+```
+
+2. Setup SSH tunnel
+```bash
+ssh -L  8080:localhost:8080 -fN $TUNNEL_HOST && \
+ssh -L  9545:localhost:9545 -fN $TUNNEL_HOST && \
+ssh -L  5600:localhost:5600 -fN $TUNNEL_HOST && \
+ssh -L  5551:localhost:5551 -fN $TUNNEL_HOST && \
+ssh -L  7546:localhost:7546 -fN $TUNNEL_HOST && \
+ssh -L  50211:localhost:50211 -fN $TUNNEL_HOST
+```
