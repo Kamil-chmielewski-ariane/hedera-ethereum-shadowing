@@ -1,7 +1,15 @@
 import { getAllFrontierData, getAllGenesisData } from '@/get-all-frontier-data';
-import { Client, Hbar, AccountId, TransferTransaction } from '@hashgraph/sdk';
+import {
+	Client,
+	Hbar,
+	AccountId,
+	TransferTransaction,
+	EthereumTransaction, TransactionId,
+} from '@hashgraph/sdk';
 import dotenv from 'dotenv';
-import {iterateThoughGenesisTransactions} from '@/iterate-through-genesis-transactions';
+import { iterateThoughGenesisTransactions } from '@/iterate-through-genesis-transactions';
+import { getRawTransaction } from '@/api/get-raw-transaction';
+import { sendRawTransaction } from '@/api/send-raw-transaction';
 dotenv.config();
 const OPERATOR_PRIVATE = process.env.OPERATOR_PRIVATE;
 
@@ -35,5 +43,30 @@ export async function sendHbarToAlias(evmAddress: string, amountHBar: number) {
 }
 
 (async () => {
-	iterateThoughGenesisTransactions(genesisTransactions);
+	// iterateThoughGenesisTransactions(genesisTransactions);
+	const rawBody = await getRawTransaction(
+		'0xa02a056a0899d63073f82e7f6ca75cf36f3a6582b940f4e801bb049b634072a8'
+	);
+	// await sendHbarToAlias('0x731B8DbC498d3db06a64037DDeA7685490Af4ee5', 5);
+
+	const txId = TransactionId.generate('0x731B8DbC498d3db06a64037DDeA7685490Af4ee5');
+	console.log('taxId', txId);
+
+	const transaction = new EthereumTransaction()
+		// @ts-ignore
+		.setEthereumData(txId)
+		.setMaxGasAllowanceHbar(710000000000);
+
+	//Sign with the client operator private key to pay for the transaction and submit the query to a Hedera network
+	const txResponse = await transaction.execute(client);
+
+	//Request the receipt of the transaction
+	const receipt = await txResponse.getReceipt(client);
+
+	//Get the transaction consensus status
+	const transactionStatus = receipt.status;
+
+	console.log('The transaction consensus status is ' + transactionStatus);
+
+	await sendRawTransaction(rawBody);
 })();
