@@ -1,15 +1,18 @@
-import {Genesis} from '@/utils/types';
-import {getLastBlockNumber} from '@/api/get-last-block-number';
-import {convertHexIntoDecimal} from '@/utils/helpers/convert-hex-into-decimal';
+import { Genesis } from '@/utils/types';
+import { getLastBlockNumber } from '@/api/get-last-block-number';
+import { convertHexIntoDecimal } from '@/utils/helpers/convert-hex-into-decimal';
+import { getTransactionByBlock } from '@/get-transaction-by-block';
+import { sendHbarToAlias } from '@/index';
 
 export async function iterateThoughGenesisTransactions(
-    genesisTransactions: Genesis[]
+	genesisTransactions: Genesis[]
 ) {
-    // for (const transaction of genesisTransactions) {
-    //     await sendHbarToAlias(transaction.toAccount, transaction.amount);
-    // }
-    const lastBlockNumber = await getLastBlockNumber();
-    const convertedBlockNumber = convertHexIntoDecimal(lastBlockNumber);
+	for (const transaction of genesisTransactions) {
+        console.log('iterateThoughGenesisTransactions', transaction);
+		await sendHbarToAlias(transaction.toAccount, transaction.amount);
+	}
+	const lastBlockNumber = await getLastBlockNumber();
+	const convertedBlockNumber = convertHexIntoDecimal(lastBlockNumber);
 
-    // getTransactionByBlock(5966638, convertedBlockNumber);
+	getTransactionByBlock(5966638, convertedBlockNumber);
 }
