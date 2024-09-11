@@ -1,19 +1,26 @@
 {
-  "name": "hedera-eth-shadowing",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.ts",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "ts-node index.ts"
-  },
-  "private": true,
-  "dependencies": {
-    "@hashgraph/sdk": "^2.50.0",
-    "axios": "^1.7.7",
-    "dotenv": "^16.4.5",
-    "rfc4648": "^1.5.3",
-    "ts-node": "^10.9.2",
-    "viem": "^2.21.2"
-  }
+	"name": "hedera-eth-shadowing",
+	"version": "1.0.0",
+	"description": "",
+	"main": "src/index.ts",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1",
+		"dev": "ts-node -r tsconfig-paths/register src/index.ts"
+	},
+	"private": true,
+	"dependencies": {
+		"@hashgraph/sdk": "^2.50.0",
+		"axios": "^1.7.7",
+		"dotenv": "^16.4.5",
+		"rfc4648": "^1.5.3",
+		"ts-node": "^10.9.2",
+		"tsconfig-paths": "^4.2.0",
+		"viem": "^2.21.2"
+	},
+	"devDependencies": {
+		"eslint": "^9.10.0",
+		"globals": "^15.9.0",
+		"prettier": "3.3.3",
+		"typescript-eslint": "^8.5.0"
+	}
 }
