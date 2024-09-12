@@ -1,8 +1,8 @@
 import { Genesis } from '@/utils/types';
 import { getLastBlockNumber } from '@/api/get-last-block-number';
 import { convertHexIntoDecimal } from '@/utils/helpers/convert-hex-into-decimal';
-import { getTransactionByBlock } from '@/get-transaction-by-block';
-import { sendHbarToAlias } from '@/index';
+import { getTransactionByBlock } from '@/apps/shadowing/get-transaction-by-block';
+import { sendHbarToAlias } from '@/apps/shadowing/index';
 
 export async function iterateThoughGenesisTransactions(
 	genesisTransactions: Genesis[]

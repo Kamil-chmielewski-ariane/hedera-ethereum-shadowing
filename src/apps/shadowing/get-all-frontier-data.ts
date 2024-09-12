@@ -1,5 +1,5 @@
-import frontier from './frontier.json';
-import genesis from './genesis_block_transactions.json';
+import frontier from '../../frontier.json';
+import genesis from '../../genesis_block_transactions.json';
 import { Account, Genesis } from '@/utils/types';
 
 export class GenesisData {
