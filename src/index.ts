@@ -49,24 +49,20 @@ export async function sendHbarToAlias(evmAddress: string, amountHBar: number) {
 	);
 	// await sendHbarToAlias('0x731B8DbC498d3db06a64037DDeA7685490Af4ee5', 5);
 
-	const txId = TransactionId.generate('0x731B8DbC498d3db06a64037DDeA7685490Af4ee5');
-	console.log('taxId', txId);
 
+	console.log(rawBody);
+	const txId = TransactionId.generate('0.0.1001');
+	const rawBodyString = rawBody + '';
+	console.log(Uint8Array.from(Buffer.from(rawBodyString.substring(2), 'hex')));
+	// const txId = TransactionId.generate(new AccountId(2));
 	const transaction = new EthereumTransaction()
-		// @ts-ignore
-		.setEthereumData(txId)
-		.setMaxGasAllowanceHbar(710000000000);
+		.setTransactionId(txId)
+		.setEthereumData(Uint8Array.from(Buffer.from(rawBodyString.substring(2), 'hex')))
+		.setMaxGasAllowanceHbar(new Hbar(100));
+	console.log(transaction);
 
 	//Sign with the client operator private key to pay for the transaction and submit the query to a Hedera network
 	const txResponse = await transaction.execute(client);
 
-	//Request the receipt of the transaction
-	const receipt = await txResponse.getReceipt(client);
-
-	//Get the transaction consensus status
-	const transactionStatus = receipt.status;
-
-	console.log('The transaction consensus status is ' + transactionStatus);
-
-	await sendRawTransaction(rawBody);
+	// await sendRawTransaction(rawBody);
 })();
