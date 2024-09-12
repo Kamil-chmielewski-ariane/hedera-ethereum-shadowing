@@ -4,7 +4,7 @@ import {
 	Hbar,
 	AccountId,
 	TransferTransaction,
-	EthereumTransaction, TransactionId,
+	EthereumTransaction, TransactionId, PrivateKey, AccountCreateTransaction, PublicKey,
 } from '@hashgraph/sdk';
 import dotenv from 'dotenv';
 import { iterateThoughGenesisTransactions } from '@/iterate-through-genesis-transactions';
@@ -28,7 +28,7 @@ export async function sendHbarToAlias(evmAddress: string, amountHBar: number) {
 		console.log(`Running transaction ${accountId}, ${evmAddress}`);
 		const transaction = new TransferTransaction()
 			.addHbarTransfer(accountId, new Hbar(-amountHBar))
-			.addHbarTransfer(evmAddress, new Hbar(amountHBar));
+			.addHbarTransfer(evmAddress, new Hbar(amountHBar))
 
 		// Execute the transaction
 		const response = await transaction.execute(client);
@@ -47,22 +47,19 @@ export async function sendHbarToAlias(evmAddress: string, amountHBar: number) {
 	const rawBody = await getRawTransaction(
 		'0xa02a056a0899d63073f82e7f6ca75cf36f3a6582b940f4e801bb049b634072a8'
 	);
-	// await sendHbarToAlias('0x731B8DbC498d3db06a64037DDeA7685490Af4ee5', 5);
-
-
-	console.log(rawBody);
-	const txId = TransactionId.generate('0.0.1001');
-	const rawBodyString = rawBody + '';
-	console.log(Uint8Array.from(Buffer.from(rawBodyString.substring(2), 'hex')));
-	// const txId = TransactionId.generate(new AccountId(2));
-	const transaction = new EthereumTransaction()
+	await sendHbarToAlias('0x731B8DbC498d3db06a64037DDeA7685490Af4ee5', 5);
+	const txId = TransactionId.generate(new AccountId(2));
+	const transaction = await new EthereumTransaction()
 		.setTransactionId(txId)
-		.setEthereumData(Uint8Array.from(Buffer.from(rawBodyString.substring(2), 'hex')))
-		.setMaxGasAllowanceHbar(new Hbar(100));
-	console.log(transaction);
+		.setEthereumData(Uint8Array.from(Buffer.from(rawBody.substring(2), 'hex')))
+		.setMaxGasAllowanceHbar(new Hbar(100))
+		.freezeWith(client)
+		.sign(PrivateKey.fromStringECDSA('302e020100300506032b65700422042012a4a4add3d885bd61d7ce5cff88c5ef2d510651add00a7f64cb90de3359bc5c'))
 
 	//Sign with the client operator private key to pay for the transaction and submit the query to a Hedera network
 	const txResponse = await transaction.execute(client);
+
+	console.log('txResponse', JSON.stringify(txResponse));
 
 	// await sendRawTransaction(rawBody);
 })();
