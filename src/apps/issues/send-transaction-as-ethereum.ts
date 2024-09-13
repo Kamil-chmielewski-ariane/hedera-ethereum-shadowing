@@ -22,12 +22,13 @@ export async function sendTransactionAsEthereum(
 	ppkey: string
 ) {
 	const rawBody = await getRawTransaction(transactionData.txHash);
-	await sendHbarToAlias(accountId, transactionData.evmAddress, 200, client);
-	const txId = TransactionId.generate(accountId);
+	await sendHbarToAlias(accountId, transactionData.evmAddress, transactionData.hbar, client);
+	const txId = TransactionId.generate(accountId)
+
 	const transaction = await new EthereumTransaction()
 		.setTransactionId(txId)
 		.setEthereumData(Uint8Array.from(Buffer.from(rawBody.substring(2), 'hex')))
-		.setMaxGasAllowanceHbar(new Hbar(100))
+		.setMaxGasAllowanceHbar(new Hbar(transactionData.gas))
 		.freezeWith(client)
 		.sign(PrivateKey.fromString(String(ppkey)));
 

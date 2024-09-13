@@ -17,7 +17,7 @@ export async function getRawTransaction(txnHash: string): Promise<any> {
 		} else {
 			throw new Error('No result found in response');
 		}
-	} catch (error: unknown) {
+	} catch (error) {
 		// Teraz obsługujemy typ unknown i sprawdzamy, czy error to AxiosError
 		if (isAxiosError(error)) {
 			console.error('Error fetching raw transaction:', error.response?.data);

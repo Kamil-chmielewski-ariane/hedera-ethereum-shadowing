@@ -18,7 +18,7 @@ client.setOperator(accountId, OPERATOR_PRIVATE || '');
 	// 	{
 	// 		txHash:
 	// 			'0xda17f66e764bbe84f2d71b5544c9733f3b4a48d49e3226a98e955747ba0b7060',
-	// 		evmAddress: '0xF29Ff96aaEa6C9A1fBa851f74737f3c069d4f1a9',
+	// 		evmAddress: '0xa9DE2a4904DDcEc6f969784FbAd36a0b7fe0f2Cd',
 	// 		hbar: 200,
 	// 		gas: 100,
 	// 	},
@@ -28,16 +28,16 @@ client.setOperator(accountId, OPERATOR_PRIVATE || '');
 	// );
 
 	// INVALID_ETHEREUM_TRANSACTION issue
-	// sendTransactionAsEthereum(
-	// 	{
-	// 		txHash:
-	// 			'0x80dfd758cbb77cb0c6e703da9f8b02d8094e02d7d68573237e3097c7fefa5554',
-	// 		evmAddress: '0xF29Ff96aaEa6C9A1fBa851f74737f3c069d4f1a9',
-	// 		hbar: 200,
-	// 		gas: 100,
-	// 	},
-	// 	accountId,
-	// 	client,
-	// 	OPERATOR_PRIVATE || ''
-	// );
+	sendTransactionAsEthereum(
+		{
+			txHash:
+				'0x605480662cca049fde57c626f5cb2315df834f75e5602d53b765ecb45f6a320a',
+			evmAddress: '0x3Cd868E221A3be64B161D596A7482257a99D857f',
+			hbar: 10,
+			gas: 10,
+		},
+		accountId,
+		client,
+		OPERATOR_PRIVATE || ''
+	);
 })();
