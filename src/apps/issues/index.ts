@@ -1,5 +1,5 @@
 import { transactionNoGas } from '@/apps/issues/transaction-no-gas';
-import { AccountId, Client, Hbar, TransferTransaction } from '@hashgraph/sdk';
+import { AccountId, Client } from '@hashgraph/sdk';
 import dotenv from 'dotenv';
 dotenv.config();
 const OPERATOR_PRIVATE = process.env.OPERATOR_PRIVATE;
@@ -9,5 +9,5 @@ const accountId = new AccountId(2);
 client.setOperator(accountId, OPERATOR_PRIVATE || '');
 
 (() => {
-    transactionNoGas()
+	transactionNoGas(accountId, client);
 })();
