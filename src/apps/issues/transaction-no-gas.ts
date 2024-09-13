@@ -14,5 +14,6 @@ export async function transactionNoGas(accountId: AccountId, client: Client) {
 		20,
 		client
 	);
-	await sendRawTransaction(rawBody);
+	const response = await sendRawTransaction(rawBody);
+	console.log(response.error.message);
 }

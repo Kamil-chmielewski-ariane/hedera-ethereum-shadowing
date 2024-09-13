@@ -20,14 +20,14 @@ client.setOperator(accountId, OPERATOR_PRIVATE || '');
 
 (async () => {
 	// iterateThoughGenesisTransactions(genesisTransactions);
-	createEthereumTransaction(
-		{
-			txHash:
-				'0xda17f66e764bbe84f2d71b5544c9733f3b4a48d49e3226a98e955747ba0b7060',
-			hbar: 200,
-			gas: 100,
-		},
-		accountId,
-		client
-	);
+	// createEthereumTransaction(
+	// 	{
+	// 		txHash:
+	// 			'0xda17f66e764bbe84f2d71b5544c9733f3b4a48d49e3226a98e955747ba0b7060',
+	// 		hbar: 200,
+	// 		gas: 100,
+	// 	},
+	// 	accountId,
+	// 	client
+	// );
 })();
