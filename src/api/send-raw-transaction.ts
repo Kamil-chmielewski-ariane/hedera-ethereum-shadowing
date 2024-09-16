@@ -1,24 +1,27 @@
 import { axiosInstanceHedera } from '@/api/config';
+import { isAxiosError } from 'axios';
+
 export async function sendRawTransaction(txnHash: string) {
-	const response = await axiosInstanceHedera
-		.post('', {
+	try {
+		const response = await axiosInstanceHedera.post('', {
 			method: 'eth_sendRawTransaction',
 			params: [txnHash],
 			id: 1,
 			jsonrpc: '2.0',
-		})
-		.catch(function (error) {
-			if (error.response) {
-				console.log(error.response.data);
-				console.log(error.response.status);
-			} else {
-				console.log(error.message);
-			}
 		});
 
-	try {
-		console.log('Raw transaction hex:', response);
+		if (response.data && response.data.result) {
+			console.log(response.data.result);
+			return response.data.result;
+		}
 	} catch (error) {
-		console.error('Error fetching raw transaction:', error);
+		if (isAxiosError(error)) {
+			return error.response?.data
+		} else {
+			throw new Error(
+				'Error fetching raw transaction: ' +
+					(error instanceof Error ? error.message : String(error))
+			);
+		}
 	}
 }

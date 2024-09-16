@@ -1,16 +1,32 @@
 import { axiosInstanceErigon } from '@/api/config';
+import { isAxiosError } from 'axios';
 
 export async function getLastBlockNumber(): Promise<any> {
-	const response = await axiosInstanceErigon.post('', {
-		method: 'eth_blockNumber',
-		params: [],
-		id: 1,
-		jsonrpc: '2.0',
-	});
-
 	try {
-		return response.data.result;
+		const response = await axiosInstanceErigon.post('', {
+			method: 'eth_blockNumber',
+			params: [],
+			id: 1,
+			jsonrpc: '2.0',
+		});
+
+		if (response.data && response.data.result) {
+			console.log(response.data.result);
+			return response.data.result;
+		}
 	} catch (error) {
-		throw new Error('Error fetching raw transaction:' + JSON.stringify(error));
+		if (isAxiosError(error)) {
+			console.error('Error fetching raw transaction:', error.response?.data);
+			throw new Error(
+				'Error fetching raw transaction: ' +
+					JSON.stringify(error.response?.data)
+			);
+		} else {
+			console.error('Unknown error:', error);
+			throw new Error(
+				'Error fetching raw transaction: ' +
+					(error instanceof Error ? error.message : String(error))
+			);
+		}
 	}
 }
