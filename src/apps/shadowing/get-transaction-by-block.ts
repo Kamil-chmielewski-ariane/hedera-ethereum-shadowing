@@ -1,17 +1,22 @@
-import { getTransactionByBlockNumber } from '@/api/get-transaction-by-block-number';
+import { getBlockByNumber } from '@/api/get-block-by-number';
 import { getRawTransaction } from '@/api/get-raw-transaction';
 import { sendRawTransaction } from '@/api/send-raw-transaction';
+import { sendBlockReward } from '@/apps/shadowing/send-block-reward';
+import { AccountId, Client } from '@hashgraph/sdk';
 
 export async function getTransactionByBlock(
 	startFromBlock: number,
-	numberOfBlocks: number
+	numberOfBlocks: number,
+	accountId: AccountId,
+	client: Client
 ) {
 	try {
 		for (; startFromBlock < numberOfBlocks; startFromBlock++) {
 			console.log('currentBlockNumber', startFromBlock);
-			let result = await getTransactionByBlockNumber(
+			let result = await getBlockByNumber(
 				startFromBlock.toString(16)
 			);
+			await sendBlockReward(accountId, client, result);
 			const transactions: string[] = result.transactions;
 
 			if (transactions.length > 1) {

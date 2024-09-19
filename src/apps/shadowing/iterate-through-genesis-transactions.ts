@@ -22,5 +22,5 @@ export async function iterateThoughGenesisTransactions(
 	const lastBlockNumber = await getLastBlockNumber();
 	const convertedBlockNumber = convertHexIntoDecimal(lastBlockNumber);
 
-	getTransactionByBlock(5966638, convertedBlockNumber);
+	getTransactionByBlock(5966638, convertedBlockNumber, accountId, client);
 }

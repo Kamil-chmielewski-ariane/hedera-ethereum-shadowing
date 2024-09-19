@@ -1,13 +1,11 @@
 import { axiosInstanceErigon } from '@/api/config';
 import { isAxiosError } from 'axios';
 
-export async function getTransactionByBlockNumber(
-	blockNumber: string
-): Promise<any> {
-	try {
+export async function getTransactionReceipt(txHash: string) : Promise<any> {
+    try {
 		const response = await axiosInstanceErigon.post('', {
-			method: 'eth_getBlockByNumber',
-			params: ['0x' + blockNumber, false],
+			method: 'eth_getTransactionReceipt',
+			params: [`${txHash}`],
 			id: 1,
 			jsonrpc: '2.0',
 		});
