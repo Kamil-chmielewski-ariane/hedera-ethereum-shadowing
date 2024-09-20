@@ -1,7 +1,7 @@
 import { getTransactionReceipt } from "@/api/get-transaction-receipt";
 import { ethers } from "ethers";
 import { BigNumber } from "@ethersproject/bignumber";
-import { getBlockByHash } from "@/api/get-block-by-hash";
+import { getBlockByHashErigon } from "@/api/get-block-by-hash";
 
 export async function calculateBlockReward(block: any) {
     try {
@@ -37,7 +37,7 @@ export async function calculateBlockReward(block: any) {
   
       let uncleRewardsArr = [];
       for (const hash of block.uncles) {
-        const uncle = await getBlockByHash(hash);
+        const uncle = await getBlockByHashErigon(hash);
         const uncleNum = parseInt(uncle.number);
         const uncleMiner = uncle.miner;
         const uncleReward = ((uncleNum + 8 - blockNumber) * baseBlockReward) / 8;

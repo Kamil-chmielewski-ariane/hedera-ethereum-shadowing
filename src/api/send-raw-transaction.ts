@@ -1,9 +1,9 @@
-import { axiosInstanceHedera } from '@/api/config';
+import { axiosInstanceHederaRpcApi } from '@/api/config';
 import { isAxiosError } from 'axios';
 
 export async function sendRawTransaction(txnHash: string) {
 	try {
-		const response = await axiosInstanceHedera.post('', {
+		const response = await axiosInstanceHederaRpcApi.post('', {
 			method: 'eth_sendRawTransaction',
 			params: [txnHash],
 			id: 1,

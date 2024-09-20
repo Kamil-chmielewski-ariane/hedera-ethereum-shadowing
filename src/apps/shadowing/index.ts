@@ -5,6 +5,7 @@ import {
 import { Client, AccountId } from '@hashgraph/sdk';
 import dotenv from 'dotenv';
 import { createEthereumTransaction } from '@/apps/shadowing/create-ethereum-transaction';
+import { iterateThoughGenesisTransactions } from './iterate-through-genesis-transactions';
 dotenv.config();
 const OPERATOR_PRIVATE = process.env.OPERATOR_PRIVATE;
 
@@ -19,7 +20,7 @@ const accountId = new AccountId(2);
 client.setOperator(accountId, OPERATOR_PRIVATE || '');
 
 (async () => {
-	// iterateThoughGenesisTransactions(genesisTransactions);
+	iterateThoughGenesisTransactions(accountId, genesisTransactions, client);
 	// createEthereumTransaction(
 	// 	{
 	// 		txHash:

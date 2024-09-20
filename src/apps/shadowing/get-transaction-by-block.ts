@@ -3,6 +3,7 @@ import { getRawTransaction } from '@/api/get-raw-transaction';
 import { sendRawTransaction } from '@/api/send-raw-transaction';
 import { sendBlockReward } from '@/apps/shadowing/send-block-reward';
 import { AccountId, Client } from '@hashgraph/sdk';
+import { compareStateRootOfBlocks } from './compare-state-root-of-blocks';
 
 export async function getTransactionByBlock(
 	startFromBlock: number,
@@ -13,11 +14,11 @@ export async function getTransactionByBlock(
 	try {
 		for (; startFromBlock < numberOfBlocks; startFromBlock++) {
 			console.log('currentBlockNumber', startFromBlock);
-			let result = await getBlockByNumber(
+			let block = await getBlockByNumber(
 				startFromBlock.toString(16)
 			);
-			await sendBlockReward(accountId, client, result);
-			const transactions: string[] = result.transactions;
+			await sendBlockReward(accountId, client, block);
+			const transactions: string[] = block.transactions;
 
 			if (transactions.length > 1) {
 				console.log(`transacion in block ${startFromBlock} found...`);
@@ -28,6 +29,7 @@ export async function getTransactionByBlock(
 					console.log('transactionRawBody', transactionRawBody);
 					await sendRawTransaction(transactionRawBody);
 				}
+				compareStateRootOfBlocks(block, transactions[-1]);
 			}
 		}
 	} catch (error) {

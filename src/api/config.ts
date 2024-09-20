@@ -7,7 +7,7 @@ export const axiosInstanceErigon = axios.create({
 	},
 });
 
-export const axiosInstanceHedera = axios.create({
+export const axiosInstanceHederaRpcApi = axios.create({
 	baseURL: 'http://localhost:7546/',
 	headers: {
 		'Content-Type': 'application/json',

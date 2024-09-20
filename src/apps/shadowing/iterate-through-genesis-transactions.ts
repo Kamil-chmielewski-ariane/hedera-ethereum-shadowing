@@ -10,17 +10,17 @@ export async function iterateThoughGenesisTransactions(
 	genesisTransactions: Genesis[],
 	client: Client
 ) {
-	for (const transaction of genesisTransactions) {
-		console.log('iterateThoughGenesisTransactions', transaction);
-		await sendHbarToAlias(
-			accountId,
-			transaction.toAccount,
-			transaction.amount,
-			client
-		);
-	}
+	// for (const transaction of genesisTransactions) {
+	// 	console.log('iterateThoughGenesisTransactions', transaction);
+	// 	await sendHbarToAlias(
+	// 		accountId,
+	// 		transaction.toAccount,
+	// 		transaction.amount,
+	// 		client
+	// 	);
+	// }
 	const lastBlockNumber = await getLastBlockNumber();
 	const convertedBlockNumber = convertHexIntoDecimal(lastBlockNumber);
 
-	getTransactionByBlock(5966638, convertedBlockNumber, accountId, client);
+	getTransactionByBlock(1, convertedBlockNumber, accountId, client);
 }
