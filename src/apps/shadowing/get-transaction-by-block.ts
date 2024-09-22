@@ -18,18 +18,22 @@ export async function getTransactionByBlock(
 				startFromBlock.toString(16)
 			);
 			await sendBlockReward(accountId, client, block);
-			const transactions: string[] = block.transactions;
+			const transactions = block.transactions;
 
 			if (transactions.length > 1) {
 				console.log(`transacion in block ${startFromBlock} found...`);
 				console.log('preceding iterate through transactions...');
-				for (const transactionId of transactions) {
-					console.log(`current element ${transactionId}`);
-					const transactionRawBody = await getRawTransaction(transactionId);
-					console.log('transactionRawBody', transactionRawBody);
-					await sendRawTransaction(transactionRawBody);
+				for (const transaction of transactions) {
+					if (transaction && transaction.hash) {
+						console.log(`current element ${transaction.hash}`);
+						const transactionRawBody = await getRawTransaction(transaction.hash);
+						console.log('transactionRawBody', transactionRawBody);
+						await sendRawTransaction(transactionRawBody);
+					}
 				}
-				compareStateRootOfBlocks(block, transactions[-1]);
+				if (transactions[-1] && transactions[-1].hash) {
+					compareStateRootOfBlocks(block, transactions[-1]);
+				}
 			}
 		}
 	} catch (error) {
