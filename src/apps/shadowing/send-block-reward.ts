@@ -3,57 +3,6 @@ import { getMinerAndUnclesBalance } from '@/apps/shadowing/get-miner-and-uncles-
 import { convertHexIntoDecimal } from '@/utils/helpers/convert-hex-into-decimal';
 import { formatEther } from 'ethers';
 
-
-async function processTransaction(accountId: AccountId, transaction: any, minerAndUncles: any, client: Client ) {
-	const minerId = minerAndUncles.miner.id;
-
-	if (transaction.to === minerAndUncles.miner.id) {
-		console.log(
-			`Miner "TO" found in transaction ${transaction.hash} for account ${minerAndUncles.miner.id}`
-		);
-		console.log(
-			`Removing ${convertHexIntoDecimal(transaction.value)} from the minter account balance`
-		);
-	}
-
-	if (transaction.from === minerAndUncles.miner.id) {
-		console.log(
-			`Miner "FROM" found in transaction ${transaction.hash} for account ${minerAndUncles.miner.id}`
-		);
-		console.log(`Adding money ${transaction.value} to the minter balance`);
-
-		const t = new TransferTransaction()
-			.addHbarTransfer(
-				accountId,
-				new Hbar(convertHexIntoDecimal(transaction.value))
-			)
-			.addHbarTransfer(
-				minerAndUncles.miner.id,
-				new Hbar(convertHexIntoDecimal(transaction.value))
-			);
-		await t.execute(client);
-	}
-
-	for (const uncle of minerAndUncles.uncles) {
-		if (transaction.to === uncle.id) {
-			console.log(`Uncle "TO" found in transaction ${transaction.hash} for account ${uncle.id}`);
-			console.log(`Adding money ${transaction.value} to the uncle's balance`);
-		}
-
-		if (transaction.from === uncle.id) {
-			console.log(`Uncle "FROM" found in transaction ${transaction.hash} for account ${uncle.id}`);
-			console.log(`Removing money ${transaction.value} from the uncle's balance`);
-
-			const t = new TransferTransaction()
-				.addHbarTransfer(accountId, new Hbar(convertHexIntoDecimal(transaction.value)))
-				.addHbarTransfer(minerId, new Hbar(convertHexIntoDecimal(transaction.value)));
-
-			await t.execute(client);
-		}
-	}
-
-}
-
 //TODO To type transaction array
 export async function sendBlockReward(
 	accountId: AccountId,
@@ -62,37 +11,68 @@ export async function sendBlockReward(
 	transactions: any[]
 ) {
 	const minerAndUncles = await getMinerAndUnclesBalance(currentBlock);
-	const minerBlockReward =
-		convertHexIntoDecimal(minerAndUncles.miner.balanceAfter) -
-		convertHexIntoDecimal(minerAndUncles.miner.balanceBefore);
+	const minerBlockReward = convertHexIntoDecimal(minerAndUncles.miner.balanceAfter) - convertHexIntoDecimal(minerAndUncles.miner.balanceBefore);
+	let minerBalanceDifference = 0
+	let uncleAccountDifference = 0;
 
 	if (transactions.length > 0) {
 		for (const transaction of transactions) {
-			await processTransaction(accountId, transaction, minerAndUncles, client);
+			if (transaction.to === minerAndUncles.miner.id) {
+				console.log(
+					`Miner "TO" found in transaction ${transaction.hash} for account ${minerAndUncles.miner.id}`
+				);
+				console.log(
+					`Removing ${convertHexIntoDecimal(transaction.value)} from the minter account balance`
+				);
+				minerBalanceDifference = minerBalanceDifference - convertHexIntoDecimal(transaction.value);
+			}
+
+			if (transaction.from === minerAndUncles.miner.id) {
+				console.log(
+					`Miner "FROM" found in transaction ${transaction.hash} for account ${minerAndUncles.miner.id}`
+				);
+				console.log(`Adding money ${transaction.value} to the minter balance`);
+				minerBalanceDifference = minerBalanceDifference + convertHexIntoDecimal(transaction.value);
+			}
+
+			for (const uncle of minerAndUncles.uncles) {
+				if (transaction.to === uncle.id) {
+					console.log(`Uncle "TO" found in transaction ${transaction.hash} for account ${uncle.id}`);
+					console.log(`Adding money ${transaction.value} to the uncle's balance`);
+					uncleAccountDifference = uncleAccountDifference + transaction.value
+				}
+
+				if (transaction.from === uncle.id) {
+					console.log(`Uncle "FROM" found in transaction ${transaction.hash} for account ${uncle.id}`);
+					console.log(`Removing money ${transaction.value} from the uncle's balance`);
+					uncleAccountDifference = uncleAccountDifference - transaction.value
+				}
+			}
 		}
 
+		const minerRewardPrice = minerBlockReward + minerBalanceDifference
+
 		const minerReward = new TransferTransaction()
-			.addHbarTransfer(accountId, new Hbar(formatEther(-minerBlockReward)))
+			.addHbarTransfer(accountId, new Hbar(formatEther(-minerRewardPrice)))
 			.addHbarTransfer(
 				minerAndUncles.miner.id,
-				new Hbar(formatEther(minerBlockReward))
+				new Hbar(formatEther(minerRewardPrice))
 			);
 
 		await minerReward.execute(client);
 
 		if (minerAndUncles.uncles.length > 0) {
 			minerAndUncles.uncles.map(async (elem) => {
-				const unclePrice =
-					convertHexIntoDecimal(elem.balanceAfter) -
-					convertHexIntoDecimal(elem.balanceAfter);
-				const uncleReward = new TransferTransaction()
-					.addHbarTransfer(accountId, new Hbar(formatEther(-unclePrice)))
+				const uncleReward = convertHexIntoDecimal(elem.balanceAfter) - convertHexIntoDecimal(elem.balanceBefore);
+				const uncleRewardPrice = uncleReward + uncleAccountDifference
+				const uncleBlockReward = new TransferTransaction()
+					.addHbarTransfer(accountId, new Hbar(formatEther(-uncleRewardPrice)))
 					.addHbarTransfer(
 						minerAndUncles.miner.id,
-						new Hbar(formatEther(unclePrice))
+						new Hbar(formatEther(uncleRewardPrice))
 					);
 
-				await uncleReward.execute(client);
+				await uncleBlockReward.execute(client);
 			});
 		}
 	}
