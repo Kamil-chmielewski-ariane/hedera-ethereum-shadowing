@@ -12,8 +12,9 @@ export async function sendBlockReward(
 ) {
 	const minerAndUncles = await getMinerAndUnclesBalance(currentBlock);
 	const minerBlockReward = convertHexIntoDecimal(minerAndUncles.miner.balanceAfter) - convertHexIntoDecimal(minerAndUncles.miner.balanceBefore);
-	let minerBalanceDifference = 0
+	let minerBalanceDifference = 0;
 	let uncleAccountDifference = 0;
+
 
 	if (transactions.length > 0) {
 		for (const transaction of transactions) {
@@ -54,10 +55,7 @@ export async function sendBlockReward(
 
 		const minerReward = new TransferTransaction()
 			.addHbarTransfer(accountId, new Hbar(formatEther(-minerRewardPrice)))
-			.addHbarTransfer(
-				minerAndUncles.miner.id,
-				new Hbar(formatEther(minerRewardPrice))
-			);
+			.addHbarTransfer(minerAndUncles.miner.id, new Hbar(formatEther(minerRewardPrice)));
 
 		await minerReward.execute(client);
 
@@ -67,10 +65,7 @@ export async function sendBlockReward(
 				const uncleRewardPrice = uncleReward + uncleAccountDifference
 				const uncleBlockReward = new TransferTransaction()
 					.addHbarTransfer(accountId, new Hbar(formatEther(-uncleRewardPrice)))
-					.addHbarTransfer(
-						minerAndUncles.miner.id,
-						new Hbar(formatEther(uncleRewardPrice))
-					);
+					.addHbarTransfer(minerAndUncles.miner.id, new Hbar(formatEther(uncleRewardPrice)));
 
 				await uncleBlockReward.execute(client);
 			});
