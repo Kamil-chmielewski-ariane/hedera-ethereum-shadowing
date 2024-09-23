@@ -13,7 +13,7 @@ export async function getBlockByNumber(
 		});
 
 		if (response.data && response.data.result) {
-			console.log(response.data.result);
+			// console.log(response.data.result);
 			return response.data.result;
 		}
 	} catch (error) {

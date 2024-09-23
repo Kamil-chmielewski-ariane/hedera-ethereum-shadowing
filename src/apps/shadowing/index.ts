@@ -6,8 +6,6 @@ import { Client, AccountId } from '@hashgraph/sdk';
 import dotenv from 'dotenv';
 import { createEthereumTransaction } from '@/apps/shadowing/create-ethereum-transaction';
 import { iterateThoughGenesisTransactions } from './iterate-through-genesis-transactions';
-import { getBlockByNumber } from '@/api/get-block-by-number';
-import { getMinerAndUnclesBalance } from '@/apps/shadowing/get-miner-and-uncles-balance';
 dotenv.config();
 const OPERATOR_PRIVATE = process.env.OPERATOR_PRIVATE;
 
@@ -22,11 +20,8 @@ const accountId = new AccountId(2);
 client.setOperator(accountId, OPERATOR_PRIVATE || '');
 
 (async () => {
-	// iterateThoughGenesisTransactions(accountId, genesisTransactions, client);
+	iterateThoughGenesisTransactions(accountId, genesisTransactions, client);
 
-	const minerAndUncles = await getMinerAndUnclesBalance('66E7C4');
-
-	console.log(minerAndUncles)
 
 	// createEthereumTransaction(
 	// 	{
