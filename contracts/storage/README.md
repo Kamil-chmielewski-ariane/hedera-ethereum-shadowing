@@ -48,7 +48,7 @@ $ anvil
 ### Deploy
 
 ```shell
-$ forge script script/Storage.s.sol:StorageScript --rpc-url <your_rpc_url> --private-key <your_private_key>
+$ forge script script/Storage.s.sol:StorageScript --rpc-url <your_rpc_url> --private-key <your_private_key> --broadcast
 ```
 
 ### Cast
@@ -64,3 +64,16 @@ $ forge --help
 $ anvil --help
 $ cast --help
 ```
+
+# Hedera smart contract 
+
+``` shell
+cast send 0xd314effaa94b02ccc5c02194e6ea3e8052c48f2d "store(uint256)" 256 --rpc-url http://localhost:7546 --private-key 0xeae4e00ece872dd14fb6dc7a04f390563c7d69d16326f2a703ec8e0934060cc7
+```
+
+# Sepolia smart contract
+``` shell
+cast send 0x4452d56aba7907e92936d7ade0151be5c57f09a1 "store(uint256)" 256 --rpc-url https://rpc2.sepolia.org --private-key <private-key>
+```
+
+

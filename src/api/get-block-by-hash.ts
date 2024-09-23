@@ -24,7 +24,6 @@ export async function getBlockByHashErigon(
 					JSON.stringify(error.response?.data)
 			);
 		} else {
-			// Jeżeli error to nie AxiosError, używamy generycznego błędu
 			console.error('Unknown error:', error);
 			throw new Error(
 				'Error fetching raw transaction: ' +
@@ -57,7 +56,6 @@ export async function getBlockByHashHedera(
 					JSON.stringify(error.response?.data)
 			);
 		} else {
-			// Jeżeli error to nie AxiosError, używamy generycznego błędu
 			console.error('Unknown error:', error);
 			throw new Error(
 				'Error fetching raw transaction: ' +

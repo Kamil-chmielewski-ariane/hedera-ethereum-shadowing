@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import { sendTransactionAsEthereum } from '@/apps/issues/send-transaction-as-ethereum';
 import { getBlockByNumber } from '@/api/get-block-by-number';
 import { findAndSendBlockReward } from '@/apps/issues/find-and-send-block-reward';
+import { compareStateForSameContracts } from './compare-state-for-same-contracts';
 dotenv.config();
 const OPERATOR_PRIVATE = process.env.OPERATOR_PRIVATE;
 const node = { '127.0.0.1:50211': new AccountId(3) };
@@ -45,4 +46,9 @@ client.setOperator(accountId, OPERATOR_PRIVATE || '');
 	// 	client,
 	// 	OPERATOR_PRIVATE || ''
 	// );
+	//STATE COMPARISION TEST CASE #1
+	// compareStateForSameContracts("0x5b000f50d4272f0874573e9365d0cbb386235ead", "0x50887fcc55040f4bc302c8add72cb6286d1fd838");
+
+	//STATE COMPARISON TEST CASE #2
+	// compareStateForSameContracts("0x1362dc92648f47a294a033892e8c7a67d37ed318", "0x65f1ac5c7ad89d830451772423871f253800ae14");
 })();

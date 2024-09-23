@@ -8,7 +8,6 @@ pragma solidity >=0.8.2 <0.9.0;
  * @custom:dev-run-script ./scripts/deploy_with_ethers.ts
  */
 contract Storage {
-
     uint256 private number;
 
     mapping(address => uint256) public balance;
@@ -25,7 +24,7 @@ contract Storage {
      * @dev Return value
      * @return value of 'number'
      */
-    function retrieve() public view returns (uint256){
+    function retrieve() public view returns (uint256) {
         return number;
     }
 
@@ -44,5 +43,4 @@ contract Storage {
         // Reset the value to the default value.
         delete balance[_addr];
     }
-
 }

@@ -22,7 +22,6 @@ export async function getTransactionReceipt(txHash: string) : Promise<any> {
 					JSON.stringify(error.response?.data)
 			);
 		} else {
-			// Jeżeli error to nie AxiosError, używamy generycznego błędu
 			console.error('Unknown error:', error);
 			throw new Error(
 				'Error fetching raw transaction: ' +

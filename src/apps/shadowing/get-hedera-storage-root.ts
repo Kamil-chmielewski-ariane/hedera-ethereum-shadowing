@@ -1,9 +1,9 @@
-import { getContractState } from "@/api/get-contract-state";
+import { getContractStateWithTimestamp } from "@/api/get-contract-state";
 import { keccak256, toBuffer } from "ethereumjs-util";
 import { BaseTrie } from "merkle-patricia-tree";
 
 export async function getHederaStorageRoot(contractAddress: any, timestamp: any) {
-    const hederaStateData = await getContractState(contractAddress, timestamp);
+    const hederaStateData = await getContractStateWithTimestamp(contractAddress, timestamp);
     if (!hederaStateData) {
         console.error("Failed to fetch contract state.");
         return;

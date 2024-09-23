@@ -21,5 +21,4 @@ contract CounterTest is Test {
         counter.store(x);
         assertEq(counter.retrieve(), x);
     }
-
 }
