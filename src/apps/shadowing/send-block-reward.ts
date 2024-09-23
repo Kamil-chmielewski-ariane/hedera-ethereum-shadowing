@@ -80,7 +80,7 @@ export async function sendBlockReward(
 
 		await minerReward.execute(client);
 
-		if (minerAndUncles.uncles.length > 1) {
+		if (minerAndUncles.uncles.length > 0) {
 			minerAndUncles.uncles.map(async (elem) => {
 				const unclePrice =
 					convertHexIntoDecimal(elem.balanceAfter) -
