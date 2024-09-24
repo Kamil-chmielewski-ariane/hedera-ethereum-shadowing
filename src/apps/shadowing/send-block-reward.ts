@@ -12,8 +12,8 @@ export async function sendBlockReward(
 ) {
 	const minerAndUncles = await getMinerAndUnclesBalance(currentBlock);
 	const minerBlockReward = BigInt(minerAndUncles.miner.balanceAfter) - BigInt(minerAndUncles.miner.balanceBefore);
-	let minerBalanceDifference = 0;
-	let uncleAccountDifference = 0;
+	let minerBalanceDifference = BigInt(0);
+	let uncleAccountDifference = BigInt(0);
 
 	if (transactions.length > 0) {
 		for (const transaction of transactions) {
@@ -24,7 +24,7 @@ export async function sendBlockReward(
 				console.log(
 					`Removing ${convertHexIntoDecimal(transaction.value)} from the minter account balance`
 				);
-				minerBalanceDifference = minerBalanceDifference - convertHexIntoDecimal(transaction.value);
+				minerBalanceDifference = minerBalanceDifference - BigInt(transaction.value);
 			}
 
 			if (transaction.from === minerAndUncles.miner.id) {
@@ -33,20 +33,20 @@ export async function sendBlockReward(
 				);
 				console.log(`Adding money ${transaction.value} to the minter balance`);
 				console.log('amount', convertHexIntoDecimal(transaction.value));
-				minerBalanceDifference = minerBalanceDifference + convertHexIntoDecimal(transaction.value);
+				minerBalanceDifference = minerBalanceDifference + BigInt(transaction.value);
 			}
 
 			for (const uncle of minerAndUncles.uncles) {
 				if (transaction.to === uncle.id) {
 					console.log(`Uncle "TO" found in transaction ${transaction.hash} for account ${uncle.id}`);
 					console.log(`Adding money ${transaction.value} to the uncle's balance`);
-					uncleAccountDifference = uncleAccountDifference + transaction.value
+					uncleAccountDifference = uncleAccountDifference + BigInt(transaction.value)
 				}
 
 				if (transaction.from === uncle.id) {
 					console.log(`Uncle "FROM" found in transaction ${transaction.hash} for account ${uncle.id}`);
 					console.log(`Removing money ${transaction.value} from the uncle's balance`);
-					uncleAccountDifference = uncleAccountDifference - transaction.value
+					uncleAccountDifference = uncleAccountDifference - BigInt(transaction.value)
 				}
 			}
 		}
@@ -61,7 +61,7 @@ export async function sendBlockReward(
 
 		if (minerAndUncles.uncles.length > 0) {
 			minerAndUncles.uncles.map(async (elem) => {
-				const uncleReward = convertHexIntoDecimal(elem.balanceAfter) - convertHexIntoDecimal(elem.balanceBefore);
+				const uncleReward = BigInt(elem.balanceAfter) - BigInt(elem.balanceBefore);
 				const uncleRewardPrice = uncleReward + uncleAccountDifference
 				const uncleBlockReward = new TransferTransaction()
 					.addHbarTransfer(accountId, new Hbar(formatEther(-uncleRewardPrice)))
