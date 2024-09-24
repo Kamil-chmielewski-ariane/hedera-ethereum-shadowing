@@ -9,7 +9,7 @@ export async function sendHbarToAlias(
 	try {
 		console.log(`Running transaction ${accountId}, ${evmAddress}`);
 		const transaction = new TransferTransaction()
-			.addHbarTransfer(accountId, new Hbar(-amountHBar))
+			.addHbarTransfer(accountId, new Hbar(amountHBar).negated())
 			.addHbarTransfer(evmAddress, new Hbar(amountHBar));
 
 		// Execute the transaction

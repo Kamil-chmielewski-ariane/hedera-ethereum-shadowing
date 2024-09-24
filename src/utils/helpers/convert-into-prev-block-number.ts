@@ -1,4 +1,4 @@
-export function convertIntoAfterBlockNumber(blockNumber: string) {
-	const afterBlockNumberDec = parseInt(blockNumber, 16) + 1;
-	return afterBlockNumberDec.toString(16);
+export function convertIntoPrevBlockNumber(blockNumber: string) {
+	const prevBlockNumberDec = parseInt(blockNumber, 16) - 1;
+	return prevBlockNumberDec.toString(16);
 }

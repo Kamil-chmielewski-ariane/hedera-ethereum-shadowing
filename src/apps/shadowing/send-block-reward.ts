@@ -1,8 +1,8 @@
-import { AccountId, Client, Hbar, TransferTransaction } from '@hashgraph/sdk';
+import {AccountId, Client, Hbar} from '@hashgraph/sdk';
 import { getMinerAndUnclesBalance } from '@/apps/shadowing/get-miner-and-uncles-balance';
-import { convertHexIntoDecimal } from '@/utils/helpers/convert-hex-into-decimal';
-import { formatEther } from 'ethers';
 import {sendHbarToAlias} from "@/apps/shadowing/send-hbar-to-alias";
+import {BigNumber} from "@ethersproject/bignumber";
+import {formatEther} from "ethers";
 
 //TODO To type transaction array
 export async function sendBlockReward(
@@ -22,7 +22,7 @@ export async function sendBlockReward(
 					`Miner "TO" found in transaction ${transaction.hash} for account ${minerAndUncles.miner.id}`
 				);
 				console.log(
-					`Removing ${convertHexIntoDecimal(transaction.value)} from the minter account balance`
+					`Removing ${BigInt(transaction.value)} from the minter account balance`
 				);
 				minerBalanceDifference = minerBalanceDifference - BigInt(transaction.value);
 			}
@@ -32,32 +32,34 @@ export async function sendBlockReward(
 					`Miner "FROM" found in transaction ${transaction.hash} for account ${minerAndUncles.miner.id}`
 				);
 				console.log(`Adding money ${transaction.value} to the minter balance`);
-				console.log('amount', convertHexIntoDecimal(transaction.value));
+				console.log('amount', BigInt(transaction.value));
 				minerBalanceDifference = minerBalanceDifference + BigInt(transaction.value);
 			}
 
-			for (const uncle of minerAndUncles.uncles) {
-				let uncleAccountDifference = BigInt(0);
-				if (transaction.to === uncle.id) {
-					console.log(`Uncle "TO" found in transaction ${transaction.hash} for account ${uncle.id}`);
-					console.log(`Adding money ${transaction.value} to the uncle's balance`);
-					uncleAccountDifference = uncleAccountDifference + BigInt(transaction.value)
+			if (minerAndUncles.uncles) {
+				for (const uncle of minerAndUncles.uncles) {
+					let uncleAccountDifference = BigInt(0);
+					if (transaction.to === uncle.id) {
+						console.log(`Uncle "TO" found in transaction ${transaction.hash} for account ${uncle.id}`);
+						console.log(`Adding money ${transaction.value} to the uncle's balance`);
+						uncleAccountDifference = uncleAccountDifference + BigInt(transaction.value)
+					}
+
+					if (transaction.from === uncle.id) {
+						console.log(`Uncle "FROM" found in transaction ${transaction.hash} for account ${uncle.id}`);
+						console.log(`Removing money ${transaction.value} from the uncle's balance`);
+						uncleAccountDifference = uncleAccountDifference - BigInt(transaction.value)
+					}
+
+					const uncleReward = BigInt(uncle.balanceAfter) - BigInt(uncle.balanceBefore);
+					const uncleRewardPrice = uncleReward + uncleAccountDifference
+					await sendHbarToAlias(accountId, uncle.id, uncleRewardPrice, client)
 				}
-
-				if (transaction.from === uncle.id) {
-					console.log(`Uncle "FROM" found in transaction ${transaction.hash} for account ${uncle.id}`);
-					console.log(`Removing money ${transaction.value} from the uncle's balance`);
-					uncleAccountDifference = uncleAccountDifference - BigInt(transaction.value)
-				}
-
-				const uncleReward = BigInt(uncle.balanceAfter) - BigInt(uncle.balanceBefore);
-				const uncleRewardPrice = uncleReward + uncleAccountDifference
-				sendHbarToAlias(accountId, uncle.id, uncleRewardPrice, client)
-
 			}
+
 		}
 
 		const minerRewardPrice = minerBlockReward + BigInt(minerBalanceDifference)
-		sendHbarToAlias(accountId, minerAndUncles.miner.id, minerRewardPrice, client)
+		await sendHbarToAlias(accountId, minerAndUncles.miner.id, minerRewardPrice, client)
 	}
 }
