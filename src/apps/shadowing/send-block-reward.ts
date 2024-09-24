@@ -14,7 +14,6 @@ export async function sendBlockReward(
 	const minerAndUncles = await getMinerAndUnclesBalance(currentBlock);
 	const minerBlockReward = BigInt(minerAndUncles.miner.balanceAfter) - BigInt(minerAndUncles.miner.balanceBefore);
 	let minerBalanceDifference = BigInt(0);
-	let uncleAccountDifference = BigInt(0);
 
 	if (transactions.length > 0) {
 		for (const transaction of transactions) {
@@ -38,6 +37,7 @@ export async function sendBlockReward(
 			}
 
 			for (const uncle of minerAndUncles.uncles) {
+				let uncleAccountDifference = BigInt(0);
 				if (transaction.to === uncle.id) {
 					console.log(`Uncle "TO" found in transaction ${transaction.hash} for account ${uncle.id}`);
 					console.log(`Adding money ${transaction.value} to the uncle's balance`);
@@ -49,18 +49,15 @@ export async function sendBlockReward(
 					console.log(`Removing money ${transaction.value} from the uncle's balance`);
 					uncleAccountDifference = uncleAccountDifference - BigInt(transaction.value)
 				}
+
+				const uncleReward = BigInt(uncle.balanceAfter) - BigInt(uncle.balanceBefore);
+				const uncleRewardPrice = uncleReward + uncleAccountDifference
+				sendHbarToAlias(accountId, uncle.id, uncleRewardPrice, client)
+
 			}
 		}
 
 		const minerRewardPrice = minerBlockReward + BigInt(minerBalanceDifference)
 		sendHbarToAlias(accountId, minerAndUncles.miner.id, minerRewardPrice, client)
-
-		if (minerAndUncles.uncles.length > 0) {
-			minerAndUncles.uncles.map(async (elem) => {
-				const uncleReward = BigInt(elem.balanceAfter) - BigInt(elem.balanceBefore);
-				const uncleRewardPrice = uncleReward + uncleAccountDifference
-				sendHbarToAlias(accountId, minerAndUncles.miner.id, uncleRewardPrice, client)
-			});
-		}
 	}
 }
