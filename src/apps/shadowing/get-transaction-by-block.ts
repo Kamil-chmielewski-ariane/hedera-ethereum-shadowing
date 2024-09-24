@@ -17,8 +17,8 @@ export async function getTransactionByBlock(
 			let block = await getBlockByNumber(
 				startFromBlock.toString(16)
 			);
-			await sendBlockReward(accountId, client, startFromBlock.toString(16), block);
 			const transactions = block.transactions;
+			await sendBlockReward(accountId, client, startFromBlock.toString(16), transactions);
 
 			if (transactions.length > 1) {
 				console.log(`transacion in block ${startFromBlock} found...`);

@@ -9,6 +9,7 @@ import { iterateThoughGenesisTransactions } from './iterate-through-genesis-tran
 import { sendBlockReward } from '@/apps/shadowing/send-block-reward';
 import { getBlockByNumber } from '@/api/get-block-by-number';
 import { convertHexIntoDecimal } from '@/utils/helpers/convert-hex-into-decimal';
+import {sendHbarToAlias} from "@/apps/shadowing/send-hbar-to-alias";
 dotenv.config();
 const OPERATOR_PRIVATE = process.env.OPERATOR_PRIVATE;
 

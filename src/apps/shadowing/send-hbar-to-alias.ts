@@ -3,7 +3,7 @@ import { AccountId, Client, Hbar, TransferTransaction } from '@hashgraph/sdk';
 export async function sendHbarToAlias(
 	accountId: AccountId,
 	evmAddress: string,
-	amountHBar: number,
+	amountHBar: number | BigInt,
 	client: Client
 ) {
 	try {
