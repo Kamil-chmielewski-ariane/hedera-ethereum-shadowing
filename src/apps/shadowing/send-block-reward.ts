@@ -11,10 +11,9 @@ export async function sendBlockReward(
 	transactions: any[]
 ) {
 	const minerAndUncles = await getMinerAndUnclesBalance(currentBlock);
-	const minerBlockReward = convertHexIntoDecimal(minerAndUncles.miner.balanceAfter) - convertHexIntoDecimal(minerAndUncles.miner.balanceBefore);
+	const minerBlockReward = BigInt(minerAndUncles.miner.balanceAfter) - BigInt(minerAndUncles.miner.balanceBefore);
 	let minerBalanceDifference = 0;
 	let uncleAccountDifference = 0;
-
 
 	if (transactions.length > 0) {
 		for (const transaction of transactions) {
@@ -33,6 +32,7 @@ export async function sendBlockReward(
 					`Miner "FROM" found in transaction ${transaction.hash} for account ${minerAndUncles.miner.id}`
 				);
 				console.log(`Adding money ${transaction.value} to the minter balance`);
+				console.log('amount', convertHexIntoDecimal(transaction.value));
 				minerBalanceDifference = minerBalanceDifference + convertHexIntoDecimal(transaction.value);
 			}
 
@@ -51,7 +51,7 @@ export async function sendBlockReward(
 			}
 		}
 
-		const minerRewardPrice = minerBlockReward + minerBalanceDifference
+		const minerRewardPrice = minerBlockReward + BigInt(minerBalanceDifference)
 
 		const minerReward = new TransferTransaction()
 			.addHbarTransfer(accountId, new Hbar(formatEther(-minerRewardPrice)))
