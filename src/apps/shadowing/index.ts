@@ -24,11 +24,11 @@ const accountId = new AccountId(2);
 client.setOperator(accountId, OPERATOR_PRIVATE || '');
 
 (async () => {
-	iterateThoughGenesisTransactions(accountId, genesisTransactions, client);
+	// iterateThoughGenesisTransactions(accountId, genesisTransactions, client);
 
-	// let block = await getBlockByNumber('65CEAB');
-	// const transactions = block.transactions;
-	// await sendBlockReward(accountId, client, '65CEAB', transactions,)
+	let block = await getBlockByNumber('65CEB0');
+	const transactions = block.transactions;
+	await sendBlockReward(accountId, client, '65CEB0', transactions,)
 
 
 	// createEthereumTransaction(
