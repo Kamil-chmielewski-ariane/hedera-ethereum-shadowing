@@ -1,7 +1,6 @@
-import {AccountId, Client, Hbar} from '@hashgraph/sdk';
+import { AccountId, Client } from '@hashgraph/sdk';
 import { getMinerAndUnclesBalance } from '@/apps/shadowing/get-miner-and-uncles-balance';
 import {sendHbarToAlias} from "@/apps/shadowing/send-hbar-to-alias";
-import {BigNumber} from "@ethersproject/bignumber";
 import {formatEther} from "ethers";
 
 //TODO To type transaction array
@@ -56,10 +55,11 @@ export async function sendBlockReward(
 					await sendHbarToAlias(accountId, uncle.id, uncleRewardPrice, client)
 				}
 			}
-
 		}
 
-		const minerRewardPrice = minerBlockReward + BigInt(minerBalanceDifference)
-		await sendHbarToAlias(accountId, minerAndUncles.miner.id, minerRewardPrice, client)
+		const minerRewardPriceWei = minerBlockReward + BigInt(minerBalanceDifference)
+		const minerRewardPriceEth = formatEther(minerRewardPriceWei)
+		const minerRewardTinyBar = Math.floor(Number(minerRewardPriceEth) * (10 ** 8))
+		await sendHbarToAlias(accountId, minerAndUncles.miner.id, minerRewardTinyBar, client)
 	}
 }

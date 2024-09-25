@@ -3,14 +3,14 @@ import { AccountId, Client, Hbar, TransferTransaction } from '@hashgraph/sdk';
 export async function sendHbarToAlias(
 	accountId: AccountId,
 	evmAddress: string,
-	amountHBar: number | BigInt,
+	amountHBar: number | BigInt | Hbar,
 	client: Client
 ) {
 	try {
 		console.log(`Running transaction ${accountId}, ${evmAddress}`);
 		const transaction = new TransferTransaction()
-			.addHbarTransfer(accountId, new Hbar(amountHBar).negated())
-			.addHbarTransfer(evmAddress, new Hbar(amountHBar));
+			.addHbarTransfer(accountId, Hbar.fromTinybars(amountHBar).negated())
+			.addHbarTransfer(evmAddress, Hbar.fromTinybars(amountHBar));
 
 		// Execute the transaction
 		const response = await transaction.execute(client);
