@@ -5,14 +5,19 @@ import { sendTransactionAsEthereum } from '@/apps/issues/send-transaction-as-eth
 import { getBlockByNumber } from '@/api/get-block-by-number';
 import { findAndSendBlockReward } from '@/apps/issues/find-and-send-block-reward';
 import { compareStateForSameContracts } from './compare-state-for-same-contracts';
+import { sendTransactionHedera, sendTransactionSepolia } from './compare-sending-transactions-sepolia';
 dotenv.config();
 const OPERATOR_PRIVATE = process.env.OPERATOR_PRIVATE;
+const METAMASK_PRIVATE_KEY = process.env.METAMASK_PRIVATE_KEY;
+const SEPOLIA_RPC_URL = process.env.SEPOLIA_RPC_URL;
+const HEDERA_PRIVATE_KEY = process.env.HEDERA_PRIVATE_KEY
+const HEDERA_RPC_URL = process.env.HEDERA_RPC_URL;
 const node = { '127.0.0.1:50211': new AccountId(3) };
 const client = Client.forNetwork(node).setMirrorNetwork('127.0.0.1:5600');
 const accountId = new AccountId(2);
 client.setOperator(accountId, OPERATOR_PRIVATE || '');
 
-(() => {
+(async () => {
 	// No gass error issue
 	// transactionNoGas(accountId, client);
 
@@ -29,6 +34,14 @@ client.setOperator(accountId, OPERATOR_PRIVATE || '');
 	// 	client,
 	// 	OPERATOR_PRIVATE || ''
 	// );
+
+	//CHECK FOR TRANSACTION FOR PROPER PARSING CHAIN ID
+	// if (METAMASK_PRIVATE_KEY && HEDERA_PRIVATE_KEY && SEPOLIA_RPC_URL && HEDERA_RPC_URL) {
+		// await sendTransactionSepolia("0x000AA36A7", METAMASK_PRIVATE_KEY, SEPOLIA_RPC_URL);
+		// await sendTransactionSepolia("0xAA36A7", METAMASK_PRIVATE_KEY, SEPOLIA_RPC_URL);
+		// await sendTransactionHedera("0xAA36A7", HEDERA_PRIVATE_KEY, HEDERA_RPC_URL);
+		// await sendTransactionHedera("0x000AA36A7", HEDERA_PRIVATE_KEY, HEDERA_RPC_URL);
+	// }
 
 	// GET BLOCK REWARD
 	// findAndSendBlockReward(accountId, client, 6714960);

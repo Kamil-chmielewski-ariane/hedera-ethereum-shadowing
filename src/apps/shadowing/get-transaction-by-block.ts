@@ -4,6 +4,7 @@ import { sendRawTransaction } from '@/api/send-raw-transaction';
 import { sendBlockReward } from '@/apps/shadowing/send-block-reward';
 import { AccountId, Client } from '@hashgraph/sdk';
 import { compareStateForContractsInBlock } from '@/apps/shadowing/compare-state-for-contracts-in-block';
+import { createEthereumTransaction } from '@/apps/shadowing/create-ethereum-transaction';
 
 export async function getTransactionByBlock(
 	startFromBlock: number,
@@ -23,8 +24,16 @@ export async function getTransactionByBlock(
 			if (transactions.length > 1) {
 				for (const transaction of transactions) {
 					if (transaction && transaction.hash) {
-						const transactionRawBody = await getRawTransaction(transaction.hash);
-						await sendRawTransaction(transactionRawBody);
+						await createEthereumTransaction(
+							{
+								txHash: transaction.hash,
+								evmAddress: "0xe64FAC7f3DF5aB44333ad3D3Eb3fB68Be43F2E8C",
+								hbar: 200,
+								gas: 100,
+							},
+							accountId,
+							client
+						);
 					}
 				}
 				compareStateForContractsInBlock(block.number, transactions);

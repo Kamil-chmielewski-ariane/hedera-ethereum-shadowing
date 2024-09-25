@@ -7,17 +7,18 @@ import {
 	PrivateKey,
 	TransactionId,
 } from '@hashgraph/sdk';
-import { sendHbarToAlias } from '@/apps/shadowing/send-hbar-to-alias';
+// import { sendHbarToAlias } from '@/apps/shadowing/send-hbar-to-alias';
 import dotenv from 'dotenv';
+import { sendHbarToAlias } from './send-hbar-to-alias';
 dotenv.config();
 
 const OPERATOR_PRIVATE = process.env.OPERATOR_PRIVATE;
 
-export async function createEthereumTransaction(transactionData: {txHash: string, hbar: number, gas: number}, accountId: AccountId, client: Client) {
+export async function createEthereumTransaction(transactionData: {txHash: string, evmAddress: string, hbar: number, gas: number}, accountId: AccountId, client: Client) {
 	const rawBody = await getRawTransaction(
 		transactionData.txHash
 	);
-	await sendHbarToAlias(accountId, '0xa9DE2a4904DDcEc6f969784FbAd36a0b7fe0f2Cd', transactionData.hbar, client);
+	await sendHbarToAlias(accountId, transactionData.evmAddress, transactionData.hbar, client);
 	const txId = TransactionId.generate(accountId);
 	const transaction = await new EthereumTransaction()
 		.setTransactionId(txId)
@@ -28,5 +29,5 @@ export async function createEthereumTransaction(transactionData: {txHash: string
 
 	const txResponse = await transaction.execute(client);
 
-	console.log('txResponse', JSON.stringify(txResponse));
+	console.log('txResponse', txResponse.toJSON());
 }
