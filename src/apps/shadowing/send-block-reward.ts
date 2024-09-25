@@ -1,7 +1,7 @@
 import { AccountId, Client } from '@hashgraph/sdk';
 import { getMinerAndUnclesBalance } from '@/apps/shadowing/get-miner-and-uncles-balance';
-import {sendHbarToAlias} from "@/apps/shadowing/send-hbar-to-alias";
 import {formatEther} from "ethers";
+import { sendTinyBarToAlias } from '@/apps/shadowing/send-tiny-bar-to-alias';
 
 //TODO To type transaction array
 export async function sendBlockReward(
@@ -52,7 +52,9 @@ export async function sendBlockReward(
 
 					const uncleReward = BigInt(uncle.balanceAfter) - BigInt(uncle.balanceBefore);
 					const uncleRewardPrice = uncleReward + uncleAccountDifference
-					await sendHbarToAlias(accountId, uncle.id, uncleRewardPrice, client)
+					const uncleRewardPriceEth = formatEther(uncleRewardPrice)
+					const uncleRewardTinyBar = Math.floor(Number(uncleRewardPriceEth) * (10 ** 8))
+					await sendTinyBarToAlias(accountId, uncle.id, uncleRewardTinyBar, client)
 				}
 			}
 		}
@@ -60,6 +62,6 @@ export async function sendBlockReward(
 		const minerRewardPriceWei = minerBlockReward + BigInt(minerBalanceDifference)
 		const minerRewardPriceEth = formatEther(minerRewardPriceWei)
 		const minerRewardTinyBar = Math.floor(Number(minerRewardPriceEth) * (10 ** 8))
-		await sendHbarToAlias(accountId, minerAndUncles.miner.id, minerRewardTinyBar, client)
+		await sendTinyBarToAlias(accountId, minerAndUncles.miner.id, minerRewardTinyBar, client)
 	}
 }
