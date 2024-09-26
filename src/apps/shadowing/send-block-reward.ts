@@ -92,6 +92,6 @@ export async function sendBlockReward(
 		const minerRewardTinyBar = Math.floor(
 			Number(minerRewardPriceEth) * 10 ** 8
 		);
-		// await sendTinyBarToAlias(accountId, minerAndUncles.miner.id, minerRewardTinyBar, client)
+		await sendTinyBarToAlias(accountId, minerAndUncles.miner.id, minerRewardTinyBar, client)
 	}
 }
