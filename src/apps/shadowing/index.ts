@@ -6,6 +6,10 @@ import { Client, AccountId } from '@hashgraph/sdk';
 import dotenv from 'dotenv';
 import { createEthereumTransaction } from '@/apps/shadowing/create-ethereum-transaction';
 import { iterateThoughGenesisTransactions } from './iterate-through-genesis-transactions';
+import { sendBlockReward } from '@/apps/shadowing/send-block-reward';
+import { getBlockByNumber } from '@/api/get-block-by-number';
+import { convertHexIntoDecimal } from '@/utils/helpers/convert-hex-into-decimal';
+import {sendHbarToAlias} from "@/apps/shadowing/send-hbar-to-alias";
 dotenv.config();
 const OPERATOR_PRIVATE = process.env.OPERATOR_PRIVATE;
 
@@ -21,6 +25,12 @@ client.setOperator(accountId, OPERATOR_PRIVATE || '');
 
 (async () => {
 	iterateThoughGenesisTransactions(accountId, genesisTransactions, client);
+
+	// let block = await getBlockByNumber('65CEB0');
+	// const transactions = block.transactions;
+	// await sendBlockReward(accountId, client, '65CEB0', transactions,)
+
+
 	// createEthereumTransaction(
 	// 	{
 	// 		txHash:

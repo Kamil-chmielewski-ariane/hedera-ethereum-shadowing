@@ -1,33 +1,101 @@
-import { sendHbarToAlias } from "@/apps/shadowing/send-hbar-to-alias";
-import {
-	AccountId,
-	Client,
-	Hbar,
-	TransferTransaction
-} from '@hashgraph/sdk';
-import { getMinersForBlock } from "@/apps/shadowing/get-miners-for-block";
+import { AccountId, Client } from '@hashgraph/sdk';
+import { getMinerAndUnclesBalance } from '@/apps/shadowing/get-miner-and-uncles-balance';
+import { ethers } from 'ethers';
+import { sendTinyBarToAlias } from '@/apps/shadowing/send-tiny-bar-to-alias';
+import { calculateFee } from '@/apps/shadowing/calculate-fee';
+import { BigNumber } from '@ethersproject/bignumber';
 
-export async function sendBlockReward(accountId: AccountId, client: Client, block: any) {
-	const miners = await getMinersForBlock(block);
-	console.log("Sending reward to miners");
-	for (const miner of miners) {
-		await sendHbarTransfer(miner, accountId, client, 0);
-	}
-}
+//TODO To type transaction array
+export async function sendBlockReward(
+	accountId: AccountId,
+	client: Client,
+	currentBlock: string,
+	transactions: any[]
+) {
+	const minerAndUncles = await getMinerAndUnclesBalance(currentBlock);
+	let minerBalanceDifference = BigNumber.from(0);
+	const minerBlockReward = BigNumber.from(minerAndUncles.miner.balanceAfter).sub(minerAndUncles.miner.balanceBefore)
 
-async function sendHbarTransfer(miner: any, accountId: AccountId, client: Client, iterator: number) {
-	try {
-		if (iterator < 30) {
-			const transaction = new TransferTransaction()
-				.addHbarTransfer(accountId, new Hbar(-6))
-				.addHbarTransfer(miner, new Hbar(6));
+	if (transactions.length > 0) {
+		for (const transaction of transactions) {
+			if (transaction.to === minerAndUncles.miner.id) {
+				console.log(
+					`Miner "TO" found in transaction ${transaction.hash} for account ${minerAndUncles.miner.id}`
+				);
+				console.log(
+					`Removing ${BigNumber.from(transaction.value).toString()} from the miner account balance`
+				);
+				console.log('amount', transaction.value);
+				minerBalanceDifference = minerBalanceDifference.sub(BigNumber.from(transaction.value))
+			}
 
-			// Execute the transaction
-			await transaction.execute(client);
+			if (transaction.from === minerAndUncles.miner.id) {
+				console.log(
+					`Miner "FROM" found in transaction ${transaction.hash} for account ${minerAndUncles.miner.id}`
+				);
+				console.log(`Adding money ${transaction.value} to the minter balance`);
+				console.log('amount', BigNumber.from(transaction.value).toString());
+
+				const fee = calculateFee(transaction.gas, transaction.gasPrice)
+				minerBalanceDifference = BigNumber.from(transaction.value).add(BigNumber.from(fee))
+			}
+
+			if (minerAndUncles.uncles) {
+				for (const uncle of minerAndUncles.uncles) {
+					let uncleAccountDifference = BigNumber.from(0);
+
+					if (transaction.to === uncle.id) {
+						console.log(
+							`Uncle "TO" found in transaction ${transaction.hash} for account ${uncle.id}`
+						);
+						console.log(
+							`Removing money ${transaction.value} to the uncle's balance`
+						);
+						console.log('amount', BigNumber.from(transaction.value).toString());
+						uncleAccountDifference = BigNumber.from(uncleAccountDifference).sub(BigNumber.from(transaction.value));
+					}
+
+					if (transaction.from === uncle.id) {
+						console.log(
+							`Uncle "FROM" found in transaction ${transaction.hash} for account ${uncle.id}`
+						);
+						console.log(
+							`Adding money ${transaction.value} from the uncle's balance`
+						);
+						console.log('amount', BigNumber.from(transaction.value).toString());
+
+						const fee = calculateFee(transaction.gas, transaction.gasPrice)
+						uncleAccountDifference = BigNumber.from(transaction.value).add(BigNumber.from(fee))
+					}
+
+					const uncleReward = BigNumber.from(uncle.balanceAfter).sub(BigNumber.from(uncle.balanceBefore));
+					const uncleRewardPrice = uncleReward.add(uncleAccountDifference)
+					const uncleRewardPriceEth = ethers.formatEther(uncleRewardPrice.toString())
+
+					const uncleRewardTinyBar = Math.floor(
+						Number(uncleRewardPriceEth) * 10 ** 8
+					);
+
+					console.log(`sending to uncle ${uncle.id} money reward: ${uncleRewardPriceEth}`);
+
+					await sendTinyBarToAlias(
+						accountId,
+						uncle.id,
+						uncleRewardTinyBar,
+						client
+					);
+				}
+			}
 		}
-	}
-	catch (error) {
-		iterator++;
-		sendHbarTransfer(miner, accountId, client, iterator);
+		const minerRewardPriceWei = minerBlockReward.add(BigNumber.from(minerBalanceDifference));
+		const minerRewardEth = ethers.formatEther(minerRewardPriceWei.toString())
+
+		const minerRewardTinyBar = Math.floor(
+			Number(minerRewardEth) * 10 ** 8
+		);
+
+		console.log(`sending to miner ${minerAndUncles.miner.id} money reward: ${minerRewardEth}`);
+
+		await sendTinyBarToAlias(accountId, minerAndUncles.miner.id, minerRewardTinyBar, client)
 	}
 }
