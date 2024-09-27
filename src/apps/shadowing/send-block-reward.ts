@@ -76,6 +76,8 @@ export async function sendBlockReward(
 						Number(uncleRewardPriceEth) * 10 ** 8
 					);
 
+					console.log(`sending to uncle ${uncle.id} money reward: ${uncleRewardPriceEth}`);
+
 					await sendTinyBarToAlias(
 						accountId,
 						uncle.id,
@@ -92,7 +94,7 @@ export async function sendBlockReward(
 			Number(minerRewardEth) * 10 ** 8
 		);
 
-		console.log(minerRewardTinyBar);
+		console.log(`sending to miner ${minerAndUncles.miner.id} money reward: ${minerRewardEth}`);
 
 		await sendTinyBarToAlias(accountId, minerAndUncles.miner.id, minerRewardTinyBar, client)
 	}
