@@ -1,5 +1,5 @@
-import { getRawTransaction } from '@/api/get-raw-transaction';
-import { sendHbarToAlias } from '@/apps/shadowing/send-hbar-to-alias';
+import { getRawTransaction } from '@/api/erigon/get-raw-transaction';
+import { sendHbarToAlias } from '@/apps/shadowing/transfers/send-hbar-to-alias';
 import {
 	AccountId,
 	Client,

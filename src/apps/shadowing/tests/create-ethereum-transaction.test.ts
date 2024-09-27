@@ -1,9 +1,9 @@
 import { describe, it, expect } from '@jest/globals';
-import { getRawTransaction } from '@/api/get-raw-transaction';
-import { sendRawTransaction } from '@/api/send-raw-transaction';
-import { sendHbarToAlias } from '@/apps/shadowing/send-hbar-to-alias';
+import { getRawTransaction } from '@/api/erigon/get-raw-transaction';
+import { sendRawTransaction } from '@/api/hedera/send-raw-transaction';
+import { sendHbarToAlias } from '@/apps/shadowing/transfers/send-hbar-to-alias';
 import { AccountId, Client } from '@hashgraph/sdk';
-import { getAllGenesisData } from '@/apps/shadowing/get-all-frontier-data';
+import { getAllGenesisData } from '@/apps/shadowing/frontier/get-all-frontier-data';
 import dotenv from 'dotenv';
 
 dotenv.config();

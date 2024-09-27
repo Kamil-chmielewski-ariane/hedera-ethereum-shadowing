@@ -1,5 +1,5 @@
-import { getBlockByHashHedera } from "@/api/get-block-by-hash";
-import { getTransaction } from "@/api/get-transaction";
+import { getBlockByHashHedera } from "@/api/erigon/get-block-by-hash";
+import { getTransaction } from "@/api/hedera/get-transaction";
 import { appendFile } from "fs";
 
 export async function compareStateRootOfBlocks(erigonBlock: any, lastTransactionHashInBlock: any) {

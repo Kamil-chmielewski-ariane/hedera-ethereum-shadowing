@@ -2,7 +2,7 @@ import { transactionNoGas } from '@/apps/issues/transaction-no-gas';
 import { AccountId, Client } from '@hashgraph/sdk';
 import dotenv from 'dotenv';
 import { sendTransactionAsEthereum } from '@/apps/issues/send-transaction-as-ethereum';
-import { getBlockByNumber } from '@/api/get-block-by-number';
+import { getBlockByNumber } from '@/api/erigon/get-block-by-number';
 import { findAndSendBlockReward } from '@/apps/issues/find-and-send-block-reward';
 dotenv.config();
 const OPERATOR_PRIVATE = process.env.OPERATOR_PRIVATE;

@@ -1,4 +1,4 @@
-import { getRawTransaction } from '@/api/get-raw-transaction';
+import { getRawTransaction } from '@/api/erigon/get-raw-transaction';
 import {
 	AccountId,
 	Client,
@@ -7,7 +7,7 @@ import {
 	PrivateKey,
 	TransactionId,
 } from '@hashgraph/sdk';
-import { sendHbarToAlias } from '@/apps/shadowing/send-hbar-to-alias';
+import { sendHbarToAlias } from '@/apps/shadowing/transfers/send-hbar-to-alias';
 import dotenv from 'dotenv';
 dotenv.config();
 
