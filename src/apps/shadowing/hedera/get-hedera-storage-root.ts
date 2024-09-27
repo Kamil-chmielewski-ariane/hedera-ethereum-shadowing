@@ -1,4 +1,4 @@
-import { getContractState } from "@/api/get-contract-state";
+import { getContractState } from "@/api/hedera-mirror-node/get-contract-state";
 import { keccak256, toBuffer } from "ethereumjs-util";
 import { BaseTrie } from "merkle-patricia-tree";
 

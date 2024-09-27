@@ -1,4 +1,4 @@
-import { getBlockByHashErigon } from "@/api/get-block-by-hash";
+import { getBlockByHashErigon } from "@/api/erigon/get-block-by-hash";
 
 export async function getMinersForBlock(block: any): Promise<any> {
     let miners = [];

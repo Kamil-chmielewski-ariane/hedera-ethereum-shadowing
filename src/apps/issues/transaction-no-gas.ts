@@ -1,6 +1,6 @@
-import { getRawTransaction } from '@/api/get-raw-transaction';
-import { sendRawTransaction } from '@/api/send-raw-transaction';
-import { sendHbarToAlias } from '@/apps/shadowing/send-hbar-to-alias';
+import { getRawTransaction } from '@/api/erigon/get-raw-transaction';
+import { sendRawTransaction } from '@/api/hedera/send-raw-transaction';
+import { sendHbarToAlias } from '@/apps/shadowing/transfers/send-hbar-to-alias';
 import { AccountId, Client } from '@hashgraph/sdk';
 
 // This function create a transaction and send the rawBody to the erigon eth_sendRawTransaction endpoint. Should return gas minimum price error

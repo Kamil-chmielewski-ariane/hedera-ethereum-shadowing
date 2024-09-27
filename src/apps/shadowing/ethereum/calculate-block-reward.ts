@@ -1,7 +1,7 @@
-import { getTransactionReceipt } from "@/api/get-transaction-receipt";
+import { getTransactionReceipt } from "@/api/erigon/get-transaction-receipt";
 import { ethers } from "ethers";
 import { BigNumber } from "@ethersproject/bignumber";
-import { getBlockByHashErigon } from "@/api/get-block-by-hash";
+import { getBlockByHashErigon } from "@/api/erigon/get-block-by-hash";
 
 export async function calculateBlockReward(block: any) {
     try {

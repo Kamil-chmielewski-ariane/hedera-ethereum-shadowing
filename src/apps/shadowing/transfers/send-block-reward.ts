@@ -1,8 +1,8 @@
 import { AccountId, Client } from '@hashgraph/sdk';
-import { getMinerAndUnclesBalance } from '@/apps/shadowing/get-miner-and-uncles-balance';
+import { getMinerAndUnclesBalance } from '@/apps/shadowing/ethereum/balances/get-miner-and-uncles-balance';
 import { ethers } from 'ethers';
-import { sendTinyBarToAlias } from '@/apps/shadowing/send-tiny-bar-to-alias';
-import { calculateFee } from '@/apps/shadowing/calculate-fee';
+import { sendTinyBarToAlias } from '@/apps/shadowing/transfers/send-tiny-bar-to-alias';
+import { calculateFee } from '@/utils/helpers/calculate-fee';
 import { BigNumber } from '@ethersproject/bignumber';
 
 //TODO To type transaction array

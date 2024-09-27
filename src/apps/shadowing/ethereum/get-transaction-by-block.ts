@@ -1,9 +1,9 @@
-import { getBlockByNumber } from '@/api/get-block-by-number';
-import { getRawTransaction } from '@/api/get-raw-transaction';
-import { sendRawTransaction } from '@/api/send-raw-transaction';
+import { getBlockByNumber } from '@/api/erigon/get-block-by-number';
+import { getRawTransaction } from '@/api/erigon/get-raw-transaction';
+import { sendRawTransaction } from '@/api/hedera/send-raw-transaction';
 import { AccountId, Client } from '@hashgraph/sdk';
-import { compareStateRootOfBlocks } from './compare-state-root-of-blocks';
-import { sendBlockReward } from '@/apps/shadowing/send-block-reward';
+import { compareStateRootOfBlocks } from '@/apps/shadowing/blockchain-utils/compare-state-root-of-blocks';
+import { sendBlockReward } from '@/apps/shadowing/transfers/send-block-reward';
 
 export async function getTransactionByBlock(
 	startFromBlock: number,
@@ -22,7 +22,7 @@ export async function getTransactionByBlock(
 
 			if (transactions.length > 1) {
 				console.log(`transacion in block ${startFromBlock} found...`);
-				console.log('preceding iterate through transactions...');
+				console.log('preceding iterate through transfers...');
 				for (const transaction of transactions) {
 					if (transaction && transaction.hash) {
 						console.log(`current element ${transaction.hash}`);

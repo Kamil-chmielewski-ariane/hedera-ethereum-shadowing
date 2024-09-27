@@ -1,15 +1,16 @@
 import {
 	getAllFrontierData,
 	getAllGenesisData,
-} from '@/apps/shadowing/get-all-frontier-data';
+} from '@/apps/shadowing/frontier/get-all-frontier-data';
 import { Client, AccountId } from '@hashgraph/sdk';
 import dotenv from 'dotenv';
-import { createEthereumTransaction } from '@/apps/shadowing/create-ethereum-transaction';
-import { iterateThoughGenesisTransactions } from './iterate-through-genesis-transactions';
-import { sendBlockReward } from '@/apps/shadowing/send-block-reward';
-import { getBlockByNumber } from '@/api/get-block-by-number';
+import { createEthereumTransaction } from '@/apps/shadowing/ethereum/create-ethereum-transaction';
+import { iterateThoughGenesisTransactions } from '@/apps/shadowing/blockchain-utils/iterate-through-genesis-transactions';
+import { sendBlockReward } from '@/apps/shadowing/transfers/send-block-reward';
+import { getBlockByNumber } from '@/api/erigon/get-block-by-number';
 import { convertHexIntoDecimal } from '@/utils/helpers/convert-hex-into-decimal';
-import {sendHbarToAlias} from "@/apps/shadowing/send-hbar-to-alias";
+import {sendHbarToAlias} from "@/apps/shadowing/transfers/send-hbar-to-alias";
+import { getAccountBalance } from '@/api/erigon/get-account-balance';
 dotenv.config();
 const OPERATOR_PRIVATE = process.env.OPERATOR_PRIVATE;
 
@@ -24,12 +25,12 @@ const accountId = new AccountId(2);
 client.setOperator(accountId, OPERATOR_PRIVATE || '');
 
 (async () => {
-	iterateThoughGenesisTransactions(accountId, genesisTransactions, client);
+	await iterateThoughGenesisTransactions(accountId, genesisTransactions, client);
 
 	// let block = await getBlockByNumber('65CEB0');
 	// const transactions = block.transactions;
+	//
 	// await sendBlockReward(accountId, client, '65CEB0', transactions,)
-
 
 	// createEthereumTransaction(
 	// 	{

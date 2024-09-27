@@ -1,8 +1,8 @@
 import { Genesis } from '@/utils/types';
-import { getLastBlockNumber } from '@/api/get-last-block-number';
+import { getLastBlockNumber } from '@/api/erigon/get-last-block-number';
 import { convertHexIntoDecimal } from '@/utils/helpers/convert-hex-into-decimal';
-import { getTransactionByBlock } from '@/apps/shadowing/get-transaction-by-block';
-import { sendHbarToAlias } from '@/apps/shadowing/send-hbar-to-alias';
+import { getTransactionByBlock } from '@/apps/shadowing/ethereum/get-transaction-by-block';
+import { sendHbarToAlias } from '@/apps/shadowing/transfers/send-hbar-to-alias';
 import { AccountId, Client } from '@hashgraph/sdk';
 
 export async function iterateThoughGenesisTransactions(

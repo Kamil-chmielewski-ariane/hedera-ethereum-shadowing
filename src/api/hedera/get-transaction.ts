@@ -1,11 +1,11 @@
-import { axiosInstanceErigon } from './config';
-import {isAxiosError} from 'axios';
+import { axiosInstanceHederaRpcApi } from '@/api/config';
+import { isAxiosError } from 'axios';
 
 // TODO to type promise response objects
-export async function getRawTransaction(txnHash: string): Promise<any> {
+export async function getTransaction(txnHash: string): Promise<any> {
 	try {
-		const response = await axiosInstanceErigon.post('', {
-			method: 'eth_getRawTransactionByHash',
+		const response = await axiosInstanceHederaRpcApi.post('', {
+			method: 'eth_getTransactionByHash',
 			params: [txnHash],
 			id: 1,
 			jsonrpc: '2.0',

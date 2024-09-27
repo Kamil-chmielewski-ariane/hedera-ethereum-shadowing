@@ -1,5 +1,5 @@
-import { getBlockByNumber } from '@/api/get-block-by-number';
-import { getAccountBalance } from '@/api/get-account-balance';
+import { getBlockByNumber } from '@/api/erigon/get-block-by-number';
+import { getAccountBalance } from '@/api/erigon/get-account-balance';
 import { convertIntoPrevBlockNumber,
 } from '@/utils/helpers/convert-into-prev-block-number';
 
