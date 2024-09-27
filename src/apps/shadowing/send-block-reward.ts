@@ -1,6 +1,6 @@
-import { AccountId, Client, EthereumTransaction } from '@hashgraph/sdk';
+import { AccountId, Client } from '@hashgraph/sdk';
 import { getMinerAndUnclesBalance } from '@/apps/shadowing/get-miner-and-uncles-balance';
-import { ethers, formatEther, parseUnits } from 'ethers';
+import { ethers } from 'ethers';
 import { sendTinyBarToAlias } from '@/apps/shadowing/send-tiny-bar-to-alias';
 import { calculateFee } from '@/apps/shadowing/calculate-fee';
 import { BigNumber } from '@ethersproject/bignumber';
