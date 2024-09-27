@@ -1,8 +1,9 @@
 import { AccountId, Client, EthereumTransaction } from '@hashgraph/sdk';
 import { getMinerAndUnclesBalance } from '@/apps/shadowing/get-miner-and-uncles-balance';
-import { formatEther } from 'ethers';
+import { ethers, formatEther, parseUnits } from 'ethers';
 import { sendTinyBarToAlias } from '@/apps/shadowing/send-tiny-bar-to-alias';
 import { calculateFee } from '@/apps/shadowing/calculate-fee';
+import { BigNumber } from '@ethersproject/bignumber';
 
 //TODO To type transaction array
 export async function sendBlockReward(
@@ -12,10 +13,8 @@ export async function sendBlockReward(
 	transactions: any[]
 ) {
 	const minerAndUncles = await getMinerAndUnclesBalance(currentBlock);
-	const minerBlockReward =
-		BigInt(minerAndUncles.miner.balanceAfter) -
-		BigInt(minerAndUncles.miner.balanceBefore);
-	let minerBalanceDifference = BigInt(0);
+	let minerBalanceDifference = BigNumber.from(0);
+	const minerBlockReward = BigNumber.from(minerAndUncles.miner.balanceAfter).sub(minerAndUncles.miner.balanceBefore)
 
 	if (transactions.length > 0) {
 		for (const transaction of transactions) {
@@ -24,8 +23,10 @@ export async function sendBlockReward(
 					`Miner "TO" found in transaction ${transaction.hash} for account ${minerAndUncles.miner.id}`
 				);
 				console.log(
-					`Removing ${BigInt(transaction.value)} from the minter account balance`
+					`Removing ${BigNumber.from(transaction.value).toString()} from the miner account balance`
 				);
+				console.log('amount', transaction.value);
+				minerBalanceDifference = minerBalanceDifference.sub(BigNumber.from(transaction.value))
 			}
 
 			if (transaction.from === minerAndUncles.miner.id) {
@@ -33,25 +34,25 @@ export async function sendBlockReward(
 					`Miner "FROM" found in transaction ${transaction.hash} for account ${minerAndUncles.miner.id}`
 				);
 				console.log(`Adding money ${transaction.value} to the minter balance`);
-				console.log('amount', BigInt(transaction.value));
+				console.log('amount', BigNumber.from(transaction.value).toString());
 
-				const fee = calculateFee(transaction.gas, transaction.gasPrice);
-				minerBalanceDifference =
-					minerBalanceDifference + BigInt(transaction.value) + BigInt(fee);
+				const fee = calculateFee(transaction.gas, transaction.gasPrice)
+				minerBalanceDifference = BigNumber.from(transaction.value).add(BigNumber.from(fee))
 			}
 
 			if (minerAndUncles.uncles) {
 				for (const uncle of minerAndUncles.uncles) {
-					let uncleAccountDifference = BigInt(0);
+					let uncleAccountDifference = BigNumber.from(0);
+
 					if (transaction.to === uncle.id) {
 						console.log(
 							`Uncle "TO" found in transaction ${transaction.hash} for account ${uncle.id}`
 						);
 						console.log(
-							`Adding money ${transaction.value} to the uncle's balance`
+							`Removing money ${transaction.value} to the uncle's balance`
 						);
-						uncleAccountDifference =
-							uncleAccountDifference + BigInt(transaction.value);
+						console.log('amount', BigNumber.from(transaction.value).toString());
+						uncleAccountDifference = BigNumber.from(uncleAccountDifference).sub(BigNumber.from(transaction.value));
 					}
 
 					if (transaction.from === uncle.id) {
@@ -59,20 +60,22 @@ export async function sendBlockReward(
 							`Uncle "FROM" found in transaction ${transaction.hash} for account ${uncle.id}`
 						);
 						console.log(
-							`Removing money ${transaction.value} from the uncle's balance`
+							`Adding money ${transaction.value} from the uncle's balance`
 						);
-						const fee = calculateFee(transaction.gas, transaction.gasPrice);
-						uncleAccountDifference =
-							uncleAccountDifference - BigInt(transaction.value) + BigInt(fee);
+						console.log('amount', BigNumber.from(transaction.value).toString());
+
+						const fee = calculateFee(transaction.gas, transaction.gasPrice)
+						uncleAccountDifference = BigNumber.from(transaction.value).add(BigNumber.from(fee))
 					}
 
-					const uncleReward =
-						BigInt(uncle.balanceAfter) - BigInt(uncle.balanceBefore);
-					const uncleRewardPrice = uncleReward + uncleAccountDifference;
-					const uncleRewardPriceEth = formatEther(uncleRewardPrice);
+					const uncleReward = BigNumber.from(uncle.balanceAfter).sub(BigNumber.from(uncle.balanceBefore));
+					const uncleRewardPrice = uncleReward.add(uncleAccountDifference)
+					const uncleRewardPriceEth = ethers.formatEther(uncleRewardPrice.toString())
+
 					const uncleRewardTinyBar = Math.floor(
 						Number(uncleRewardPriceEth) * 10 ** 8
 					);
+
 					await sendTinyBarToAlias(
 						accountId,
 						uncle.id,
@@ -82,16 +85,15 @@ export async function sendBlockReward(
 				}
 			}
 		}
-
-		const minerRewardPriceWei =
-			minerBlockReward + BigInt(minerBalanceDifference);
-		const minerRewardPriceEth = formatEther(minerRewardPriceWei);
-
-		console.log('minerRewardPriceEth', minerRewardPriceEth);
+		const minerRewardPriceWei = minerBlockReward.add(BigNumber.from(minerBalanceDifference));
+		const minerRewardEth = ethers.formatEther(minerRewardPriceWei.toString())
 
 		const minerRewardTinyBar = Math.floor(
-			Number(minerRewardPriceEth) * 10 ** 8
+			Number(minerRewardEth) * 10 ** 8
 		);
+
+		console.log(minerRewardTinyBar);
+
 		await sendTinyBarToAlias(accountId, minerAndUncles.miner.id, minerRewardTinyBar, client)
 	}
 }
