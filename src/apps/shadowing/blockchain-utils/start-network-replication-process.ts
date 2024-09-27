@@ -5,7 +5,7 @@ import { getTransactionByBlock } from '@/apps/shadowing/ethereum/get-transaction
 import { sendHbarToAlias } from '@/apps/shadowing/transfers/send-hbar-to-alias';
 import { AccountId, Client } from '@hashgraph/sdk';
 
-export async function iterateThoughGenesisTransactions(
+export async function startNetworkReplicationProcess(
 	accountId: AccountId,
 	genesisTransactions: Genesis[],
 	client: Client
