@@ -24,7 +24,7 @@ export async function getBlockByNumber(
 					JSON.stringify(error.response?.data)
 			);
 		} else {
-			// Jeżeli error to nie AxiosError, używamy generycznego błędu
+			// if error not axios error, use generic error
 			console.error('Unknown error:', error);
 			throw new Error(
 				'Error fetching raw transaction: ' +
