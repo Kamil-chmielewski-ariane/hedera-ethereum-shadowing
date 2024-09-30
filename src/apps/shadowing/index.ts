@@ -5,6 +5,8 @@ import {
 import { Client, AccountId } from '@hashgraph/sdk';
 import dotenv from 'dotenv';
 import { iterateThoughGenesisTransactions } from '@/apps/shadowing/blockchain-utils/iterate-through-genesis-transactions';
+import { getAccount } from '@/api/hedera-mirror-node/get-account';
+import { sendHbarToAlias } from '@/apps/shadowing/transfers/send-hbar-to-alias';
 dotenv.config();
 const OPERATOR_PRIVATE = process.env.OPERATOR_PRIVATE;
 

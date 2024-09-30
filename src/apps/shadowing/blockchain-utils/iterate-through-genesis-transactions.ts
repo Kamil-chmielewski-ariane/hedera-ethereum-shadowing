@@ -4,8 +4,8 @@ import { convertHexIntoDecimal } from '@/utils/helpers/convert-hex-into-decimal'
 import { getTransactionByBlock } from '@/apps/shadowing/ethereum/get-transaction-by-block';
 import { sendHbarToAlias } from '@/apps/shadowing/transfers/send-hbar-to-alias';
 import { AccountId, Client } from '@hashgraph/sdk';
-import { getOperatorAccountBalance } from '@/apps/shadowing/hedera/get-operator-account-balance';
 import { calculateCreateAccountFee } from '@/apps/shadowing/hedera/calculate-create-account-fee';
+import { getAccount } from '@/api/hedera-mirror-node/get-account';
 
 export async function iterateThoughGenesisTransactions(
 	accountId: AccountId,
@@ -13,9 +13,16 @@ export async function iterateThoughGenesisTransactions(
 	client: Client
 ) {
 	for (const transaction of genesisTransactions) {
-		console.log('iterateThoughGenesisTransactions', transaction);
+		const isAccountCreated = await getAccount(transaction.toAccount)
 
-		const accountBalanceBefore = await getOperatorAccountBalance(accountId, client);
+		if (!isAccountCreated) {
+			await sendHbarToAlias(
+				accountId,
+				transaction.toAccount,
+				1,
+				client
+			);
+		}
 
 		await sendHbarToAlias(
 			accountId,
@@ -24,8 +31,6 @@ export async function iterateThoughGenesisTransactions(
 			client
 		);
 
-		const accountCreateFee = await calculateCreateAccountFee(accountId, client, accountBalanceBefore, transaction.amount)
-		console.log(`fee for account create: ${accountCreateFee}`)
 	}
 	const lastBlockNumber = await getLastBlockNumber();
 	const convertedBlockNumber = convertHexIntoDecimal(lastBlockNumber);

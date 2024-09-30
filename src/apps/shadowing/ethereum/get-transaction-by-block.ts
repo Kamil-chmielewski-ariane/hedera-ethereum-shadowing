@@ -4,6 +4,8 @@ import { sendRawTransaction } from '@/api/hedera/send-raw-transaction';
 import { AccountId, Client } from '@hashgraph/sdk';
 import { compareStateRootOfBlocks } from '@/apps/shadowing/blockchain-utils/compare-state-root-of-blocks';
 import { sendBlockReward } from '@/apps/shadowing/transfers/send-block-reward';
+import { getAccount } from '@/api/hedera-mirror-node/get-account';
+import { sendHbarToAlias } from '@/apps/shadowing/transfers/send-hbar-to-alias';
 
 export async function getTransactionByBlock(
 	startFromBlock: number,
@@ -24,6 +26,17 @@ export async function getTransactionByBlock(
 				console.log(`transacion in block ${startFromBlock} found...`);
 				console.log('preceding iterate through transfers...');
 				for (const transaction of transactions) {
+					const isAccountCreated = await getAccount(transaction.toAccount)
+
+					if (!isAccountCreated) {
+						await sendHbarToAlias(
+							accountId,
+							transaction.toAccount,
+							transaction.amount,
+							client
+						);
+					}
+
 					if (transaction && transaction.hash) {
 						console.log(`current element ${transaction.hash}`);
 						const transactionRawBody = await getRawTransaction(transaction.hash);
