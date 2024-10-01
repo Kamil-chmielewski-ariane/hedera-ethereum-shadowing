@@ -4,7 +4,6 @@ import { convertHexIntoDecimal } from '@/utils/helpers/convert-hex-into-decimal'
 import { getTransactionByBlock } from '@/apps/shadowing/ethereum/get-transaction-by-block';
 import { sendHbarToAlias } from '@/apps/shadowing/transfers/send-hbar-to-alias';
 import { AccountId, Client } from '@hashgraph/sdk';
-import { calculateCreateAccountFee } from '@/apps/shadowing/hedera/calculate-create-account-fee';
 import { getAccount } from '@/api/hedera-mirror-node/get-account';
 
 export async function iterateThoughGenesisTransactions(

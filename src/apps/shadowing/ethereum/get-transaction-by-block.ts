@@ -32,7 +32,7 @@ export async function getTransactionByBlock(
 						await sendHbarToAlias(
 							accountId,
 							transaction.toAccount,
-							transaction.amount,
+							1,
 							client
 						);
 					}

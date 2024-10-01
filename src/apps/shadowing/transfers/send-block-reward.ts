@@ -26,7 +26,7 @@ export async function sendBlockReward(
 				await sendHbarToAlias(
 					accountId,
 					transaction.toAccount,
-					transaction.amount,
+					1,
 					client
 				);
 			}

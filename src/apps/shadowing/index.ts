@@ -5,14 +5,11 @@ import {
 import { Client, AccountId } from '@hashgraph/sdk';
 import dotenv from 'dotenv';
 import { iterateThoughGenesisTransactions } from '@/apps/shadowing/blockchain-utils/iterate-through-genesis-transactions';
-import { getAccount } from '@/api/hedera-mirror-node/get-account';
-import { sendHbarToAlias } from '@/apps/shadowing/transfers/send-hbar-to-alias';
 dotenv.config();
 const OPERATOR_PRIVATE = process.env.OPERATOR_PRIVATE;
 
 const HARDCODED_NUMBER_OF_BLOCKS = 100000;
 const HARDCODED_BLOCK_NUMBER_WITH_TRANSACTIONS = 5966639;
-const accountsMapping = getAllFrontierData();
 
 const node = { '127.0.0.1:50211': new AccountId(3) };
 const genesisTransactions = getAllGenesisData();
