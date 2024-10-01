@@ -12,6 +12,7 @@ export async function startNetworkReplicationProcess(
 	client: Client
 ) {
 	for (const transaction of genesisTransactions) {
+		console.log('iterateThoughGenesisTransactions', transaction);
 		const isAccountCreated = await getAccount(transaction.toAccount)
 
 		if (!isAccountCreated) {
