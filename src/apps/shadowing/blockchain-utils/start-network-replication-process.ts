@@ -6,7 +6,7 @@ import { sendHbarToAlias } from '@/apps/shadowing/transfers/send-hbar-to-alias';
 import { AccountId, Client } from '@hashgraph/sdk';
 import { getAccount } from '@/api/hedera-mirror-node/get-account';
 
-export async function iterateThoughGenesisTransactions(
+export async function startNetworkReplicationProcess(
 	accountId: AccountId,
 	genesisTransactions: Genesis[],
 	client: Client

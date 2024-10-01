@@ -5,25 +5,23 @@ Using the getTransaction function, we retrieve an object based on the provided t
 We then assign the elements retrieved from the getTransaction function to two objects: unsignedTx and signature.
 Finally, using the serializeTransaction function, we serialize the unsignedTx and signature objects into a hex string format.
 
-1. zainincjalizowac hedera local node na podstawie genesis block
-   -> stworzyć funkcję do mintowania tokenów na podstawie balance dla danego konta
-   -> local node hedery powinien mieć debug
+1. Initialize a Hedera local node based on the genesis block -> Create a function for minting tokens based on the balance of a given account -> The local Hedera node should have debugging enabled
 
-2. Zaciąganie wszystkich transakcji z bloku n
-3. Dla każdej transakcji występującej w bloku sprawdzamy czy istnieje konto z którego została wykonana transakcja
-   - Nie - tworzymy konto
-   - Tak - ignore
-4. getRawTransactionBody from erigon
-5. getRawTransaction to hedera local node
-6. Obsłużyć nagrodę za blok
-7. Powtórzyć dla blok + 1
+2. Fetch all transactions from block n
 
-- Sprawdzić jak zwiększyć gaz price w local node -> Priorytet, bez tego nie ruszymy dalej.
-- Zobaczyć czy występują problemy z transakcjami po zwiększeniu gazu.
-- Obsłużyc zwrot podatku po wykonaniu transakcji.
-- Obsłużyć wysyłkę nagrody po utworzeniu kolejnego bloku.
-- Znaleźć w rpc metodę sprawdzające czy dane konto istnieje
+3. For each transaction in the block, check if the account from which the transaction was executed exists:
+   - If no, create the account
+   - If yes, ignore
+4. Get the getRawTransactionBody from Erigon
+5. Send the getRawTransaction to the Hedera local node
+6. Handle the block reward
+7. Repeat for block n + 1
 
+- Check how to increase the gas price in the local node -> Priority, we cannot proceed without this.
+- Check if there are any issues with transactions after increasing the gas price.
+- Handle the refund of the fee after a transaction is executed.
+- Handle the distribution of the block reward after creating the next block.
+- Find an RPC method to check if a given account exists.
 
 ## Setup tunnel to the Node VM
 

@@ -1,11 +1,11 @@
 import { axiosInstanceErigon } from '@/api/config';
 import { isAxiosError } from 'axios';
 
-export async function getTransactionReceipt(txHash: string) : Promise<any> {
-    try {
+export async function getStorageAt(contractAddress: string, position: string, blockNumber: string) : Promise<any> {
+	try {
 		const response = await axiosInstanceErigon.post('', {
-			method: 'eth_getTransactionReceipt',
-			params: [`${txHash}`],
+			method: 'eth_getStorageAt',
+			params: [`${contractAddress}`, `${position}`, `${blockNumber}`],
 			id: 1,
 			jsonrpc: '2.0',
 		});
@@ -19,14 +19,14 @@ export async function getTransactionReceipt(txHash: string) : Promise<any> {
 			console.error('Error fetching raw transaction:', error.response?.data);
 			throw new Error(
 				'Error fetching raw transaction: ' +
-					JSON.stringify(error.response?.data)
+				JSON.stringify(error.response?.data)
 			);
 		} else {
-			// if error not axios error, use generic error
+			// Jeżeli error to nie AxiosError, używamy generycznego błędu
 			console.error('Unknown error:', error);
 			throw new Error(
 				'Error fetching raw transaction: ' +
-					(error instanceof Error ? error.message : String(error))
+				(error instanceof Error ? error.message : String(error))
 			);
 		}
 	}

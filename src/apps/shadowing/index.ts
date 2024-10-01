@@ -1,10 +1,7 @@
-import {
-	getAllFrontierData,
-	getAllGenesisData,
-} from '@/apps/shadowing/frontier/get-all-frontier-data';
+import { getAllGenesisData } from '@/apps/shadowing/frontier/get-all-frontier-data';
 import { Client, AccountId } from '@hashgraph/sdk';
 import dotenv from 'dotenv';
-import { iterateThoughGenesisTransactions } from '@/apps/shadowing/blockchain-utils/iterate-through-genesis-transactions';
+import { startNetworkReplicationProcess } from '@/apps/shadowing/blockchain-utils/start-network-replication-process';
 dotenv.config();
 const OPERATOR_PRIVATE = process.env.OPERATOR_PRIVATE;
 
@@ -18,5 +15,5 @@ const accountId = new AccountId(2);
 client.setOperator(accountId, OPERATOR_PRIVATE || '');
 
 (async () => {
-	await iterateThoughGenesisTransactions(accountId, genesisTransactions, client);
+	await startNetworkReplicationProcess(accountId, genesisTransactions, client);
 })();
