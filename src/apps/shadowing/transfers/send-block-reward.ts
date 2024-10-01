@@ -23,6 +23,7 @@ export async function sendBlockReward(
 			const isAccountCreated = await getAccount(transaction.toAccount)
 
 			if (!isAccountCreated) {
+				console.log('account not found, created new account and sending 1 hbar...')
 				await sendHbarToAlias(
 					accountId,
 					transaction.toAccount,
