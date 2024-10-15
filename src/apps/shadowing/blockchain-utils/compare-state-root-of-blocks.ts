@@ -1,6 +1,7 @@
 import { getStorageAt } from "@/api/erigon/get-storage-at";
 import { getHederaContractStates } from "@/apps/shadowing/hedera/get-hedera-contract-states";
 import fs from "fs";
+import {writeLogFile} from "@/utils/helpers/write-log-file";
 
 export async function compareStateForContractsInBlock(blockNumber: any, transactions: any) {
     const errorInBlock = [];
@@ -24,12 +25,5 @@ export async function compareStateForContractsInBlock(blockNumber: any, transact
             }
         }
     }
-    await writeLogFileForBlock(errorInBlock, Number(blockNumber));
-}
-
-async function writeLogFileForBlock(data: any, blockNumber: any) {
-    const jsonData = JSON.stringify(data)
-    fs.writeFile(`logs/${blockNumber}.json`, jsonData, 'utf-8', (err) => {
-        if (err) {  console.error(err);  return; }
-    });
+    await writeLogFile(`logs/${blockNumber}.json`, errorInBlock);
 }

@@ -16,31 +16,32 @@ export async function sendBlockReward(
 ) {
 	const minerAndUncles = await getMinerAndUnclesBalance(currentBlock);
 	let minerBalanceDifference = BigNumber.from(0);
-	const minerBlockReward = BigNumber.from(minerAndUncles.miner.balanceAfter).sub(minerAndUncles.miner.balanceBefore)
+	const minerBlockReward = BigNumber.from(String(minerAndUncles.miner.balanceAfter)).sub(String(minerAndUncles.miner.balanceBefore))
 
 	if (transactions.length > 0) {
 		for (const transaction of transactions) {
-			const isAccountCreated = await getAccount(transaction.toAccount)
 
-			if (!isAccountCreated) {
-				console.log('account not found, created new account and sending 1 hbar...')
-				await sendHbarToAlias(
-					accountId,
-					transaction.toAccount,
-					1,
-					client
-				);
-			}
+			// const isAccountCreated = await getAccount(transaction.toAccount)
+
+			// if (!isAccountCreated) {
+			// 	console.log('account not found, created new account and sending 1 hbar...')
+			// 	await sendHbarToAlias(
+			// 		accountId,
+			// 		transaction.toAccount,
+			// 		1,
+			// 		client
+			// 	);
+			// }
 
 			if (transaction.to === minerAndUncles.miner.id) {
 				console.log(
 					`Miner "TO" found in transaction ${transaction.hash} for account ${minerAndUncles.miner.id}`
 				);
 				console.log(
-					`Removing ${BigNumber.from(transaction.value).toString()} from the miner account balance`
+					`Removing ${BigNumber.from(String(transaction.value)).toString()} from the miner account balance`
 				);
 				console.log('amount', transaction.value);
-				minerBalanceDifference = minerBalanceDifference.sub(BigNumber.from(transaction.value))
+				minerBalanceDifference = minerBalanceDifference.sub(BigNumber.from(String(transaction.value)))
 			}
 
 			if (transaction.from === minerAndUncles.miner.id) {
@@ -48,10 +49,10 @@ export async function sendBlockReward(
 					`Miner "FROM" found in transaction ${transaction.hash} for account ${minerAndUncles.miner.id}`
 				);
 				console.log(`Adding money ${transaction.value} to the minter balance`);
-				console.log('amount', BigNumber.from(transaction.value).toString());
+				console.log('amount', BigNumber.from(String(transaction.value)).toString());
 
 				const fee = calculateFee(transaction.gas, transaction.gasPrice)
-				minerBalanceDifference = BigNumber.from(transaction.value).add(BigNumber.from(fee))
+				minerBalanceDifference = BigNumber.from(String(transaction.value)).add(BigNumber.from(String(fee)))
 			}
 
 			if (minerAndUncles.uncles) {
@@ -65,8 +66,8 @@ export async function sendBlockReward(
 						console.log(
 							`Removing money ${transaction.value} to the uncle's balance`
 						);
-						console.log('amount', BigNumber.from(transaction.value).toString());
-						uncleAccountDifference = BigNumber.from(uncleAccountDifference).sub(BigNumber.from(transaction.value));
+						console.log('amount', BigNumber.from(String(transaction.value)).toString());
+						uncleAccountDifference = BigNumber.from(String(uncleAccountDifference)).sub(BigNumber.from(String(transaction.value)));
 					}
 
 					if (transaction.from === uncle.id) {
@@ -76,13 +77,13 @@ export async function sendBlockReward(
 						console.log(
 							`Adding money ${transaction.value} from the uncle's balance`
 						);
-						console.log('amount', BigNumber.from(transaction.value).toString());
+						console.log('amount', BigNumber.from(String(transaction.value)).toString());
 
 						const fee = calculateFee(transaction.gas, transaction.gasPrice)
-						uncleAccountDifference = BigNumber.from(transaction.value).add(BigNumber.from(fee))
+						uncleAccountDifference = BigNumber.from(String(transaction.value)).add(BigNumber.from(String(fee)))
 					}
 
-					const uncleReward = BigNumber.from(uncle.balanceAfter).sub(BigNumber.from(uncle.balanceBefore));
+					const uncleReward = BigNumber.from(String(uncle.balanceAfter)).sub(BigNumber.from(String(uncle.balanceBefore)));
 					const uncleRewardPrice = uncleReward.add(uncleAccountDifference)
 					const uncleRewardPriceEth = ethers.formatEther(uncleRewardPrice.toString())
 
