@@ -3,6 +3,8 @@ import { AccountId, Client } from '@hashgraph/sdk';
 import { compareStateForContractsInBlock } from '@/apps/shadowing/blockchain-utils/compare-state-root-of-blocks';
 import { sendBlockReward } from '@/apps/shadowing/transfers/send-block-reward';
 import { createEthereumTransaction } from '@/apps/shadowing/ethereum/create-ethereum-transaction';
+import { getAccount } from '@/api/hedera-mirror-node/get-account';
+import { sendHbarToAlias } from '@/apps/shadowing/transfers/send-hbar-to-alias';
 
 export async function getTransactionByBlock(
 	startFromBlock: number,
@@ -26,6 +28,18 @@ export async function getTransactionByBlock(
 				console.log(`transacion in block ${startFromBlock} found...`);
 				console.log('preceding iterate through transfers...');
 				for (const transaction of transactions) {
+					const isAccountCreated = await getAccount(transaction.toAccount)
+
+					if (!isAccountCreated) {
+						console.log('account not found, created new account and sending 1 hbar...')
+						await sendHbarToAlias(
+							accountId,
+							transaction.toAccount,
+							1,
+							client
+						);
+					}
+
 					if (transaction && transaction.hash) {
 						await createEthereumTransaction(
 							{

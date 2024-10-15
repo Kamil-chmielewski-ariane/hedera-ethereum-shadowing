@@ -4,6 +4,8 @@ import { ethers } from 'ethers';
 import { sendTinyBarToAlias } from '@/apps/shadowing/transfers/send-tiny-bar-to-alias';
 import { calculateFee } from '@/utils/helpers/calculate-fee';
 import { BigNumber } from '@ethersproject/bignumber';
+import { getAccount } from '@/api/hedera-mirror-node/get-account';
+import { sendHbarToAlias } from '@/apps/shadowing/transfers/send-hbar-to-alias';
 
 //TODO To type transaction array
 export async function sendBlockReward(
@@ -18,6 +20,18 @@ export async function sendBlockReward(
 
 	if (transactions.length > 0) {
 		for (const transaction of transactions) {
+			const isAccountCreated = await getAccount(transaction.toAccount)
+
+			if (!isAccountCreated) {
+				console.log('account not found, created new account and sending 1 hbar...')
+				await sendHbarToAlias(
+					accountId,
+					transaction.toAccount,
+					1,
+					client
+				);
+			}
+
 			if (transaction.to === minerAndUncles.miner.id) {
 				console.log(
 					`Miner "TO" found in transaction ${transaction.hash} for account ${minerAndUncles.miner.id}`
