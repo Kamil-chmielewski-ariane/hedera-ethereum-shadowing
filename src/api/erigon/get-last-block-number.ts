@@ -11,7 +11,6 @@ export async function getLastBlockNumber(): Promise<any> {
 		});
 
 		if (response.data && response.data.result) {
-			console.log(response.data.result);
 			return response.data.result;
 		}
 	} catch (error) {

@@ -2,6 +2,10 @@ import { getAllGenesisData } from '@/apps/shadowing/frontier/get-all-frontier-da
 import { Client, AccountId } from '@hashgraph/sdk';
 import dotenv from 'dotenv';
 import { startNetworkReplicationProcess } from '@/apps/shadowing/blockchain-utils/start-network-replication-process';
+import { getTransactionByBlock } from '@/apps/shadowing/ethereum/get-transaction-by-block';
+import { getLastBlockNumber } from '@/api/erigon/get-last-block-number';
+import { convertHexIntoDecimal } from '@/utils/helpers/convert-hex-into-decimal';
+import { writeLogFile } from '@/utils/helpers/write-log-file';
 dotenv.config();
 const OPERATOR_PRIVATE = process.env.OPERATOR_PRIVATE;
 
