@@ -39,7 +39,7 @@ export async function getTransactionByBlock(
 				for (const transaction of transactions) {
 					const isAccountCreated = await getAccount(transaction.to)
 
-					if (!isAccountCreated) {
+					if (!isAccountCreated && transaction.to) {
 						console.log('account not found, created new account and sending 1 hbar...')
 						await sendHbarToAlias(
 							accountId,
