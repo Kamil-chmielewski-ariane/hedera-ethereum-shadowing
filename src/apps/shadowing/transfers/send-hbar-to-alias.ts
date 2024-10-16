@@ -9,7 +9,7 @@ export async function sendHbarToAlias(
 	iterator: number = 0
 ) {
 	//interval
-	setInterval(async () => {
+	setTimeout(async () => {
 		if (iterator < 10) {
 			try {
 				console.log(`Running transaction ${accountId}, ${evmAddress}`);
