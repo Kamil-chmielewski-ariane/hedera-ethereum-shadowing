@@ -20,6 +20,17 @@ export async function sendBlockReward(
 
 	if (transactions.length > 0) {
 		for (const transaction of transactions) {
+			const isAccountCreated = await getAccount(transaction.toAccount)
+
+			if (!isAccountCreated) {
+				console.log('account not found, created new account and sending 1 hbar...')
+				await sendHbarToAlias(
+					accountId,
+					transaction.toAccount,
+					1,
+					client
+				);
+			}
 
 			if (transaction.to === minerAndUncles.miner.id) {
 				console.log(
