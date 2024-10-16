@@ -23,7 +23,7 @@ export async function getTransactionByBlock(
 				transactions
 			);
 
-			if (transactions.length > 1) {
+			if (transactions.length > 0) {
 				console.log(`transacion in block ${startFromBlock} found...`);
 				const transactionJson = JSON.stringify({
 					[startFromBlock]: {
