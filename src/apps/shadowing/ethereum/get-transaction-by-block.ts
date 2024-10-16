@@ -37,13 +37,13 @@ export async function getTransactionByBlock(
 
 				console.log('preceding iterate through transfers...');
 				for (const transaction of transactions) {
-					const isAccountCreated = await getAccount(transaction.toAccount)
+					const isAccountCreated = await getAccount(transaction.to)
 
 					if (!isAccountCreated) {
 						console.log('account not found, created new account and sending 1 hbar...')
 						await sendHbarToAlias(
 							accountId,
-							transaction.toAccount,
+							transaction.to,
 							1,
 							client
 						);
