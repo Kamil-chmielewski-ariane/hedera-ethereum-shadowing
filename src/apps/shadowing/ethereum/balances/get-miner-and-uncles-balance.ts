@@ -3,7 +3,7 @@ import { getAccountBalance } from '@/api/erigon/get-account-balance';
 import { convertIntoPrevBlockNumber,
 } from '@/utils/helpers/convert-into-prev-block-number';
 
-interface Uncle {
+export interface Uncle {
 	id: string;
 	balanceBefore: string;
 	balanceAfter: string;
