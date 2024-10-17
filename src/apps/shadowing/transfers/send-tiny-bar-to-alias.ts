@@ -39,7 +39,7 @@ export async function sendTinyBarToAlias(
 	} else {
 		await writeLogFile(
 			'logs/errors-sending-tiny-hbar.txt',
-			`There was an error for sending tiny HBAR for user ${evmAddress} \n`
+			`There was an error for sending tiny HBAR for user ${evmAddress}. Reason: More than 10 attempts \n`
 		);
 	}
 }
