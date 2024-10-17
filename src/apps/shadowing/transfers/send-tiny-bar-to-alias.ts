@@ -8,7 +8,7 @@ export async function sendTinyBarToAlias(
 	client: Client,
 	iterator: number = 0
 ) {
-	if (iterator > 10) {
+	if (iterator < 10) {
 		try {
 			console.log(`Running tinybar transaction ${accountId}, ${evmAddress}`);
 			const transaction = new TransferTransaction()
