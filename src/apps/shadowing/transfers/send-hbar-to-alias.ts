@@ -38,6 +38,6 @@ export async function sendHbarToAlias(
 			);
 		}
 	} else {
-		await writeLogFile('/logs/errors-sending-hbar.txt', `There was an error for sending HBAR for user ${evmAddress}`);
+		await writeLogFile('logs/errors-sending-hbar.txt', `There was an error for sending HBAR for user ${evmAddress} \n`);
 	}
 }

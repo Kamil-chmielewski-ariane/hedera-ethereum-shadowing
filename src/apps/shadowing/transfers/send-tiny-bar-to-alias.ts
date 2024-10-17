@@ -38,8 +38,8 @@ export async function sendTinyBarToAlias(
 		}
 	} else {
 		await writeLogFile(
-			'/logs/errors-sending-tiny-hbar.txt',
-			`There was an error for sending tiny HBAR for user ${evmAddress}`
+			'logs/errors-sending-tiny-hbar.txt',
+			`There was an error for sending tiny HBAR for user ${evmAddress} \n`
 		);
 	}
 }
