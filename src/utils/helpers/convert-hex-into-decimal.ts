@@ -1,3 +1,3 @@
 export function convertHexIntoDecimal(hex: string): number {
-	return Number(hex);
+	return parseInt(hex, 16);
 }
