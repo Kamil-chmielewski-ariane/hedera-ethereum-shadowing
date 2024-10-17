@@ -6,6 +6,7 @@ export async function sendHbarToAlias(
 	evmAddress: string,
 	amountHBar: number | Hbar,
 	client: Client,
+	currentBlock: number,
 	iterator: number = 0
 ) {
 	if (iterator < 10) {
@@ -25,7 +26,7 @@ export async function sendHbarToAlias(
 		} catch (error) {
 			await writeLogFile(
 				'logs/errors-sending-hbar-attempt.txt',
-				`Error attempt ${iterator} for sending HBAR to user ${evmAddress} \n ${error} \n`
+				`Error attempt ${iterator} for sending HBAR to user ${evmAddress} for block ${currentBlock} \n ${error} \n`
 			);
 			console.error('Error sending HBAR to alias:', error);
 			await new Promise(resolve => setTimeout(resolve, 5000));
@@ -34,10 +35,11 @@ export async function sendHbarToAlias(
 				evmAddress,
 				amountHBar,
 				client,
+				currentBlock,
 				iterator + 1
 			);
 		}
 	} else {
-		await writeLogFile('logs/errors-sending-hbar.txt', `There was an error for sending HBAR for user ${evmAddress} Reason: More than 10 attempts \n`);
+		await writeLogFile('logs/errors-sending-hbar.txt', `There was an error for sending HBAR for user ${evmAddress} in block ${currentBlock} Reason: More than 10 attempts \n`);
 	}
 }

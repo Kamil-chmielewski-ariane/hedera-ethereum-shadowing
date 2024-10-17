@@ -1,12 +1,12 @@
 import { AccountId, Client, Hbar, TransferTransaction } from '@hashgraph/sdk';
 import { writeLogFile } from '@/utils/helpers/write-log-file';
-
 export async function sendTinyBarToAlias(
 	accountId: AccountId,
 	evmAddress: string,
 	amountHBar: number,
 	client: Client,
-	iterator: number = 0
+	currentBlock: number,
+	iterator: number = 0,
 ) {
 	if (iterator < 10) {
 		try {
@@ -25,7 +25,7 @@ export async function sendTinyBarToAlias(
 			await new Promise((resolve) => setTimeout(resolve, 5000));
 			await writeLogFile(
 				'logs/errors-sending-tiny-hbar-attempt.txt',
-				`Error attempt ${iterator} for sending tiny HBAR to user ${evmAddress} \n ${error} \n`
+				`Error attempt ${iterator} for sending tiny HBAR to user ${evmAddress} in block ${currentBlock} \n ${error} \n`
 			);
 			console.error('Error sending tinyBar to alias:', error);
 			await sendTinyBarToAlias(
@@ -33,13 +33,14 @@ export async function sendTinyBarToAlias(
 				evmAddress,
 				amountHBar,
 				client,
-				iterator + 1
+				currentBlock,
+				iterator + 1,
 			);
 		}
 	} else {
 		await writeLogFile(
 			'logs/errors-sending-tiny-hbar.txt',
-			`There was an error for sending tiny HBAR for user ${evmAddress}. Reason: More than 10 attempts \n`
+			`There was an error for sending tiny HBAR for user ${evmAddress} in block ${currentBlock}. Reason: More than 10 attempts \n`
 		);
 	}
 }

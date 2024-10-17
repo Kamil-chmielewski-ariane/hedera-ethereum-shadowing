@@ -4,6 +4,7 @@ import { ethers } from 'ethers';
 import { sendTinyBarToAlias } from '@/apps/shadowing/transfers/send-tiny-bar-to-alias';
 import { calculateFee } from '@/utils/helpers/calculate-fee';
 import { BigNumber } from '@ethersproject/bignumber';
+import { convertHexIntoDecimal } from '@/utils/helpers/convert-hex-into-decimal';
 
 //TODO To type transaction array
 export async function sendBlockReward(
@@ -12,6 +13,7 @@ export async function sendBlockReward(
 	currentBlock: string,
 	transactions: any[]
 ) {
+	const convertedCurrentBlock = convertHexIntoDecimal(currentBlock)
 	const minerAndUncles = await getMinerAndUnclesBalance(currentBlock);
 	let minerBalanceDifference = BigNumber.from(0);
 	const minerBlockReward = BigNumber.from(String(minerAndUncles.miner.balanceAfter)).sub(String(minerAndUncles.miner.balanceBefore))
@@ -49,10 +51,10 @@ export async function sendBlockReward(
 
 	console.log(`sending to miner ${minerAndUncles.miner.id} money reward: ${minerRewardEth}`);
 
-	await sendTinyBarToAlias(accountId, minerAndUncles.miner.id, minerRewardTinyBar, client);
+	await sendTinyBarToAlias(accountId, minerAndUncles.miner.id, minerRewardTinyBar, client, convertedCurrentBlock);
 	
 	if (minerAndUncles.uncles) {
-		await calculateUnclesReward(accountId, client, transactions, minerAndUncles.uncles);
+		await calculateUnclesReward(accountId, client, transactions, minerAndUncles.uncles, convertedCurrentBlock);
 	}
 }
 
@@ -60,8 +62,10 @@ async function calculateUnclesReward(
 	accountId: AccountId,
 	client: Client,
 	transactions: any[],
-	uncles: Uncle[]
+	uncles: Uncle[],
+	currentBlock: number,
 ) {
+
 	for (const uncle of uncles) {
 		const uncleReward = BigNumber.from(String(uncle.balanceAfter)).sub(BigNumber.from(String(uncle.balanceBefore)));
 		let uncleAccountDifference = BigNumber.from(0);
@@ -103,7 +107,8 @@ async function calculateUnclesReward(
 				accountId,
 				uncle.id,
 				uncleRewardTinyBar,
-				client
+				client,
+				currentBlock,
 			);
 		}
 	}

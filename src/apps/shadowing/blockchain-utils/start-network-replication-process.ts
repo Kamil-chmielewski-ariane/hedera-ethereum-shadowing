@@ -18,7 +18,8 @@ export async function startNetworkReplicationProcess(
 			accountId,
 			transaction.toAccount,
 			transaction.amount,
-			client
+			client,
+			0
 		);
 
 	}

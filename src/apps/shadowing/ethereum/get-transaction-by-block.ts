@@ -45,7 +45,8 @@ export async function getTransactionByBlock(
 							accountId,
 							transaction.to,
 							1,
-							client
+							client,
+							startFromBlock
 						);
 					}
 
