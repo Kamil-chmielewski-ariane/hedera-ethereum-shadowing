@@ -15,7 +15,7 @@ const accountsMapping = getAllFrontierData();
 
 const node = { '127.0.0.1:50211': new AccountId(3) };
 const genesisTransactions = getAllGenesisData();
-const client = Client.forNetwork(node).setMirrorNetwork('127.0.0.1:5600');
+const client = Client.forNetwork(node);
 const accountId = new AccountId(2);
 client.setOperator(accountId, OPERATOR_PRIVATE || '');
 

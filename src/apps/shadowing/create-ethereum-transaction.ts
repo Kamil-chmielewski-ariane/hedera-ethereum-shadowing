@@ -20,12 +20,11 @@ export async function createEthereumTransaction(transactionData: {txHash: string
 	);
 	await sendHbarToAlias(accountId, transactionData.evmAddress, transactionData.hbar, client);
 	const txId = TransactionId.generate(accountId);
-	const transaction = await new EthereumTransaction()
+	const transaction = new EthereumTransaction()
 		.setTransactionId(txId)
 		.setEthereumData(Uint8Array.from(Buffer.from(rawBody.substring(2), 'hex')))
 		.setMaxGasAllowanceHbar(new Hbar(transactionData.gas))
-		.freezeWith(client)
-		.sign(PrivateKey.fromString(String(OPERATOR_PRIVATE)));
+		.freezeWith(client);
 
 	const txResponse = await transaction.execute(client);
 

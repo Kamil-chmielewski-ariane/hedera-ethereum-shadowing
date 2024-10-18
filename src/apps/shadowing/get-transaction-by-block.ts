@@ -12,13 +12,24 @@ export async function getTransactionByBlock(
 	accountId: AccountId,
 	client: Client
 ) {
+	// try {
+	// 	await createEthereumTransaction({
+	// 		txHash: "0x1009199f804a4c75d266627548dc154989eec8385c7b3a67e2bd50a5db5063c9",
+	// 		evmAddress: "0xa701afD383E5c9f85a07A228a4837B2E31aDaC9a",
+	// 		hbar: 200,
+	// 		gas: 100
+	// 	}, accountId, client);
+	// } catch (error) {
+	// 	console.log(error);
+	// }
+	
 	try {
 		for (; startFromBlock < numberOfBlocks; startFromBlock++) {
 			console.log('currentBlockNumber', startFromBlock);
 			let block = await getBlockByNumber(
 				startFromBlock.toString(16)
 			);
-			await sendBlockReward(accountId, client, block);
+			// await sendBlockReward(accountId, client, block);
 			const transactions = block.transactions;
 
 			if (transactions.length > 1) {
@@ -27,7 +38,7 @@ export async function getTransactionByBlock(
 						await createEthereumTransaction(
 							{
 								txHash: transaction.hash,
-								evmAddress: "0xe64FAC7f3DF5aB44333ad3D3Eb3fB68Be43F2E8C",
+								evmAddress: "0xeA1B261FB7Ec1C4F2BEeA2476f17017537b4B507",
 								hbar: 200,
 								gas: 100,
 							},

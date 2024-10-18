@@ -5,7 +5,8 @@ import { sendTransactionAsEthereum } from '@/apps/issues/send-transaction-as-eth
 import { getBlockByNumber } from '@/api/get-block-by-number';
 import { findAndSendBlockReward } from '@/apps/issues/find-and-send-block-reward';
 import { compareStateForSameContracts } from './compare-state-for-same-contracts';
-import { sendTransactionFromSepoliaToHedera, sendTransactionHederaTestnet, sendTransactionHedera, sendTransactionSepolia, prepareAndSendTransactionFromSepoliaToHedera } from './compare-sending-transactions-sepolia';
+import { sendTransactionFromSepoliaToHedera, sendTransactionHederaTestnet, sendTransactionHedera, sendTransactionSepolia, prepareAndSendTransactionFromSepoliaToHedera, sendTransactionHederaLocalWithEthersjs } from './compare-sending-transactions-sepolia';
+import { createEthereumTransaction } from './create-transaction-with-ethers';
 dotenv.config();
 const OPERATOR_PRIVATE = process.env.OPERATOR_PRIVATE;
 const METAMASK_PRIVATE_KEY = process.env.METAMASK_PRIVATE_KEY;
@@ -19,7 +20,7 @@ const client = Client.forNetwork(node).setMirrorNetwork('127.0.0.1:5600');
 const accountId = new AccountId(2);
 client.setOperator(accountId, OPERATOR_PRIVATE || '');
 
-// (async () => {
+(async () => {
 	// No gass error issue
 	// transactionNoGas(accountId, client);
 
@@ -38,7 +39,7 @@ client.setOperator(accountId, OPERATOR_PRIVATE || '');
 	// );
 
 	//CHECK FOR TRANSACTION FOR PROPER PARSING CHAIN ID
-	// if (METAMASK_PRIVATE_KEY && HEDERA_TESTNET_PRIVATE_KEY && SEPOLIA_RPC_URL && HEDERA_TESTNET_RPC_URL) {
+	// if (METAMASK_PRIVATE_KEY && HEDERA_TESTNET_PRIVATE_KEY && SEPOLIA_RPC_URL && HEDERA_TESTNET_RPC_URL && HEDERA_RPC_URL && HEDERA_PRIVATE_KEY) {
 		// const txHash1 = await sendTransactionSepolia("0x000AA36A7", METAMASK_PRIVATE_KEY, SEPOLIA_RPC_URL, 0);
 		// const txHash2 = await sendTransactionSepolia("0x000AA36A7", METAMASK_PRIVATE_KEY, SEPOLIA_RPC_URL, 2);
 		// const txHash3 = await sendTransactionSepolia("0xAA36A7", METAMASK_PRIVATE_KEY, SEPOLIA_RPC_URL, 0);
@@ -47,11 +48,13 @@ client.setOperator(accountId, OPERATOR_PRIVATE || '');
 		// await sendTransactionHederaTestnet("0x000128", HEDERA_TESTNET_PRIVATE_KEY, HEDERA_TESTNET_RPC_URL, 2);
 		// await sendTransactionHederaTestnet("0x128", HEDERA_TESTNET_PRIVATE_KEY, HEDERA_TESTNET_RPC_URL, 0);
 		// await sendTransactionHederaTestnet("0x128", HEDERA_TESTNET_PRIVATE_KEY, HEDERA_TESTNET_RPC_URL, 2);
-		// await sendTransactionHedera(accountId, client, String(OPERATOR_PRIVATE));
+		// await sendTransactionHederaLocalWithEthersjs("0xAA36A7", String(HEDERA_PRIVATE_KEY), HEDERA_RPC_URL, 0);
+		await sendTransactionHedera(accountId, client, String(OPERATOR_PRIVATE));
 		// await sendTransactionFromSepoliaToHedera("0x9ca5a66468cbcf4cf7d39de88c191e5399efa1939f57c96eded49f400b049b84", accountId, client, OPERATOR_PRIVATE || '');
 		// await sendTransactionFromSepoliaToHedera("0x419ae1c103f41ef99c1e8a6f46d81bf18835bd59b3ba0603a96d49615f51397f", accountId, client, OPERATOR_PRIVATE || '');
 		// await sendTransactionHedera("0x85e339d06c16000ed326c10bff2cdc6163c89ac4fea66e97c2cf4c29348e4016", accountId, client);
 	// }
+	// await createEthereumTransaction();
 
 	// SEND LEGACY TRANSACTION FROM SEPOLIA TO HEDERA WITH ETHERS JS 
 	// if (HEDERA_PRIVATE_KEY && HEDERA_RPC_URL && SEPOLIA_RPC_URL) {
@@ -79,4 +82,4 @@ client.setOperator(accountId, OPERATOR_PRIVATE || '');
 
 	//STATE COMPARISON TEST CASE #2
 	// compareStateForSameContracts("0x1362dc92648f47a294a033892e8c7a67d37ed318", "0x65f1ac5c7ad89d830451772423871f253800ae14");
-// })();
+})();
