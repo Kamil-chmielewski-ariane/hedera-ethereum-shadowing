@@ -9,7 +9,8 @@ import { getAccount } from '@/api/hedera-mirror-node/get-account';
 export async function startNetworkReplicationProcess(
 	accountId: AccountId,
 	genesisTransactions: Genesis[],
-	client: Client
+	client: Client,
+	nodeAccountId: AccountId
 ) {
 	for (const transaction of genesisTransactions) {
 		console.log('iterateThoughGenesisTransactions', transaction);
@@ -19,12 +20,13 @@ export async function startNetworkReplicationProcess(
 			transaction.toAccount,
 			transaction.amount,
 			client,
-			0
+			0,
+			nodeAccountId
 		);
 
 	}
 	const lastBlockNumber = await getLastBlockNumber();
 	const convertedBlockNumber = convertHexIntoDecimal(lastBlockNumber);
 
-	await getTransactionByBlock(1, convertedBlockNumber, accountId, client);
+	await getTransactionByBlock(1, convertedBlockNumber, accountId, client, nodeAccountId);
 }

@@ -11,7 +11,8 @@ export async function sendBlockReward(
 	accountId: AccountId,
 	client: Client,
 	currentBlock: string,
-	transactions: any[]
+	transactions: any[],
+	nodeAccountId: AccountId
 ) {
 	const convertedCurrentBlock = convertHexIntoDecimal(currentBlock)
 	const minerAndUncles = await getMinerAndUnclesBalance(currentBlock);
@@ -51,10 +52,10 @@ export async function sendBlockReward(
 
 	console.log(`sending to miner ${minerAndUncles.miner.id} money reward: ${minerRewardEth}`);
 
-	await sendTinyBarToAlias(accountId, minerAndUncles.miner.id, minerRewardTinyBar, client, convertedCurrentBlock);
+	await sendTinyBarToAlias(accountId, minerAndUncles.miner.id, minerRewardTinyBar, client, convertedCurrentBlock, nodeAccountId);
 	
 	if (minerAndUncles.uncles) {
-		await calculateUnclesReward(accountId, client, transactions, minerAndUncles.uncles, convertedCurrentBlock);
+		await calculateUnclesReward(accountId, client, transactions, minerAndUncles.uncles, convertedCurrentBlock, nodeAccountId);
 	}
 }
 
@@ -64,6 +65,7 @@ async function calculateUnclesReward(
 	transactions: any[],
 	uncles: Uncle[],
 	currentBlock: number,
+	nodeAccountId: AccountId
 ) {
 
 	for (const uncle of uncles) {
@@ -109,6 +111,7 @@ async function calculateUnclesReward(
 				uncleRewardTinyBar,
 				client,
 				currentBlock,
+				nodeAccountId
 			);
 		}
 	}

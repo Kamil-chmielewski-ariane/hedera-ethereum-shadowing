@@ -1,4 +1,4 @@
-import { AccountId, Client, Hbar, TransferTransaction } from '@hashgraph/sdk';
+import { AccountId, Client, Hbar, TransactionId, TransferTransaction } from '@hashgraph/sdk';
 import { writeLogFile } from '@/utils/helpers/write-log-file';
 export async function sendTinyBarToAlias(
 	accountId: AccountId,
@@ -6,41 +6,25 @@ export async function sendTinyBarToAlias(
 	amountHBar: number,
 	client: Client,
 	currentBlock: number,
-	iterator: number = 0,
+	nodeAccountId: AccountId
 ) {
-	if (iterator < 10) {
-		try {
-			console.log(`Running tinybar transaction ${accountId}, ${evmAddress}`);
-			const transaction = new TransferTransaction()
-				.addHbarTransfer(accountId, Hbar.fromTinybars(amountHBar).negated())
-				.addHbarTransfer(evmAddress, Hbar.fromTinybars(amountHBar));
+	try {
+		console.log(`Running tinybar transaction ${accountId}, ${evmAddress}`);
+		const txId = TransactionId.generate(accountId);
+		const transaction = new TransferTransaction()
+			.addHbarTransfer(accountId, Hbar.fromTinybars(amountHBar).negated())
+			.addHbarTransfer(evmAddress, Hbar.fromTinybars(amountHBar))
+			.setTransactionId(txId)
+			.setNodeAccountIds([nodeAccountId])
+			.freeze();
 
-			// Execute the transaction
-			const response = await transaction.execute(client);
+		// Execute the transaction
+		const response = await transaction.execute(client);
 
-			// Get the receipt to confirm the transaction
-			const receipt = await response.getReceipt(client);
-			console.log('Transaction status:', receipt.status.toString());
-		} catch (error) {
-			await new Promise((resolve) => setTimeout(resolve, 5000));
-			await writeLogFile(
-				'logs/errors-sending-tiny-hbar-attempt.txt',
-				`Error attempt ${iterator} for sending tiny HBAR to user ${evmAddress} in block ${currentBlock} \n ${error} \n`
-			);
-			console.error('Error sending tinyBar to alias:', error);
-			await sendTinyBarToAlias(
-				accountId,
-				evmAddress,
-				amountHBar,
-				client,
-				currentBlock,
-				iterator + 1,
-			);
-		}
-	} else {
-		await writeLogFile(
-			'logs/errors-sending-tiny-hbar.txt',
-			`There was an error for sending tiny HBAR for user ${evmAddress} in block ${currentBlock}. Reason: More than 10 attempts \n`
-		);
+		// Get the receipt to confirm the transaction
+		// const receipt = await response.getReceipt(client);
+		// console.log('Transaction status:', receipt.status.toString());
+	} catch (error) {
+		console.error('Error sending tinyBar to alias:', error);
 	}
 }

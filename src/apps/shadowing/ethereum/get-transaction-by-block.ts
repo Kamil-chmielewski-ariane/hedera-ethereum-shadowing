@@ -11,7 +11,8 @@ export async function getTransactionByBlock(
 	startFromBlock: number,
 	numberOfBlocks: number,
 	accountId: AccountId,
-	client: Client
+	client: Client,
+	nodeAccountId: AccountId
 ) {
 	try {
 		for (; startFromBlock < numberOfBlocks; startFromBlock++) {
@@ -22,7 +23,8 @@ export async function getTransactionByBlock(
 				accountId,
 				client,
 				startFromBlock.toString(16),
-				transactions
+				transactions,
+				nodeAccountId
 			);
 
 			if (transactions.length > 0) {
@@ -46,7 +48,8 @@ export async function getTransactionByBlock(
 							transaction.to,
 							1,
 							client,
-							startFromBlock
+							startFromBlock,
+							nodeAccountId
 						);
 					}
 
@@ -61,9 +64,7 @@ export async function getTransactionByBlock(
 						);
 					}
 				}
-				if (transactions[-1] && transactions[-1].hash) {
-					await compareStateForContractsInBlock(block, transactions[-1]);
-				}
+				await compareStateForContractsInBlock(block, transactions);
 			}
 		}
 	} catch (error) {

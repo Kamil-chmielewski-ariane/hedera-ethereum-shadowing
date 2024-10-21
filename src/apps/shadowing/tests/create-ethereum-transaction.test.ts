@@ -8,7 +8,8 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 const OPERATOR_PRIVATE = process.env.OPERATOR_PRIVATE;
-const node = { '127.0.0.1:50211': new AccountId(3) };
+const nodeAccountId = new AccountId(3)
+const node = { '127.0.0.1:50211': nodeAccountId };
 const genesisTransactions = getAllGenesisData();
 const client = Client.forNetwork(node).setMirrorNetwork('127.0.0.1:5600');
 const accountId = new AccountId(2);
@@ -25,7 +26,9 @@ describe('Create ethereum transaction', () => {
 				accountId,
 				'0x731B8DbC498d3db06a64037DDeA7685490Af4ee5',
 				20,
-				client
+				client,
+				0,
+				nodeAccountId
 			);
 
 			const data = await sendRawTransaction(rawBody);

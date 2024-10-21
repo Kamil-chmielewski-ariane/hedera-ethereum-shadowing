@@ -3,7 +3,6 @@ import { AccountId, Client } from '@hashgraph/sdk';
 import dotenv from 'dotenv';
 import { sendTransactionAsEthereum } from '@/apps/issues/send-transaction-as-ethereum';
 import { getBlockByNumber } from '@/api/erigon/get-block-by-number';
-import { findAndSendBlockReward } from '@/apps/issues/find-and-send-block-reward';
 dotenv.config();
 const OPERATOR_PRIVATE = process.env.OPERATOR_PRIVATE;
 const node = { '127.0.0.1:50211': new AccountId(3) };
