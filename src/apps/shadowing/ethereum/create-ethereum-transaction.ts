@@ -15,7 +15,8 @@ const OPERATOR_PRIVATE = process.env.OPERATOR_PRIVATE;
 export async function createEthereumTransaction(
 	transactionData: { txHash: string; gas: number },
 	accountId: AccountId,
-	client: Client
+	client: Client,
+	nodeAccountId: AccountId
 ) {
 	const rawBody = await getRawTransaction(transactionData.txHash);
 	const txId = TransactionId.generate(accountId);
@@ -23,7 +24,8 @@ export async function createEthereumTransaction(
 		.setTransactionId(txId)
 		.setEthereumData(Uint8Array.from(Buffer.from(rawBody.substring(2), 'hex')))
 		.setMaxGasAllowanceHbar(new Hbar(transactionData.gas))
-		.freezeWith(client)
+		.freeze()
+		.setNodeAccountIds([nodeAccountId])
 		.sign(PrivateKey.fromString(String(OPERATOR_PRIVATE)));
 
 	const txResponse = await transaction.execute(client);

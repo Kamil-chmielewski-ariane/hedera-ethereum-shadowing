@@ -60,7 +60,8 @@ export async function getTransactionByBlock(
 								gas: 21000,
 							},
 							accountId,
-							client
+							client,
+							nodeAccountId
 						);
 					}
 				}
