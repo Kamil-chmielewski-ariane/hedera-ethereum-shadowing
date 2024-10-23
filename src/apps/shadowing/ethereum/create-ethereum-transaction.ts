@@ -1,4 +1,5 @@
 import { getRawTransaction } from '@/api/erigon/get-raw-transaction';
+import { sendTransactionInfoToReceiptApi } from '@/api/receipt/transaction-sender';
 import {
 	AccountId,
 	Client,
@@ -16,7 +17,9 @@ export async function createEthereumTransaction(
 	transactionData: { txHash: string; gas: number },
 	accountId: AccountId,
 	client: Client,
-	nodeAccountId: AccountId
+	nodeAccountId: AccountId,
+	accountTo: string,
+	currentBlock: number
 ) {
 	const rawBody = await getRawTransaction(transactionData.txHash);
 	const txId = TransactionId.generate(accountId);
@@ -24,11 +27,13 @@ export async function createEthereumTransaction(
 		.setTransactionId(txId)
 		.setEthereumData(Uint8Array.from(Buffer.from(rawBody.substring(2), 'hex')))
 		.setMaxGasAllowanceHbar(new Hbar(transactionData.gas))
-		.freeze()
 		.setNodeAccountIds([nodeAccountId])
+		.freeze()
 		.sign(PrivateKey.fromString(String(OPERATOR_PRIVATE)));
 
 	const txResponse = await transaction.execute(client);
 
 	console.log('txResponse', txResponse.toJSON());
+	// TODO: uncomment when receipt API is ready
+	// sendTransactionInfoToReceiptApi(txId, accountTo, currentBlock, "ETHEREUM_TRANSACTION");
 }

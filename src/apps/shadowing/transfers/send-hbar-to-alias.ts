@@ -1,5 +1,5 @@
 import { AccountId, Client, Hbar, TransactionId, TransferTransaction } from '@hashgraph/sdk';
-import { writeLogFile } from '@/utils/helpers/write-log-file';
+import { sendTransactionInfoToReceiptApi } from '@/api/receipt/transaction-sender';
 
 export async function sendHbarToAlias(
 	accountId: AccountId,
@@ -20,12 +20,9 @@ export async function sendHbarToAlias(
 			.freeze();
 
 		// Execute the transaction
-		const response = await transaction.execute(client);
-
-		// Get the receipt to confirm the transaction
-		// const receipt = await response.getReceipt(client);
-
-		// console.log('Transaction status:', receipt.status.toString());
+		await transaction.execute(client);
+		// TODO: uncomment when receipt API is ready
+		// sendTransactionInfoToReceiptApi(txId, evmAddress, currentBlock, "TRANSFER_TRANSACTION");
 	} catch (error) {
 		console.error('Error sending HBAR to alias:', error);
 	}

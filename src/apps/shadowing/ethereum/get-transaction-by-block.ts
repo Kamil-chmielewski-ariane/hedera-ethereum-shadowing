@@ -61,7 +61,9 @@ export async function getTransactionByBlock(
 							},
 							accountId,
 							client,
-							nodeAccountId
+							nodeAccountId,
+							transaction.to,
+							startFromBlock
 						);
 					}
 				}

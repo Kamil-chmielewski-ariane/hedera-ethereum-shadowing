@@ -1,5 +1,5 @@
+import { sendTransactionInfoToReceiptApi } from '@/api/receipt/transaction-sender';
 import { AccountId, Client, Hbar, TransactionId, TransferTransaction } from '@hashgraph/sdk';
-import { writeLogFile } from '@/utils/helpers/write-log-file';
 export async function sendTinyBarToAlias(
 	accountId: AccountId,
 	evmAddress: string,
@@ -19,11 +19,9 @@ export async function sendTinyBarToAlias(
 			.freeze();
 
 		// Execute the transaction
-		const response = await transaction.execute(client);
-
-		// Get the receipt to confirm the transaction
-		// const receipt = await response.getReceipt(client);
-		// console.log('Transaction status:', receipt.status.toString());
+		await transaction.execute(client);
+		// TODO: uncomment when receipt API is ready
+		// sendTransactionInfoToReceiptApi(txId, evmAddress, currentBlock, "TRANSFER");
 	} catch (error) {
 		console.error('Error sending tinyBar to alias:', error);
 	}

@@ -13,7 +13,7 @@ export async function getAccountBalance(address: string, blockNumber: string) {
         if (response.data && response.data.result) {
             return response.data.result
         }
-    }catch (error) {
+    } catch (error) {
         if (isAxiosError(error)) {
             throw new Error(
                 'Error fetching raw transaction: ' +
