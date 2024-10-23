@@ -3,7 +3,6 @@ import { AccountId, Client } from '@hashgraph/sdk';
 import { compareStateForContractsInBlock } from '@/apps/shadowing/blockchain-utils/compare-state-root-of-blocks';
 import { sendBlockReward } from '@/apps/shadowing/transfers/send-block-reward';
 import { createEthereumTransaction } from '@/apps/shadowing/ethereum/create-ethereum-transaction';
-import {writeLogFile} from "@/utils/helpers/write-log-file";
 import {getAccount} from "@/api/hedera-mirror-node/get-account";
 import {sendHbarToAlias} from "@/apps/shadowing/transfers/send-hbar-to-alias";
 
@@ -29,14 +28,6 @@ export async function getTransactionByBlock(
 
 			if (transactions.length > 0) {
 				console.log(`transacion in block ${startFromBlock} found...`);
-				const transactionJson = JSON.stringify({
-					[startFromBlock]: {
-						transactions: transactions.map((transaction: any) => transaction.hash)
-					}
-				})
-
-				await writeLogFile('logs/blocks-with-transactions.json', transactionJson )
-
 				console.log('preceding iterate through transfers...');
 				for (const transaction of transactions) {
 					const isAccountCreated = await getAccount(transaction.to)
