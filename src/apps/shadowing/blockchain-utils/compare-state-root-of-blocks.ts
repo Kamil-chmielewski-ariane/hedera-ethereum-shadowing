@@ -3,8 +3,8 @@ import { getHederaContractStates } from "@/apps/shadowing/hedera/get-hedera-cont
 import { writeLogFile } from "@/utils/helpers/write-log-file";
 import { convertHexIntoDecimal } from '@/utils/helpers/convert-hex-into-decimal';
 
-export async function compareStateForContractsInBlock(blockNumber: any, transactions: any) {
-    const blockNumberDex = convertHexIntoDecimal(blockNumber.number)
+export async function compareStateForContractsInBlock(block: any, transactions: any) {
+    const blockNumberDex = convertHexIntoDecimal(block.number)
     const transactionsInBlock = []
     const contractsInBlock = []
     const errorInBlock = [];
@@ -21,7 +21,7 @@ export async function compareStateForContractsInBlock(blockNumber: any, transact
             }
 
             for (const hederaState of hederaStates) {
-                const sepoliaStateValue = await getStorageAt(possibleTransactionAddress, hederaState.slot, blockNumber);
+                const sepoliaStateValue = await getStorageAt(possibleTransactionAddress, hederaState.slot, block.number);
                 if (sepoliaStateValue != hederaState.value) {
                     const dataError = {
                         "blockNumber": blockNumberDex,
