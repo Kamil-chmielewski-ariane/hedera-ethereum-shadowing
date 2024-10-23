@@ -3,7 +3,7 @@ import { getHederaContractStates } from "@/apps/shadowing/hedera/get-hedera-cont
 import { writeLogFile } from "@/utils/helpers/write-log-file";
 
 export async function compareStateForContractsInBlock(blockNumber: any, transactions: any) {
-    const blocksWithTransacitons = []
+    const transactionsInBlock = []
     const errorInBlock = [];
     for (const transaction of transactions) {
         if (transaction && transaction.hash && transaction.to) {
@@ -25,13 +25,16 @@ export async function compareStateForContractsInBlock(blockNumber: any, transact
                     errorInBlock.push(dataError);
                 }
             }
-            const dataTransactions = {
-                "blockNumber": blockNumber,
-                "transactionHash": transaction.hash
-            }
-            blocksWithTransacitons.push(dataTransactions);
+            transactionsInBlock.push(transaction.hash);
         }
     }
-    await writeLogFile(`logs/blocks-with-transactions.json`, JSON.stringify(blocksWithTransacitons));
+
+    const blockWithTransactions = {
+        [blockNumber]: {
+            transactions: transactionsInBlock
+        }
+    }
+
+    await writeLogFile(`logs/blocks-with-transactions.json`, JSON.stringify(blockWithTransactions));
     await writeLogFile(`logs/state-root-compare.json`, JSON.stringify(errorInBlock));
 }
