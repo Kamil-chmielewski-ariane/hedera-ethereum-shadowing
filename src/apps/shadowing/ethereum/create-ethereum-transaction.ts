@@ -38,9 +38,10 @@ export async function createEthereumTransaction(
 		await new Promise(resolve => setTimeout(resolve, 1));
 		const txResponse = await transaction.execute(client);
 		const txTimestamp = new Date().toISOString();
+		
 		if (txBody && txBody.to) {
 			const hederaStates = await getHederaContractStates(txBody.to);
-			if (hederaStates && hederaStates.length) {
+			if (hederaStates && hederaStates.length > 0) {
 				const receipt = txResponse.getReceipt(client);
 				await writeLogFile('logs/receipt-for-contract-transactions.txt', `Transaction hash ${transactionData.txHash} in block ${currentBlock} \n ${JSON.stringify(receipt)} \n`);
 			}
