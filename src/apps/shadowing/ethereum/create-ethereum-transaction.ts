@@ -42,7 +42,7 @@ export async function createEthereumTransaction(
 		if (txBody && txBody.to) {
 			const hederaStates = await getHederaContractStates(txBody.to);
 			if (hederaStates && hederaStates.length > 0) {
-				const receipt = txResponse.getReceipt(client);
+				const receipt = await txResponse.getReceipt(client);
 				await writeLogFile('logs/receipt-for-contract-transactions.txt', `Transaction hash ${transactionData.txHash} in block ${currentBlock} \n ${JSON.stringify(receipt)} \n`);
 			}
 		}
