@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import { sendTransactionAsEthereum } from '@/apps/issues/send-transaction-as-ethereum';
 import { getBlockByNumber } from '@/api/erigon/get-block-by-number';
 import { testForSmartContracts } from './send-transaction-for-contracts';
+import { replicatePlatformNotActiveError } from './platfrom-not-active-error';
 dotenv.config();
 const OPERATOR_PRIVATE = process.env.OPERATOR_PRIVATE;
 const node = { '127.0.0.1:50211': new AccountId(3) };
@@ -48,4 +49,6 @@ client.setOperator(accountId, OPERATOR_PRIVATE || '');
 	//
 	//BAD CONTRACT VALUES TEST FOR CONTRACT 0xbdf6a09235fa130c5e5ddb60a3c06852e7943475
 	// testForSmartContracts(new AccountId(2), client, new AccountId(3), OPERATOR_PRIVATE || '');
+	//PLATFORM_NOT_ACTIVE error
+	// replicatePlatformNotActiveError(new AccountId(2), client, OPERATOR_PRIVATE || '');
 })();

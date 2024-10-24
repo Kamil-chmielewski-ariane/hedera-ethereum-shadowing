@@ -30,19 +30,19 @@ export async function getTransactionByBlock(
 				console.log(`transacion in block ${startFromBlock} found...`);
 				console.log('preceding iterate through transfers...');
 				for (const transaction of transactions) {
-					// const isAccountCreated = await getAccount(transaction.to)
+					const isAccountCreated = await getAccount(transaction.to)
 
-					// if (!isAccountCreated && transaction.to !== null) {
-					// 	console.log('account not found, created new account and sending 1 hbar...')
-					// 	await sendHbarToAlias(
-					// 		accountId,
-					// 		transaction.to,
-					// 		1,
-					// 		client,
-					// 		startFromBlock,
-					// 		nodeAccountId
-					// 	);
-					// }
+					if (!isAccountCreated && transaction.to !== null) {
+						console.log('account not found, created new account and sending 1 hbar...')
+						await sendHbarToAlias(
+							accountId,
+							transaction.to,
+							1,
+							client,
+							startFromBlock,
+							nodeAccountId
+						);
+					}
 
 					if (transaction && transaction.hash) {
 						await createEthereumTransaction(
