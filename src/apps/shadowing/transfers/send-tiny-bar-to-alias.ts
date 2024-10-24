@@ -20,8 +20,9 @@ export async function sendTinyBarToAlias(
 
 		// Execute the transaction
 		await transaction.execute(client);
+		const txTimestamp = new Date().toISOString();
 		// TODO: uncomment when receipt API is ready
-		// sendTransactionInfoToReceiptApi(txId, evmAddress, currentBlock, "TRANSFER");
+		// sendTransactionInfoToReceiptApi(txId, evmAddress, currentBlock, "TRANSFER", txTimestamp);
 	} catch (error) {
 		console.error('Error sending tinyBar to alias:', error);
 	}

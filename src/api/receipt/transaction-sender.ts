@@ -5,14 +5,17 @@ export async function sendTransactionInfoToReceiptApi(
 	transactionId: TransactionId,
 	evmAddress: string,
 	currentBlock: number,
-	transactionType: string
+	transactionType: string,
+	txTimestamp: string
 ) {
 	try {
         const response = await axiosReceiptApi.post('', {
 			transactionId: transactionId.toString(),
 			blockNumber: currentBlock,
 			addressTo: evmAddress,
-			type: transactionType
+			type: transactionType,
+			txTimestamp: txTimestamp,
+			currentTimestamp: new Date().toISOString()
 		});
 
 		if (response.data && response.data.result) {

@@ -21,8 +21,9 @@ export async function sendHbarToAlias(
 
 		// Execute the transaction
 		await transaction.execute(client);
+		const txTimestamp = new Date().toISOString();
 		// TODO: uncomment when receipt API is ready
-		// sendTransactionInfoToReceiptApi(txId, evmAddress, currentBlock, "TRANSFER_TRANSACTION");
+		// sendTransactionInfoToReceiptApi(txId, evmAddress, currentBlock, "TRANSFER_TRANSACTION", txTimestamp);
 	} catch (error) {
 		console.error('Error sending HBAR to alias:', error);
 	}
