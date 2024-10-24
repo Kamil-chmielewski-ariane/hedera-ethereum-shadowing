@@ -17,7 +17,7 @@ export async function compareStateForContractsInBlock(block: any, transactions: 
             if (hederaStates.length > 0) {
                 contractsInBlock.push(transaction.to)
             } else {
-                transactionsInBlock.push(transaction.to)
+                transactionsInBlock.push(transaction.hash)
             }
 
             for (const hederaState of hederaStates) {
