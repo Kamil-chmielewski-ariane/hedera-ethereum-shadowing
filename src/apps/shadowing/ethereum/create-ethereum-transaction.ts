@@ -32,6 +32,7 @@ export async function createEthereumTransaction(
 			.setNodeAccountIds([nodeAccountId])
 			.freeze()
 			.sign(PrivateKey.fromString(String(OPERATOR_PRIVATE)));
+		await new Promise(resolve => setTimeout(resolve, 50));
 		const txResponse = await transaction.execute(client);
 		const txTimestamp = new Date().toISOString();
 
