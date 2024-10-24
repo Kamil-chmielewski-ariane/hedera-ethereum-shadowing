@@ -20,6 +20,7 @@ export async function sendTinyBarToAlias(
 			.freeze();
 
 		// Execute the transaction
+		await new Promise(resolve => setTimeout(resolve, 1));
 		await transaction.execute(client);
 		const txTimestamp = new Date().toISOString();
 		// TODO: uncomment when receipt API is ready
