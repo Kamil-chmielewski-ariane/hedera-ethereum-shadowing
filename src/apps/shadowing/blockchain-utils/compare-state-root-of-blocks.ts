@@ -59,5 +59,8 @@ export async function compareStateForContractsInBlock(block: any, transactions: 
 
     if (errorInBlock.length > 0) {
         await writeLogFile(`logs/state-root-compare-errors.json`, JSON.stringify(errorInBlock));
+        throw new Error(
+            'Error for state root blocks '
+        );
     }
 }
