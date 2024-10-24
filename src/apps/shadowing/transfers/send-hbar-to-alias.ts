@@ -1,5 +1,6 @@
 import { AccountId, Client, Hbar, TransactionId, TransferTransaction } from '@hashgraph/sdk';
 import { sendTransactionInfoToReceiptApi } from '@/api/receipt/transaction-sender';
+import { writeLogFile } from '@/utils/helpers/write-log-file';
 
 export async function sendHbarToAlias(
 	accountId: AccountId,
@@ -26,5 +27,6 @@ export async function sendHbarToAlias(
 		// sendTransactionInfoToReceiptApi(txId, evmAddress, currentBlock, "TRANSFER_TRANSACTION", txTimestamp);
 	} catch (error) {
 		console.error('Error sending HBAR to alias:', error);
+		await writeLogFile(`logs/send-hbar-to-alias-error.txt`, `Found error in block ${currentBlock} Transaction Type: TransferTransaction  \n ${JSON.stringify(error)} \n`);
 	}
 }

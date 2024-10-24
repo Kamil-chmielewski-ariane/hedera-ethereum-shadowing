@@ -1,5 +1,6 @@
 import { sendTransactionInfoToReceiptApi } from '@/api/receipt/transaction-sender';
 import { AccountId, Client, Hbar, TransactionId, TransferTransaction } from '@hashgraph/sdk';
+import { writeLogFile } from '@/utils/helpers/write-log-file';
 export async function sendTinyBarToAlias(
 	accountId: AccountId,
 	evmAddress: string,
@@ -25,5 +26,6 @@ export async function sendTinyBarToAlias(
 		// sendTransactionInfoToReceiptApi(txId, evmAddress, currentBlock, "TRANSFER", txTimestamp);
 	} catch (error) {
 		console.error('Error sending tinyBar to alias:', error);
+		await writeLogFile(`logs/send-tiny-bar-to-alias-error.txt`, `Found error in block ${currentBlock} Transaction Type: TransferTransaction  \n ${JSON.stringify(error)} \n`);
 	}
 }
