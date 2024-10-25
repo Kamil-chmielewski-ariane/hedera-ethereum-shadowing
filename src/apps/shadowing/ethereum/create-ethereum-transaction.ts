@@ -1,5 +1,4 @@
 import { getRawTransaction } from '@/api/erigon/get-raw-transaction';
-import { sendTransactionInfoToReceiptApi } from '@/api/receipt/transaction-sender';
 import {
 	AccountId,
 	Client,
@@ -10,8 +9,6 @@ import {
 } from '@hashgraph/sdk';
 import dotenv from 'dotenv';
 import { writeLogFile } from '@/utils/helpers/write-log-file';
-import { getTransactionByHash } from '@/api/erigon/get-transaction-by-hash';
-import { getHederaContractStates } from '../hedera/get-hedera-contract-states';
 dotenv.config();
 
 const OPERATOR_PRIVATE = process.env.OPERATOR_PRIVATE;
@@ -26,7 +23,6 @@ export async function createEthereumTransaction(
 ) {
 	try {
 		const rawBody = await getRawTransaction(transactionData.txHash);
-		const txBody = await getTransactionByHash(transactionData.txHash);
 		const txId = TransactionId.generate(accountId);
 		const transaction = await new EthereumTransaction()
 			.setTransactionId(txId)
@@ -38,14 +34,6 @@ export async function createEthereumTransaction(
 		await new Promise(resolve => setTimeout(resolve, 1));
 		const txResponse = await transaction.execute(client);
 		const txTimestamp = new Date().toISOString();
-		
-		if (txBody && txBody.to) {
-			const hederaStates = await getHederaContractStates(txBody.to);
-			if (hederaStates && hederaStates.length > 0) {
-				const receipt = await txResponse.getReceipt(client);
-				await writeLogFile('logs/receipt-for-contract-transactions.txt', `Transaction hash ${transactionData.txHash} in block ${currentBlock} \n ${JSON.stringify(receipt)} \n`);
-			}
-		}
 		
 
 		console.log('txResponse', txResponse.toJSON());

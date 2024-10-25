@@ -5,8 +5,9 @@ import { convertHexIntoDecimal } from '@/utils/helpers/convert-hex-into-decimal'
 
 export async function compareStateForContractsInBlock(block: any, transactions: any) {
     const blockNumberDex = convertHexIntoDecimal(block.number)
-    const transactionsInBlock = []
-    const contractsInBlock = []
+    const transactionsInBlock = [];
+    const contractsInBlock = [];
+    const possibleErrorInBlock = [];
     const errorInBlock = [];
     for (const transaction of transactions) {
         if (transaction && transaction.hash && transaction.to) {
@@ -31,7 +32,24 @@ export async function compareStateForContractsInBlock(block: any, transactions: 
                         "hederaValue": hederaState.value,
                         "ethereumValue": sepoliaStateValue
                     }
-                    errorInBlock.push(dataError);
+                    possibleErrorInBlock.push(dataError);
+
+                    await new Promise(resolve => setTimeout(resolve, 120000));
+                    
+                    const delayedHederaStates = await getHederaContractStates(possibleTransactionAddress);
+                    for (const delayedHederaState of delayedHederaStates) {
+                        if (sepoliaStateValue != delayedHederaState.value) {
+                            const delayedDataError = {
+                                "blockNumber": blockNumberDex,
+                                "transactionHash": transaction.hash,
+                                "contractAddress": possibleTransactionAddress,
+                                "searchedSlot": delayedHederaState.slot,
+                                "hederaValue": delayedHederaState.value,
+                                "ethereumValue": sepoliaStateValue
+                            }
+                            errorInBlock.push(delayedDataError);
+                        }
+                    }
                 }
             }
         }
@@ -57,10 +75,11 @@ export async function compareStateForContractsInBlock(block: any, transactions: 
         await writeLogFile(`logs/blocks-with-contracts.json`, JSON.stringify(blockWithContracts));
     }
 
+    if (possibleErrorInBlock.length > 0) {
+        await writeLogFile(`logs/possible-state-root-compare-errors.json`, JSON.stringify(possibleErrorInBlock));
+    }
+
     if (errorInBlock.length > 0) {
         await writeLogFile(`logs/state-root-compare-errors.json`, JSON.stringify(errorInBlock));
-        throw new Error(
-            'Error for state root blocks '
-        );
     }
 }
