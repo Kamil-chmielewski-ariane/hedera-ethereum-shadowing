@@ -9,6 +9,7 @@ export async function compareStateForContractsInBlock(block: any, transactions: 
     const contractsInBlock = [];
     const possibleErrorInBlock = [];
     const errorInBlock = [];
+    let stateRootError = false;
     for (const transaction of transactions) {
         if (transaction && transaction.hash && transaction.to) {
             const possibleTransactionAddress = transaction.to;
@@ -24,6 +25,7 @@ export async function compareStateForContractsInBlock(block: any, transactions: 
             for (const hederaState of hederaStates) {
                 const sepoliaStateValue = await getStorageAt(possibleTransactionAddress, hederaState.slot, block.number);
                 if (sepoliaStateValue != hederaState.value) {
+                    stateRootError = true;
                     const dataError = {
                         "blockNumber": blockNumberDex,
                         "transactionHash": transaction.hash,
@@ -33,22 +35,23 @@ export async function compareStateForContractsInBlock(block: any, transactions: 
                         "ethereumValue": sepoliaStateValue
                     }
                     possibleErrorInBlock.push(dataError);
-
-                    await new Promise(resolve => setTimeout(resolve, 120000));
-                    
-                    const delayedHederaStates = await getHederaContractStates(possibleTransactionAddress);
-                    for (const delayedHederaState of delayedHederaStates) {
-                        if (sepoliaStateValue != delayedHederaState.value) {
-                            const delayedDataError = {
-                                "blockNumber": blockNumberDex,
-                                "transactionHash": transaction.hash,
-                                "contractAddress": possibleTransactionAddress,
-                                "searchedSlot": delayedHederaState.slot,
-                                "hederaValue": delayedHederaState.value,
-                                "ethereumValue": sepoliaStateValue
-                            }
-                            errorInBlock.push(delayedDataError);
+                }
+            }
+            if (stateRootError) {
+                await new Promise(resolve => setTimeout(resolve, 120000));
+                const delayedHederaStates = await getHederaContractStates(possibleTransactionAddress);
+                for (const delayedHederaState of delayedHederaStates) {
+                    const delayedSepoliaStateValue = await getStorageAt(possibleTransactionAddress, delayedHederaState.slot, block.number);
+                    if (delayedSepoliaStateValue != delayedHederaState.value) {
+                        const delayedDataError = {
+                            "blockNumber": blockNumberDex,
+                            "transactionHash": transaction.hash,
+                            "contractAddress": possibleTransactionAddress,
+                            "searchedSlot": delayedHederaState.slot,
+                            "hederaValue": delayedHederaState.value,
+                            "ethereumValue": delayedSepoliaStateValue
                         }
+                        errorInBlock.push(delayedDataError);
                     }
                 }
             }
