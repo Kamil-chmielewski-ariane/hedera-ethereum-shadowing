@@ -14,6 +14,7 @@ export async function getTransactionByBlock(
 	nodeAccountId: AccountId
 ) {
 	try {
+		let lastTransactionHash = ''
 		for (; startFromBlock < numberOfBlocks; startFromBlock++) {
 			console.log('currentBlockNumber', startFromBlock);
 			let block = await getBlockByNumber(startFromBlock.toString(16));
@@ -45,7 +46,8 @@ export async function getTransactionByBlock(
 					}
 
 					if (transaction && transaction.hash) {
-						await createEthereumTransaction(
+						console.log(`transaction found ${transaction.hash}`)
+						const response = await createEthereumTransaction(
 							{
 								txHash: transaction.hash,
 								gas: 21000,
@@ -56,9 +58,12 @@ export async function getTransactionByBlock(
 							transaction.to,
 							startFromBlock
 						);
+						lastTransactionHash = response?.transactionHash;
 					}
+					console.log(lastTransactionHash, 'lastTransactionHash');
 				}
-				await compareStateForContractsInBlock(block, transactions);
+				await new Promise(resolve => setTimeout(resolve, 5000));
+				await compareStateForContractsInBlock(block, transactions, lastTransactionHash);
 			}
 		}
 	} catch (error) {

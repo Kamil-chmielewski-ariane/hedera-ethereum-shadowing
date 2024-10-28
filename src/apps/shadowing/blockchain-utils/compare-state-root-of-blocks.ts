@@ -2,8 +2,13 @@ import { getStorageAt } from "@/api/erigon/get-storage-at";
 import { getHederaContractStates } from "@/apps/shadowing/hedera/get-hedera-contract-states";
 import { writeLogFile } from "@/utils/helpers/write-log-file";
 import { convertHexIntoDecimal } from '@/utils/helpers/convert-hex-into-decimal';
+import { getTransaction } from '@/api/hedera-mirror-node/get-transaction';
+import { getHederaContractStatesByTimestamp } from '@/apps/shadowing/hedera/get-hedera-contract-states-by-timestamp';
 
-export async function compareStateForContractsInBlock(block: any, transactions: any) {
+export async function compareStateForContractsInBlock(block: any, transactions: any, lastTransaction: any) {
+    const transactionResponse = await getTransaction(lastTransaction)
+    const lastTransactionTimestamp = transactionResponse.consensus_timestamp
+    console.log(lastTransactionTimestamp, 'lastTransactionTimestamp');
     const blockNumberDex = convertHexIntoDecimal(block.number)
     const transactionsInBlock = [];
     const contractsInBlock = [];
@@ -15,6 +20,10 @@ export async function compareStateForContractsInBlock(block: any, transactions: 
             const possibleTransactionAddress = transaction.to;
             console.log(possibleTransactionAddress);
             const hederaStates = await getHederaContractStates(possibleTransactionAddress);
+            const hederaStateByLastTransactionTimestamp = await getHederaContractStatesByTimestamp(possibleTransactionAddress, lastTransactionTimestamp);
+
+            console.log(hederaStates, 'hederaStates');
+            console.log(hederaStateByLastTransactionTimestamp, 'hederaStateByLastTransactionTimestamp');
 
             if (hederaStates.length > 0) {
                 contractsInBlock.push(transaction.to)
