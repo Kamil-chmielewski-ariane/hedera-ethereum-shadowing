@@ -6,7 +6,8 @@ export type Genesis = {
 };
 
 export interface StateData {
-	stateSlot: string;
-	stateValue: string;
+	slot: string;
+	value: string;
 	timestamp: string;
+	address: string;
 }

@@ -6,7 +6,7 @@ export async function getContractStateByTimestamp(contractAddress: any, timestam
 	let stateData: StateData[] = [];
 		try {
 			const response = await axios.get(url);
-			stateData = response.data;
+			stateData = response.data.state;
 		} catch (error) {
 			return [];
 		}
