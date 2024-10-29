@@ -2,17 +2,16 @@ import { axiosInstanceErigon } from '@/api/config';
 import {isAxiosError} from 'axios';
 
 // TODO to type promise response objects
-export async function getRawTransaction(txnHash: string): Promise<any> {
+export async function getTransactionByHash(txnHash: string): Promise<any> {
 	try {
 		const response = await axiosInstanceErigon.post('', {
-			method: 'eth_getRawTransactionByHash',
+			method: 'eth_getTransactionByHash',
 			params: [txnHash],
 			id: 1,
 			jsonrpc: '2.0',
 		});
 
 		if (response.data && response.data.result) {
-			// console.log(response.data.result);
 			return response.data.result;
 		} else {
 			throw new Error('No result found in response');

@@ -1,45 +1,32 @@
-import { AccountId, Client, Hbar, TransferTransaction } from '@hashgraph/sdk';
+import { sendTransactionInfoToReceiptApi } from '@/api/receipt/transaction-sender';
+import { AccountId, Client, Hbar, TransactionId, TransferTransaction } from '@hashgraph/sdk';
 import { writeLogFile } from '@/utils/helpers/write-log-file';
-
 export async function sendTinyBarToAlias(
 	accountId: AccountId,
 	evmAddress: string,
 	amountHBar: number,
 	client: Client,
-	iterator: number = 0
+	currentBlock: number,
+	nodeAccountId: AccountId
 ) {
-	if (iterator < 10) {
-		try {
-			console.log(`Running tinybar transaction ${accountId}, ${evmAddress}`);
-			const transaction = new TransferTransaction()
-				.addHbarTransfer(accountId, Hbar.fromTinybars(amountHBar).negated())
-				.addHbarTransfer(evmAddress, Hbar.fromTinybars(amountHBar));
+	try {
+		console.log(`Running tinybar transaction ${accountId}, ${evmAddress}`);
+		const txId = TransactionId.generate(accountId);
+		const transaction = new TransferTransaction()
+			.addHbarTransfer(accountId, Hbar.fromTinybars(amountHBar).negated())
+			.addHbarTransfer(evmAddress, Hbar.fromTinybars(amountHBar))
+			.setTransactionId(txId)
+			.setNodeAccountIds([nodeAccountId])
+			.freeze();
 
-			// Execute the transaction
-			const response = await transaction.execute(client);
-
-			// Get the receipt to confirm the transaction
-			const receipt = await response.getReceipt(client);
-			console.log('Transaction status:', receipt.status.toString());
-		} catch (error) {
-			await new Promise((resolve) => setTimeout(resolve, 5000));
-			await writeLogFile(
-				'logs/errors-sending-tiny-hbar-attempt.txt',
-				`Error attempt ${iterator} for sending tiny HBAR to user ${evmAddress} \n ${error} \n`
-			);
-			console.error('Error sending tinyBar to alias:', error);
-			await sendTinyBarToAlias(
-				accountId,
-				evmAddress,
-				amountHBar,
-				client,
-				iterator + 1
-			);
-		}
-	} else {
-		await writeLogFile(
-			'logs/errors-sending-tiny-hbar.txt',
-			`There was an error for sending tiny HBAR for user ${evmAddress}. Reason: More than 10 attempts \n`
-		);
+		// Execute the transaction
+		await new Promise(resolve => setTimeout(resolve, 1));
+		await transaction.execute(client);
+		const txTimestamp = new Date().toISOString();
+		// TODO: uncomment when receipt API is ready
+		// sendTransactionInfoToReceiptApi(txId, evmAddress, currentBlock, "TRANSFER", txTimestamp);
+	} catch (error) {
+		console.error('Error sending tinyBar to alias:', error);
+		await writeLogFile(`logs/send-tiny-bar-to-alias-error.txt`, `Found error in block ${currentBlock} Transaction Type: TransferTransaction  \n ${JSON.stringify(error)} \n`);
 	}
 }

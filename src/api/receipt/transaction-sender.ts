@@ -1,18 +1,25 @@
-import { axiosInstanceErigon } from '@/api/config';
-import {isAxiosError} from 'axios';
-
-// TODO to type promise response objects
-export async function getRawTransaction(txnHash: string): Promise<any> {
+import { TransactionId } from '@hashgraph/sdk';
+import { axiosReceiptApi } from '../config';
+import { isAxiosError } from 'axios';
+export async function sendTransactionInfoToReceiptApi(
+	transactionId: TransactionId,
+	evmAddress: string,
+	currentBlock: number,
+	transactionType: string,
+	txTimestamp: string
+) {
 	try {
-		const response = await axiosInstanceErigon.post('', {
-			method: 'eth_getRawTransactionByHash',
-			params: [txnHash],
-			id: 1,
-			jsonrpc: '2.0',
+        const response = await axiosReceiptApi.post('', {
+			transactionId: transactionId.toString(),
+			blockNumber: currentBlock,
+			addressTo: evmAddress,
+			type: transactionType,
+			txTimestamp: txTimestamp,
+			currentTimestamp: new Date().toISOString()
 		});
 
 		if (response.data && response.data.result) {
-			// console.log(response.data.result);
+			console.log(response.data.result);
 			return response.data.result;
 		} else {
 			throw new Error('No result found in response');

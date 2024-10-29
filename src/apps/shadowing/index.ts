@@ -8,12 +8,13 @@ const OPERATOR_PRIVATE = process.env.OPERATOR_PRIVATE;
 const HARDCODED_NUMBER_OF_BLOCKS = 100000;
 const HARDCODED_BLOCK_NUMBER_WITH_TRANSACTIONS = 5966639;
 
-const node = { '127.0.0.1:50211': new AccountId(3) };
+const nodeAccountId = new AccountId(3);
+const node = { '127.0.0.1:50211': nodeAccountId };
 const genesisTransactions = getAllGenesisData();
 const client = Client.forNetwork(node).setMirrorNetwork('127.0.0.1:5600');
 const accountId = new AccountId(2);
 client.setOperator(accountId, OPERATOR_PRIVATE || '');
 
 (async () => {
-	await startNetworkReplicationProcess(accountId, genesisTransactions, client);
+	await startNetworkReplicationProcess(accountId, genesisTransactions, client, nodeAccountId);
 })();

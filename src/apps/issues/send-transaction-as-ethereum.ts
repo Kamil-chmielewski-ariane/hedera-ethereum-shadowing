@@ -22,7 +22,7 @@ export async function sendTransactionAsEthereum(
 	ppkey: string
 ) {
 	const rawBody = await getRawTransaction(transactionData.txHash);
-	await sendHbarToAlias(accountId, transactionData.evmAddress, transactionData.hbar, client);
+	await sendHbarToAlias(accountId, transactionData.evmAddress, transactionData.hbar, client, 0, new AccountId(3));
 	const txId = TransactionId.generate(accountId)
 
 	const transaction = await new EthereumTransaction()
