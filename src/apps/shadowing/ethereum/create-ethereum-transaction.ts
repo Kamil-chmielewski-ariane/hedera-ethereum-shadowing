@@ -35,6 +35,7 @@ export async function createEthereumTransaction(
 			.sign(PrivateKey.fromString(String(OPERATOR_PRIVATE)));
 		await new Promise((resolve) => setTimeout(resolve, 1));
 		const txResponse = await transaction.execute(client);
+		console.log(txResponse.toJSON())
 		return txResponse.toJSON();
 		// TODO: uncomment when receipt API is ready
 		// sendTransactionInfoToReceiptApi(txId, accountTo, currentBlock, "ETHEREUM_TRANSACTION", txTimestamp);

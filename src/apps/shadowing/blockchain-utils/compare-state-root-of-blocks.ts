@@ -1,5 +1,4 @@
 import { getStorageAt } from "@/api/erigon/get-storage-at";
-import { getHederaContractStates } from "@/apps/shadowing/hedera/get-hedera-contract-states";
 import { writeLogFile } from "@/utils/helpers/write-log-file";
 import { convertHexIntoDecimal } from '@/utils/helpers/convert-hex-into-decimal';
 import { getTransaction } from '@/api/hedera-mirror-node/get-transaction';
@@ -19,11 +18,8 @@ export async function compareStateForContractsInBlock(block: any, transactions: 
         if (transaction && transaction.hash && transaction.to) {
             const possibleTransactionAddress = transaction.to;
             console.log(possibleTransactionAddress);
-            const hederaStates = await getHederaContractStates(possibleTransactionAddress);
-            const hederaStateByLastTransactionTimestamp = await getHederaContractStatesByTimestamp(possibleTransactionAddress, lastTransactionTimestamp);
-
+            const hederaStates = await getHederaContractStatesByTimestamp(possibleTransactionAddress, lastTransactionTimestamp);
             console.log(hederaStates, 'hederaStates');
-            console.log(hederaStateByLastTransactionTimestamp, 'hederaStateByLastTransactionTimestamp');
 
             if (hederaStates.length > 0) {
                 contractsInBlock.push(transaction.to)
@@ -32,15 +28,16 @@ export async function compareStateForContractsInBlock(block: any, transactions: 
             }
 
             for (const hederaState of hederaStates) {
-                const sepoliaStateValue = await getStorageAt(possibleTransactionAddress, hederaState.slot, block.number);
-                if (sepoliaStateValue != hederaState.value) {
+                const sepoliaStateValue = await getStorageAt(possibleTransactionAddress, hederaState.stateSlot, block.number);
+                if (sepoliaStateValue != hederaState.stateValue) {
                     stateRootError = true;
                     const dataError = {
                         "blockNumber": blockNumberDex,
                         "transactionHash": transaction.hash,
+                        "timestamp": hederaState.timestamp,
                         "contractAddress": possibleTransactionAddress,
-                        "searchedSlot": hederaState.slot,
-                        "hederaValue": hederaState.value,
+                        "searchedSlot": hederaState.stateSlot,
+                        "hederaValue": hederaState.stateValue,
                         "ethereumValue": sepoliaStateValue
                     }
                     possibleErrorInBlock.push(dataError);
@@ -48,16 +45,17 @@ export async function compareStateForContractsInBlock(block: any, transactions: 
             }
             if (stateRootError) {
                 await new Promise(resolve => setTimeout(resolve, 120000));
-                const delayedHederaStates = await getHederaContractStates(possibleTransactionAddress);
+                const delayedHederaStates = await getHederaContractStatesByTimestamp(possibleTransactionAddress, lastTransactionTimestamp);
                 for (const delayedHederaState of delayedHederaStates) {
-                    const delayedSepoliaStateValue = await getStorageAt(possibleTransactionAddress, delayedHederaState.slot, block.number);
-                    if (delayedSepoliaStateValue != delayedHederaState.value) {
+                    const delayedSepoliaStateValue = await getStorageAt(possibleTransactionAddress, delayedHederaState.stateSlot, block.number);
+                    if (delayedSepoliaStateValue != delayedHederaState.stateValue) {
                         const delayedDataError = {
                             "blockNumber": blockNumberDex,
                             "transactionHash": transaction.hash,
+                            "timestamp": delayedHederaState.timestamp,
                             "contractAddress": possibleTransactionAddress,
-                            "searchedSlot": delayedHederaState.slot,
-                            "hederaValue": delayedHederaState.value,
+                            "searchedSlot": delayedHederaState.stateSlot,
+                            "hederaValue": delayedHederaState.stateValue,
                             "ethereumValue": delayedSepoliaStateValue
                         }
                         errorInBlock.push(delayedDataError);
