@@ -14,7 +14,7 @@ export async function getTransactionByBlock(
 	nodeAccountId: AccountId
 ) {
 	try {
-		let lastTransactionHash = ''
+		let hederaLastTransactionHashInBlock = ''
 		for (; startFromBlock < numberOfBlocks; startFromBlock++) {
 			console.log('currentBlockNumber', startFromBlock);
 			let block = await getBlockByNumber(startFromBlock.toString(16));
@@ -58,12 +58,12 @@ export async function getTransactionByBlock(
 							transaction.to,
 							startFromBlock
 						);
-						lastTransactionHash = response?.transactionHash;
+						hederaLastTransactionHashInBlock = response?.transactionHash;
 					}
-					console.log(lastTransactionHash, 'lastTransactionHash');
+					console.log(hederaLastTransactionHashInBlock, 'hederaLastTransactionHashInBlock');
 				}
-				await new Promise(resolve => setTimeout(resolve, 5000));
-				await compareStateForContractsInBlock(block, transactions, lastTransactionHash);
+				await new Promise(resolve => setTimeout(resolve, 2000));
+				await compareStateForContractsInBlock(block, transactions, hederaLastTransactionHashInBlock);
 			}
 		}
 	} catch (error) {
