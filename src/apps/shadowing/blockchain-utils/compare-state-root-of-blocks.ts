@@ -1,11 +1,11 @@
 import { getStorageAt } from "@/api/erigon/get-storage-at";
 import { writeLogFile } from "@/utils/helpers/write-log-file";
 import { convertHexIntoDecimal } from '@/utils/helpers/convert-hex-into-decimal';
-import { getTransaction } from '@/api/hedera-mirror-node/get-transaction';
+import { getMirrorNodeTransaction } from '@/api/hedera-mirror-node/get-mirror-node-transaction';
 import { getHederaContractStatesByTimestamp } from '@/apps/shadowing/hedera/get-hedera-contract-states-by-timestamp';
 
-export async function compareStateForContractsInBlock(block: any, transactions: any, lastTransaction: any) {
-    const transactionResponse = await getTransaction(lastTransaction)
+export async function compareStateForContractsInBlock(block: any, transactions: any, hederaLastTransactionHash: any ) {
+    const transactionResponse = await getMirrorNodeTransaction(hederaLastTransactionHash )
     const lastTransactionTimestamp = transactionResponse.consensus_timestamp
     console.log(lastTransactionTimestamp, 'lastTransactionTimestamp');
     const blockNumberDex = convertHexIntoDecimal(block.number)
