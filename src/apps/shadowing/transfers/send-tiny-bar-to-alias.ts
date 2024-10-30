@@ -25,8 +25,15 @@ export async function sendTinyBarToAlias(
 		const txTimestamp = new Date().toISOString();
 		// TODO: uncomment when receipt API is ready
 		// sendTransactionInfoToReceiptApi(txId, evmAddress, currentBlock, "TRANSFER", txTimestamp);
-	} catch (error) {
-		console.error('Error sending tinyBar to alias:', error);
-		await writeLogFile(`logs/send-tiny-bar-to-alias-error.txt`, `Found error in block ${currentBlock} Transaction Type: TransferTransaction  \n ${JSON.stringify(error)} \n`);
+	} catch (error: any) {
+		if (error.status && error.status === "DUPLICATE_TRANSACTION") {
+			console.error('Error sending tinyBar to alias:', error);
+			await writeLogFile(`logs/send-tiny-bar-to-alias-error.txt`, `I am rerunning transaction. Found error in block ${currentBlock} Transaction Type: TransferTransaction  \n ${JSON.stringify(error)} \n`);
+			sendTinyBarToAlias(accountId, evmAddress, amountHBar, client, currentBlock, nodeAccountId);
+		}
+		else {
+			console.error('Error sending tinyBar to alias:', error);
+			await writeLogFile(`logs/send-tiny-bar-to-alias-error.txt`, `Found error in block ${currentBlock} Transaction Type: TransferTransaction  \n ${JSON.stringify(error)} \n`);
+		}
 	}
 }
