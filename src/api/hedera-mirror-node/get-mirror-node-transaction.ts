@@ -1,16 +1,11 @@
-import axios, { isAxiosError } from 'axios';
+import axios from 'axios';
+import { getCurrentTimestamp } from '@/utils/helpers/get-current-unix-timestamp';
 
 export async function getMirrorNodeTransaction(
-	hederaTransactionHash: string,
+	hederaTransactionHash: string
 ): Promise<any> {
-
 	if (hederaTransactionHash === undefined) {
-		const date = new Date();
-		const unixTimestamp = Math.floor(date.getTime() / 1000);
-
-		return {
-			consensus_timestamp: unixTimestamp,
-		};
+		return getCurrentTimestamp();
 	}
 
 	const url = `http://localhost:5551/api/v1/transactions/${hederaTransactionHash}`;
@@ -19,15 +14,10 @@ export async function getMirrorNodeTransaction(
 		const response = await axios.get(url);
 		if (response.data) {
 			return response.data.transactions[0];
-		} else {
-			throw new Error('No result found in response');
 		}
 	} catch (error) {
-		if (isAxiosError(error)) {
-			console.error('Error fetching transaction:', JSON.stringify(error));
-		} else {
-			// if error not axios error, use generic error
-			console.error('Unknown error:', error);
-		}
+		console.error('Error fetching transaction:', JSON.stringify(error));
+		// if error, return default time stamp
+		return getCurrentTimestamp();
 	}
 }
