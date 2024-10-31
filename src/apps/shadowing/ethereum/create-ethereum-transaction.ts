@@ -39,10 +39,20 @@ export async function createEthereumTransaction(
 		return txResponse.toJSON();
 		// TODO: uncomment when receipt API is ready
 		// sendTransactionInfoToReceiptApi(txId, accountTo, currentBlock, "ETHEREUM_TRANSACTION", txTimestamp);
-	} catch (error) {
-		await writeLogFile(
-			`logs/create-ethereum-transaction-error.txt`,
-			`Found error at transaction ${transactionData.txHash} in block ${currentBlock} Transaction Type: EthereumTransaction \n ${JSON.stringify(error)} \n`
-		);
+	} catch (error: any) {
+		if (error.status && error.status === "DUPLICATE_TRANSACTION") {
+			await writeLogFile(
+				`logs/create-ethereum-transaction-error.txt`,
+				`DUPLICATE TRASNSACTION: \nFound error at transaction ${transactionData.txHash} in block ${currentBlock} Transaction Type: EthereumTransaction \n ${JSON.stringify(error)} \n`
+			);
+			createEthereumTransaction(transactionData, accountId, client, nodeAccountId, accountTo, currentBlock);
+		}
+		else {
+			await writeLogFile(
+				`logs/create-ethereum-transaction-error.txt`,
+				`Found error at transaction ${transactionData.txHash} in block ${currentBlock} Transaction Type: EthereumTransaction \n ${JSON.stringify(error)} \n`
+			);
+		}
+		
 	}
 }
