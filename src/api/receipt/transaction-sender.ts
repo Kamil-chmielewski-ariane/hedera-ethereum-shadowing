@@ -2,28 +2,27 @@ import { TransactionId } from '@hashgraph/sdk';
 import { axiosReceiptApi } from '../config';
 import { isAxiosError } from 'axios';
 
-export async function sendTransactionInfoToReceiptApi(
-	transactionId: TransactionId,
+interface ReceiptData {
+	transactionId: string | TransactionId,
 	evmAddress: string,
 	currentBlock: number,
 	transactionType: string,
 	txTimestamp: string
-) {
+}
+
+export async function sendTransactionInfoToReceiptApi(receiptData: ReceiptData) {
 	try {
-		const response = await axiosReceiptApi.post('', {
-			transactionId: transactionId.toString(),
-			type: transactionType,
-			blockNumber: currentBlock,
-			addressTo: evmAddress,
-			txTimestamp: txTimestamp,
+		const response = await axiosReceiptApi.post('/check-transaction', {
+			transactionId: receiptData.transactionId.toString(),
+			type: receiptData.transactionType,
+			blockNumber: receiptData.currentBlock,
+			addressTo: receiptData.evmAddress,
+			txTimestamp: receiptData.txTimestamp,
 			currentTimestamp: new Date().toISOString(),
 		});
 
-		if (response.data && response.data.result) {
-			console.log(response.data.result);
-			return response.data.result;
-		} else {
-			throw new Error('No result found in response');
+		if (response.data === 'OK') {
+			console.log('Transaction was send successfully')
 		}
 	} catch (error) {
 		// handle unknown type and check if axios error

@@ -13,11 +13,11 @@ export interface StateData {
 }
 
 export interface ContractType {
-	"transactionId": string;
-	"type": string;
-	"blockNumber": number;
-	"addressTo": string;
-	"txTimestamp": string,
-	"currentTimestamp": string;
+	transactionId: string;
+	type: string;
+	blockNumber: number;
+	addressTo: string;
+	txTimestamp: string,
+	currentTimestamp: string;
 }
 

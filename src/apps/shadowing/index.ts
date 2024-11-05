@@ -2,13 +2,7 @@ import { getAllGenesisData } from '@/apps/shadowing/frontier/get-all-frontier-da
 import { Client, AccountId } from '@hashgraph/sdk';
 import dotenv from 'dotenv';
 import { startNetworkReplicationProcess } from '@/apps/shadowing/blockchain-utils/start-network-replication-process';
-import { sendHbarToAlias } from '@/apps/shadowing/transfers/send-hbar-to-alias';
-import { createEthereumTransaction } from '@/apps/shadowing/ethereum/create-ethereum-transaction';
-import { getTransactionByBlock } from '@/apps/shadowing/ethereum/get-transaction-by-block';
-import { getMirrorNodeTransaction } from '@/api/hedera-mirror-node/get-mirror-node-transaction';
-import { getHederaContractStatesByTimestamp } from '@/apps/shadowing/hedera/get-hedera-contract-states-by-timestamp';
 import { websocketConnection, websocketEvents } from '@/api/websocket/websocket-connection';
-import { eip712WalletActions } from 'viem/zksync';
 import { ContractType } from '@/utils/types';
 dotenv.config();
 const OPERATOR_PRIVATE = process.env.OPERATOR_PRIVATE;
