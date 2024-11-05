@@ -1,5 +1,7 @@
 export type Account = Record<string, { balance: string }>;
 
+export type TransactionType = 'TRANSFER' | 'TRANSFER_TRANSACTION';
+
 export type Genesis = {
 	toAccount: string;
 	amount: number;
@@ -19,5 +21,7 @@ export interface ContractType {
 	addressTo: string;
 	txTimestamp: string,
 	currentTimestamp: string;
+	ethereumTransactionHash: string | null;
+	hederaTransactionHash: string;
 }
 

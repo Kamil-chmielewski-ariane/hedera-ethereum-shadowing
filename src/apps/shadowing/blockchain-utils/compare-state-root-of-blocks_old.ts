@@ -4,6 +4,7 @@ import { convertHexIntoDecimal } from '@/utils/helpers/convert-hex-into-decimal'
 import { getMirrorNodeTransaction } from '@/api/hedera-mirror-node/get-mirror-node-transaction';
 import { getHederaContractStatesByTimestamp } from '@/apps/shadowing/hedera/get-hedera-contract-states-by-timestamp';
 
+//TODO funkcja do refactoringu - tę zostawic i dodać nową - to będzie jako odzielny proces.
 export async function compareStateForContractsInBlock(
 	block: any,
 	transactions: any,

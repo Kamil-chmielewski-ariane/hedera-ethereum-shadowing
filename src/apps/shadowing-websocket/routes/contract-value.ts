@@ -13,6 +13,9 @@ const contractValueRouter = (wss: WebSocketServer) => {
 			addressTo: req.body.addressTo,
 			txTimestamp: req.body.txTimestamp,
 			timestamp: req.body.timestamp,
+			currentTimestamp: req.body.currentTimestamp,
+			hederaTransactionHash: req.body.hederaTransactionHash,
+			ethereumTransactionHash: req.body.ethereumTransactionHash,
 		};
 
 		wss.clients.forEach((client) => {
@@ -21,7 +24,7 @@ const contractValueRouter = (wss: WebSocketServer) => {
 			}
 		});
 
-		res.status(201).json('Data was send to successfully');
+		res.status(201).json('Data was send successfully');
 	});
 
 	return router;

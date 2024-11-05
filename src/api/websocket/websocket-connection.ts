@@ -4,7 +4,7 @@ import EventEmitter from 'events';
 export const websocketEvents = new EventEmitter();
 
 export function websocketConnection() {
-	const socket = new WebSocket('ws://localhost:8080/');
+	const socket = new WebSocket('ws://localhost:8085/');
 
 	socket.onopen = () => {
 		console.log('WebSocket connection opened');

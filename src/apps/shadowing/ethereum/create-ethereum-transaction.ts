@@ -9,6 +9,7 @@ import {
 } from '@hashgraph/sdk';
 import dotenv from 'dotenv';
 import { writeLogFile } from '@/utils/helpers/write-log-file';
+import { sendTransactionInfoToReceiptApi } from '@/api/receipt/transaction-sender';
 dotenv.config();
 
 const OPERATOR_PRIVATE = process.env.OPERATOR_PRIVATE;
@@ -36,16 +37,24 @@ export async function createEthereumTransaction(
 		await new Promise((resolve) => setTimeout(resolve, 1));
 		const txResponse = await transaction.execute(client);
 		console.log(txResponse.toJSON())
+		const transactionTimestamp = new Date().toISOString();
+		await sendTransactionInfoToReceiptApi({
+			transactionId: txId,
+			ethereumTransactionHash: null,
+			hederaTransactionHash: txResponse.transactionHash,
+			transactionType: 'TRANSFER_TRANSACTION',
+			currentBlock: currentBlock,
+			evmAddress: accountTo,
+			txTimestamp: transactionTimestamp,
+		});
 		return txResponse.toJSON();
-		// TODO: uncomment when receipt API is ready
-		// sendTransactionInfoToReceiptApi(txId, accountTo, currentBlock, "ETHEREUM_TRANSACTION", txTimestamp);
 	} catch (error: any) {
 		if (error.status && error.status === "DUPLICATE_TRANSACTION") {
 			await writeLogFile(
 				`logs/create-ethereum-transaction-error.txt`,
 				`DUPLICATE TRASNSACTION: \nFound error at transaction ${transactionData.txHash} in block ${currentBlock} Transaction Type: EthereumTransaction \n ${JSON.stringify(error)} \n`
 			);
-			createEthereumTransaction(transactionData, accountId, client, nodeAccountId, accountTo, currentBlock);
+			await createEthereumTransaction(transactionData, accountId, client, nodeAccountId, accountTo, currentBlock);
 		}
 		else {
 			await writeLogFile(

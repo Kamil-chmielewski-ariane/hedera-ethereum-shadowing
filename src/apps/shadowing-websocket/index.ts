@@ -1,7 +1,7 @@
 import express from 'express'
 import contractValue from './routes/contract-value';
 import { WebSocket, WebSocketServer } from 'ws';
-const port = 8080;
+const port = 8085;
 
 const wss = new WebSocketServer({ port: port });
 

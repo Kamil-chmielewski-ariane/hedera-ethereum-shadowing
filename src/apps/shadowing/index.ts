@@ -2,8 +2,13 @@ import { getAllGenesisData } from '@/apps/shadowing/frontier/get-all-frontier-da
 import { Client, AccountId } from '@hashgraph/sdk';
 import dotenv from 'dotenv';
 import { startNetworkReplicationProcess } from '@/apps/shadowing/blockchain-utils/start-network-replication-process';
-import { websocketConnection, websocketEvents } from '@/api/websocket/websocket-connection';
+import {
+	websocketConnection,
+	websocketEvents,
+} from '@/api/websocket/websocket-connection';
 import { ContractType } from '@/utils/types';
+import { compareSmartContractRootState } from '@/apps/shadowing/blockchain-utils/compare-smart-contract-root-state';
+import axios from 'axios';
 dotenv.config();
 const OPERATOR_PRIVATE = process.env.OPERATOR_PRIVATE;
 
@@ -19,10 +24,16 @@ client.setOperator(accountId, OPERATOR_PRIVATE || '');
 
 (async () => {
 	websocketConnection();
+	await new Promise((resolve) => setTimeout(resolve, 2000));
 
-	websocketEvents.on('websocket', (data: ContractType) => {
-		console.log('Websocket data recieved', data.blockNumber);
+	websocketEvents.on('websocket', (contractData: ContractType) => {
+		compareSmartContractRootState(contractData);
 	});
 
-	await startNetworkReplicationProcess(accountId, genesisTransactions, client, nodeAccountId);
+	await startNetworkReplicationProcess(
+		accountId,
+		genesisTransactions,
+		client,
+		nodeAccountId
+	);
 })();
