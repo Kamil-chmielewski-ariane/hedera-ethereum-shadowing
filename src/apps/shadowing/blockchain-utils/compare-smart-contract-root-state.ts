@@ -6,10 +6,9 @@ import { ContractType } from '@/utils/types';
 
 export async function compareSmartContractRootState(contractRootData: ContractType) {
 	console.log(`Starting compare state contract ${contractRootData.blockNumber}`)
-
-	console.log(contractRootData);
-
+	
 	const errorInBlock = [];
+	const contractsInBlock = [];
 	const transactionResponse = await getMirrorNodeTransaction(contractRootData.hederaTransactionHash);
 
 	const createTransactionTimestamp = transactionResponse.consensus_timestamp;
@@ -21,6 +20,10 @@ export async function compareSmartContractRootState(contractRootData: ContractTy
 			possibleTransactionAddress,
 			createTransactionTimestamp
 		);
+
+		if (hederaStates.length > 0) {
+			contractsInBlock.push(transactionResponse.transactionHash);
+		}
 
 		for (const hederaState of hederaStates) {
 			const sepoliaStateValue = await getStorageAt(
@@ -47,6 +50,19 @@ export async function compareSmartContractRootState(contractRootData: ContractTy
 				errorInBlock.push(contractDetails);
 			}
 		}
+	}
+
+	const blockWithContracts = {
+		[contractRootData.blockNumber]: {
+			contracts: contractsInBlock,
+		},
+	};
+
+	if (blockWithContracts[contractRootData.blockNumber].contracts.length > 0) {
+		await writeLogFile(
+			`logs/blocks-with-contracts.json`,
+			JSON.stringify(blockWithContracts)
+		);
 	}
 
 	if (errorInBlock.length > 0) {
