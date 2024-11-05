@@ -12,9 +12,10 @@ export function websocketConnection() {
 
 	socket.onmessage = (event) => {
 		try {
-			// @ts-ignore
-			const data = JSON.parse(event.data);
-			websocketEvents.emit('websocket', data);
+			if (typeof event.data === 'string') {
+				const data = JSON.parse(event.data);
+				websocketEvents.emit('websocket', data);
+			}
 		} catch (error) {
 			console.error('Error parsing JSON:', error);
 		}
