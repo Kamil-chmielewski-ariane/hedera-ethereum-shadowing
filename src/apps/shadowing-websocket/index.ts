@@ -10,12 +10,16 @@ app.use(express.json());
 app.use('/contract-value', contractValue(wss) )
 
 wss.on('connection', (ws: WebSocket) => {
+	console.log('A new client connected.');
+
 	ws.on('error', console.error)
 
 	ws.on('message', (message) => {
+		console.log('Received message:', message.toString());
+
 		wss.clients.forEach((client) => {
 			if (client.readyState === WebSocket.OPEN) {
-				client.send(	`CONNECTION SUCESS', ${message.toString()}`);
+				client.send(`CONNECTION SUCESS', ${message.toString()}`);
 			}
 		})
 	})
