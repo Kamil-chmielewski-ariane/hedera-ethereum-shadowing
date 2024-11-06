@@ -3,7 +3,7 @@ import { getRawTransaction } from '@/api/erigon/get-raw-transaction';
 import { sendRawTransaction } from '@/api/hedera/send-raw-transaction';
 import { sendHbarToAlias } from '@/apps/shadowing/transfers/send-hbar-to-alias';
 import { AccountId, Client } from '@hashgraph/sdk';
-import { getAllGenesisData } from '@/apps/shadowing/frontier/get-all-frontier-data';
+import { getAllGenesisData } from '@/apps/shadowing/frontier/get-all-genesis-data';
 import dotenv from 'dotenv';
 
 dotenv.config();

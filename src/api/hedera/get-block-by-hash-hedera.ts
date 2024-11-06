@@ -1,13 +1,11 @@
 import { axiosInstanceHederaRpcApi } from '@/api/config';
-import { isAxiosError } from 'axios';
 import { errorHandler } from '@/utils/helpers/api/error-handler';
 
-// TODO to type promise response objects
-export async function getTransaction(txnHash: string): Promise<any> {
+export async function getBlockByHashHedera(blockHash: string): Promise<any> {
 	try {
 		const response = await axiosInstanceHederaRpcApi.post('', {
-			method: 'eth_getTransactionByHash',
-			params: [txnHash],
+			method: 'eth_getBlockByHash',
+			params: [`${blockHash}`, false],
 			id: 1,
 			jsonrpc: '2.0',
 		});
@@ -15,10 +13,8 @@ export async function getTransaction(txnHash: string): Promise<any> {
 		if (response.data && response.data.result) {
 			console.log(response.data.result);
 			return response.data.result;
-		} else {
-			throw new Error('No result found in response');
 		}
 	} catch (error) {
-		errorHandler(error, 'error in getTransaction');
+		errorHandler(error, 'Error getBlockByHashHedera');
 	}
 }

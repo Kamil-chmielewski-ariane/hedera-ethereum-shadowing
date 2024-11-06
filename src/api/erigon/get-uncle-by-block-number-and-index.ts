@@ -1,9 +1,10 @@
 import { axiosInstanceErigon } from '@/api/config';
 import { isAxiosError } from 'axios';
+import { errorHandler } from '@/utils/helpers/api/error-handler';
 
 export async function getUncleByBlockNumberAndIndex(
 	blockNumber: string,
-    index: string
+	index: string
 ): Promise<any> {
 	try {
 		const response = await axiosInstanceErigon.post('', {
@@ -17,13 +18,6 @@ export async function getUncleByBlockNumberAndIndex(
 			return response.data.result;
 		}
 	} catch (error) {
-		if (isAxiosError(error)) {
-			console.error('Error fetching raw transaction:', error.response?.data);
-            return undefined;
-		} else {
-			// if error not axios error, use generic error
-			console.error('Unknown error:', error);
-            return undefined;
-		}
+		errorHandler(error, 'Error in getUncleByBlockNumberAndIndex');
 	}
 }

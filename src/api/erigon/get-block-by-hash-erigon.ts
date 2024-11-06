@@ -1,12 +1,12 @@
-import { axiosInstanceErigon } from '@/api/config';
+import { axiosInstanceErigon, axiosInstanceHederaRpcApi } from '@/api/config';
 import { isAxiosError } from 'axios';
 import { errorHandler } from '@/utils/helpers/api/error-handler';
 
-export async function getTransactionReceipt(txHash: string): Promise<any> {
+export async function getBlockByHashErigon(blockHash: string): Promise<any> {
 	try {
 		const response = await axiosInstanceErigon.post('', {
-			method: 'eth_getTransactionReceipt',
-			params: [`${txHash}`],
+			method: 'eth_getBlockByHash',
+			params: [`${blockHash}`, false],
 			id: 1,
 			jsonrpc: '2.0',
 		});
@@ -16,6 +16,6 @@ export async function getTransactionReceipt(txHash: string): Promise<any> {
 			return response.data.result;
 		}
 	} catch (error) {
-		errorHandler(error, 'Error in getTransactionReceipt');
+		errorHandler(error, 'Error in getBlockByHash');
 	}
 }

@@ -4,7 +4,7 @@ import { sendBlockReward } from '@/apps/shadowing/transfers/send-block-reward';
 import { createEthereumTransaction } from '@/apps/shadowing/ethereum/create-ethereum-transaction';
 import { getAccount } from '@/api/hedera-mirror-node/get-account';
 import { sendHbarToAlias } from '@/apps/shadowing/transfers/send-hbar-to-alias';
-import axios from 'axios';
+import { writeLogFile } from '@/utils/helpers/write-log-file';
 
 export async function getTransactionByBlock(
 	startFromBlock: number,
@@ -13,6 +13,7 @@ export async function getTransactionByBlock(
 	client: Client,
 	nodeAccountId: AccountId
 ) {
+	const transactionsInBlock = [];
 	try {
 		for (; startFromBlock < numberOfBlocks; startFromBlock++) {
 			console.log('currentBlockNumber', startFromBlock);
@@ -30,6 +31,7 @@ export async function getTransactionByBlock(
 				console.log(`transacion in block ${startFromBlock} found...`);
 				console.log('preceding iterate through transfers...');
 				for (const transaction of transactions) {
+					transactionsInBlock.push(transaction.hash);
 					const isAccountCreated = await getAccount(transaction.to);
 
 					if (!isAccountCreated && transaction.to !== null) {
@@ -48,7 +50,7 @@ export async function getTransactionByBlock(
 
 					if (transaction && transaction.hash) {
 						console.log(`transaction found ${transaction.hash}`);
-						const response = await createEthereumTransaction(
+						await createEthereumTransaction(
 							{
 								txHash: transaction.hash,
 								gas: 21000,
@@ -60,6 +62,19 @@ export async function getTransactionByBlock(
 							startFromBlock
 						);
 					}
+				}
+
+				const blockWithTransactions = {
+					[startFromBlock]: {
+						transactions: transactionsInBlock,
+					},
+				};
+
+				if (blockWithTransactions[startFromBlock].transactions.length > 0) {
+					await writeLogFile(
+						`logs/blocks-with-transactions.json`,
+						JSON.stringify(blockWithTransactions)
+					);
 				}
 			}
 		}

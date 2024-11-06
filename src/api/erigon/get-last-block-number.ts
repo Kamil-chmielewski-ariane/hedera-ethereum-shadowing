@@ -1,5 +1,6 @@
 import { axiosInstanceErigon } from '@/api/config';
 import { isAxiosError } from 'axios';
+import {errorHandler} from "@/utils/helpers/api/error-handler";
 
 export async function getLastBlockNumber(): Promise<any> {
 	try {
@@ -14,18 +15,6 @@ export async function getLastBlockNumber(): Promise<any> {
 			return response.data.result;
 		}
 	} catch (error) {
-		if (isAxiosError(error)) {
-			console.error('Error fetching raw transaction:', error.response?.data);
-			throw new Error(
-				'Error fetching raw transaction: ' +
-					JSON.stringify(error.response?.data)
-			);
-		} else {
-			console.error('Unknown error:', error);
-			throw new Error(
-				'Error fetching raw transaction: ' +
-					(error instanceof Error ? error.message : String(error))
-			);
-		}
+		errorHandler(error, 'Error fetching last block number');
 	}
 }

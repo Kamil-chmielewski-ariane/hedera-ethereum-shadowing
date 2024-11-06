@@ -1,5 +1,6 @@
 import { axiosInstanceHederaRpcApi } from '@/api/config';
 import { isAxiosError } from 'axios';
+import { errorHandler } from '@/utils/helpers/api/error-handler';
 
 export async function sendRawTransaction(txnHash: string) {
 	try {
@@ -15,13 +16,6 @@ export async function sendRawTransaction(txnHash: string) {
 			return response.data.result;
 		}
 	} catch (error) {
-		if (isAxiosError(error)) {
-			return error.response?.data
-		} else {
-			throw new Error(
-				'Error fetching raw transaction: ' +
-					(error instanceof Error ? error.message : String(error))
-			);
-		}
+		errorHandler(error, 'Error in sendRawTransaction');
 	}
 }

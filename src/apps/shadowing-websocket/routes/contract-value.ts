@@ -1,21 +1,27 @@
 import { Router, Request, Response } from 'express';
 import { WebSocketServer } from 'ws';
-import { ContractType } from '@/utils/types';
+import { TransactionStatusResponse } from '@/utils/types';
 
 const contractValueRouter = (wss: WebSocketServer) => {
 	const router = Router();
 
-	router.post('/', (req: Request<ContractType>, res: Response) => {
+	router.post('/', (req: Request<TransactionStatusResponse>, res: Response) => {
+		console.log('reqBody', req.body);
+
 		const contractData = {
-			transactionId: req.body.transactionId,
-			type: req.body.type,
-			blockNumber: req.body.blockNumber,
-			addressTo: req.body.addressTo,
-			txTimestamp: req.body.txTimestamp,
-			timestamp: req.body.timestamp,
-			currentTimestamp: req.body.currentTimestamp,
-			hederaTransactionHash: req.body.hederaTransactionHash,
-			ethereumTransactionHash: req.body.ethereumTransactionHash,
+			transactionId: req.body.transactionPayload.transactionId,
+			type: req.body.transactionPayload.type,
+			blockNumber: req.body.transactionPayload.blockNumber,
+			addressTo: req.body.transactionPayload.addressTo,
+			txTimestamp: req.body.transactionPayload.txTimestamp,
+			timestamp: req.body.transactionPayload.timestamp,
+			currentTimestamp: req.body.transactionPayload.currentTimestamp,
+			hederaTransactionHash: req.body.transactionPayload.hederaTransactionHash,
+			ethereumTransactionHash:
+				req.body.transactionPayload.ethereumTransactionHash,
+			transactionStatus: req.body.transactionPayload.transactionStatus,
+			status: req.body.status,
+			error: req.body.error,
 		};
 
 		wss.clients.forEach((client) => {
