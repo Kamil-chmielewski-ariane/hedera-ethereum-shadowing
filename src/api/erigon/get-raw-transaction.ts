@@ -1,5 +1,4 @@
 import { axiosInstanceErigon } from '@/api/config';
-import { isAxiosError } from 'axios';
 import { errorHandler } from '@/utils/helpers/api/error-handler';
 
 // TODO to type promise response objects

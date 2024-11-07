@@ -1,5 +1,4 @@
-import { axiosInstanceErigon, axiosInstanceHederaRpcApi } from '@/api/config';
-import { isAxiosError } from 'axios';
+import { axiosInstanceErigon } from '@/api/config';
 import { errorHandler } from '@/utils/helpers/api/error-handler';
 
 export async function getBlockByHashErigon(blockHash: string): Promise<any> {

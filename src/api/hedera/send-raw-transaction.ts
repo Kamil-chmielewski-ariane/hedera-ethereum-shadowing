@@ -1,5 +1,4 @@
 import { axiosInstanceHederaRpcApi } from '@/api/config';
-import { isAxiosError } from 'axios';
 import { errorHandler } from '@/utils/helpers/api/error-handler';
 
 export async function sendRawTransaction(txnHash: string) {
