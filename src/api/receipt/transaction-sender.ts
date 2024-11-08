@@ -33,6 +33,6 @@ export async function sendTransactionInfoToReceiptApi(
 			console.log('Transaction was send successfully');
 		}
 	} catch (error) {
-		errorHandler(error, 'Error fetching transaction info');
+		errorHandler(error, 'Error fetching transaction info', false);
 	}
 }
