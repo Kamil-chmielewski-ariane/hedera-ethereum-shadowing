@@ -7,6 +7,5 @@ module.exports = {
         log_date_format: "YYYY-MM-DD HH:mm",
         max_memory_restart: '2G',
         autorestart: false,
-        log_date_format: "YYYY-MM-DD HH:mm"
     }]
 }
