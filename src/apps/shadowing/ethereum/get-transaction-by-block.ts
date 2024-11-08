@@ -13,9 +13,9 @@ export async function getTransactionByBlock(
 	client: Client,
 	nodeAccountId: AccountId
 ) {
-	const transactionsInBlock = [];
 	try {
 		for (; startFromBlock < numberOfBlocks; startFromBlock++) {
+			const transactionsInBlock = [];
 			console.log('currentBlockNumber', startFromBlock);
 			let block = await getBlockByNumber(startFromBlock.toString(16));
 			const transactions = block.transactions;

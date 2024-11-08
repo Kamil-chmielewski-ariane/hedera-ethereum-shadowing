@@ -11,21 +11,3 @@ export interface StateData {
 	timestamp: string;
 	address: string;
 }
-
-export interface ContractType {
-	transactionId: string;
-	type: string;
-	blockNumber: number;
-	addressTo: string;
-	txTimestamp: string;
-	currentTimestamp: string;
-	ethereumTransactionHash: string | null;
-	hederaTransactionHash: string;
-	transactionStatus: string;
-}
-
-export interface TransactionStatusResponse {
-	transactionPayload: ContractType;
-	status: string;
-	error: string;
-}
