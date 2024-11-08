@@ -17,7 +17,6 @@ export async function sendHbarToAlias(
 	currentBlock: number,
 	nodeAccountId: AccountId
 ) {
-
 	try {
 		console.log(`Running transaction ${accountId}, ${evmAddress}`);
 		const transactionId = TransactionId.generate(accountId);

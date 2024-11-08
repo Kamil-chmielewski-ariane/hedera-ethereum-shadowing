@@ -36,7 +36,7 @@ export async function createEthereumTransaction(
 			.sign(PrivateKey.fromString(String(OPERATOR_PRIVATE)));
 		await new Promise((resolve) => setTimeout(resolve, 1));
 		const txResponse = await transaction.execute(client);
-		console.log(txResponse.toJSON())
+		console.log(txResponse.toJSON());
 		const transactionTimestamp = new Date().toISOString();
 		await sendTransactionInfoToReceiptApi({
 			transactionId: txId,
@@ -49,19 +49,24 @@ export async function createEthereumTransaction(
 		});
 		return txResponse.toJSON();
 	} catch (error: any) {
-		if (error.status && error.status === "DUPLICATE_TRANSACTION") {
+		if (error.status && error.status === 'DUPLICATE_TRANSACTION') {
 			await writeLogFile(
 				`logs/create-ethereum-transaction-error.txt`,
 				`DUPLICATE TRASNSACTION: \nFound error at transaction ${transactionData.txHash} in block ${currentBlock} Transaction Type: EthereumTransaction \n ${JSON.stringify(error)} \n`
 			);
-			await createEthereumTransaction(transactionData, accountId, client, nodeAccountId, accountTo, currentBlock);
-		}
-		else {
+			await createEthereumTransaction(
+				transactionData,
+				accountId,
+				client,
+				nodeAccountId,
+				accountTo,
+				currentBlock
+			);
+		} else {
 			await writeLogFile(
 				`logs/create-ethereum-transaction-error.txt`,
 				`Found error at transaction ${transactionData.txHash} in block ${currentBlock} Transaction Type: EthereumTransaction \n ${JSON.stringify(error)} \n`
 			);
 		}
-		
 	}
 }

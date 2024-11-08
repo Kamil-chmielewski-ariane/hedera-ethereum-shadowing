@@ -19,4 +19,4 @@ export const axiosReceiptApi = axios.create({
 	headers: {
 		'Content-Type': 'application/json',
 	},
-})
+});

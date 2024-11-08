@@ -8,7 +8,7 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 const OPERATOR_PRIVATE = process.env.OPERATOR_PRIVATE;
-const nodeAccountId = new AccountId(3)
+const nodeAccountId = new AccountId(3);
 const node = { '127.0.0.1:50211': nodeAccountId };
 const genesisTransactions = getAllGenesisData();
 const client = Client.forNetwork(node).setMirrorNetwork('127.0.0.1:5600');

@@ -14,14 +14,15 @@ export async function sendBlockReward(
 	transactions: any[],
 	nodeAccountId: AccountId
 ) {
-	const convertedCurrentBlock = convertHexIntoDecimal(currentBlock)
+	const convertedCurrentBlock = convertHexIntoDecimal(currentBlock);
 	const miners = await getMinerAndUnclesBalance(currentBlock);
 	for (const miner of miners) {
 		if (miner.id && miner.balanceBefore && miner.balanceAfter) {
 			let minerBalanceDifference = BigNumber.from(0);
-			const minerBlockReward = BigNumber.from(String(miner.balanceAfter)).sub(String(miner.balanceBefore));
+			const minerBlockReward = BigNumber.from(String(miner.balanceAfter)).sub(
+				String(miner.balanceBefore)
+			);
 			for (const transaction of transactions) {
-
 				if (transaction.to === miner.id) {
 					console.log(
 						`Miner "TO" found in transaction ${transaction.hash} for account ${miner.id}`
@@ -30,30 +31,48 @@ export async function sendBlockReward(
 						`Removing ${BigNumber.from(String(transaction.value)).toString()} from the miner account balance`
 					);
 					console.log('amount', transaction.value);
-					minerBalanceDifference = minerBalanceDifference.sub(BigNumber.from(String(transaction.value)))
+					minerBalanceDifference = minerBalanceDifference.sub(
+						BigNumber.from(String(transaction.value))
+					);
 				}
-		
+
 				if (transaction.from === miner.id) {
 					console.log(
 						`Miner "FROM" found in transaction ${transaction.hash} for account ${miner.id}`
 					);
-					console.log(`Adding money ${transaction.value} to the minter balance`);
-					console.log('amount', BigNumber.from(String(transaction.value)).toString());
-		
-					const fee = calculateFee(transaction.gas, transaction.gasPrice)
-					minerBalanceDifference = BigNumber.from(String(transaction.value)).add(BigNumber.from(String(fee)))
+					console.log(
+						`Adding money ${transaction.value} to the minter balance`
+					);
+					console.log(
+						'amount',
+						BigNumber.from(String(transaction.value)).toString()
+					);
+
+					const fee = calculateFee(transaction.gas, transaction.gasPrice);
+					minerBalanceDifference = BigNumber.from(
+						String(transaction.value)
+					).add(BigNumber.from(String(fee)));
 				}
 			}
-			const minerRewardPriceWei = minerBlockReward.add(BigNumber.from(minerBalanceDifference));
-			const minerRewardEth = ethers.formatEther(minerRewardPriceWei.toString())
-		
-			const minerRewardTinyBar = Math.floor(
-				Number(minerRewardEth) * 10 ** 8
+			const minerRewardPriceWei = minerBlockReward.add(
+				BigNumber.from(minerBalanceDifference)
 			);
-		
-			console.log(`sending to miner ${miner.id} money reward: ${minerRewardEth}`);
-		
-			await sendTinyBarToAlias(accountId, miner.id, minerRewardTinyBar, client, convertedCurrentBlock, nodeAccountId);
+			const minerRewardEth = ethers.formatEther(minerRewardPriceWei.toString());
+
+			const minerRewardTinyBar = Math.floor(Number(minerRewardEth) * 10 ** 8);
+
+			console.log(
+				`sending to miner ${miner.id} money reward: ${minerRewardEth}`
+			);
+
+			await sendTinyBarToAlias(
+				accountId,
+				miner.id,
+				minerRewardTinyBar,
+				client,
+				convertedCurrentBlock,
+				nodeAccountId
+			);
 		}
 	}
 }
