@@ -15,8 +15,8 @@ export const axiosInstanceHederaRpcApi = axios.create({
 });
 
 export const axiosReceiptApi = axios.create({
-	baseURL: 'http://localhost:9000/',
+	baseURL: 'http://localhost:8081/',
 	headers: {
 		'Content-Type': 'application/json',
 	},
-})
+});

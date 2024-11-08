@@ -6,6 +6,7 @@ module.exports = {
         out_file : "./logs/hedera-shadowing-out-full.log",
         log_date_format: "YYYY-MM-DD HH:mm",
         max_memory_restart: '2G',
-        autorestart: false
+        autorestart: false,
+        log_date_format: "YYYY-MM-DD HH:mm"
     }]
 }

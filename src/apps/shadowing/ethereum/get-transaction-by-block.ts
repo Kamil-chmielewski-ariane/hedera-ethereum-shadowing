@@ -1,10 +1,10 @@
 import { getBlockByNumber } from '@/api/erigon/get-block-by-number';
 import { AccountId, Client } from '@hashgraph/sdk';
-import { compareStateForContractsInBlock } from '@/apps/shadowing/blockchain-utils/compare-state-root-of-blocks';
 import { sendBlockReward } from '@/apps/shadowing/transfers/send-block-reward';
 import { createEthereumTransaction } from '@/apps/shadowing/ethereum/create-ethereum-transaction';
-import {getAccount} from "@/api/hedera-mirror-node/get-account";
-import {sendHbarToAlias} from "@/apps/shadowing/transfers/send-hbar-to-alias";
+import { getAccount } from '@/api/hedera-mirror-node/get-account';
+import { sendHbarToAlias } from '@/apps/shadowing/transfers/send-hbar-to-alias';
+import { writeLogFile } from '@/utils/helpers/write-log-file';
 
 export async function getTransactionByBlock(
 	startFromBlock: number,
@@ -14,8 +14,8 @@ export async function getTransactionByBlock(
 	nodeAccountId: AccountId
 ) {
 	try {
-		let hederaLastTransactionHashInBlock = ''
 		for (; startFromBlock < numberOfBlocks; startFromBlock++) {
+			const transactionsInBlock = [];
 			console.log('currentBlockNumber', startFromBlock);
 			let block = await getBlockByNumber(startFromBlock.toString(16));
 			const transactions = block.transactions;
@@ -31,10 +31,13 @@ export async function getTransactionByBlock(
 				console.log(`transacion in block ${startFromBlock} found...`);
 				console.log('preceding iterate through transfers...');
 				for (const transaction of transactions) {
-					const isAccountCreated = await getAccount(transaction.to)
+					transactionsInBlock.push(transaction.hash);
+					const isAccountCreated = await getAccount(transaction.to);
 
 					if (!isAccountCreated && transaction.to !== null) {
-						console.log('account not found, created new account and sending 1 hbar...')
+						console.log(
+							'account not found, created new account and sending 1 hbar...'
+						);
 						await sendHbarToAlias(
 							accountId,
 							transaction.to,
@@ -46,8 +49,8 @@ export async function getTransactionByBlock(
 					}
 
 					if (transaction && transaction.hash) {
-						console.log(`transaction found ${transaction.hash}`)
-						const response = await createEthereumTransaction(
+						console.log(`transaction found ${transaction.hash}`);
+						await createEthereumTransaction(
 							{
 								txHash: transaction.hash,
 								gas: 21000,
@@ -58,16 +61,24 @@ export async function getTransactionByBlock(
 							transaction.to,
 							startFromBlock
 						);
-						hederaLastTransactionHashInBlock = response?.transactionHash;
 					}
-					console.log(hederaLastTransactionHashInBlock, 'hederaLastTransactionHashInBlock');
 				}
-				await new Promise(resolve => setTimeout(resolve, 2000));
-				await compareStateForContractsInBlock(block, transactions, hederaLastTransactionHashInBlock);
+
+				const blockWithTransactions = {
+					[startFromBlock]: {
+						transactions: transactionsInBlock,
+					},
+				};
+
+				if (blockWithTransactions[startFromBlock].transactions.length > 0) {
+					await writeLogFile(
+						`logs/blocks-with-transactions.json`,
+						JSON.stringify(blockWithTransactions)
+					);
+				}
 			}
 		}
 	} catch (error) {
 		console.log(error);
 	}
 }
-

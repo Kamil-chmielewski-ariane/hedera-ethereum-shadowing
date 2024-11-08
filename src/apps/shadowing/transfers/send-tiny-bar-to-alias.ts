@@ -1,5 +1,11 @@
 import { sendTransactionInfoToReceiptApi } from '@/api/receipt/transaction-sender';
-import { AccountId, Client, Hbar, TransactionId, TransferTransaction } from '@hashgraph/sdk';
+import {
+	AccountId,
+	Client,
+	Hbar,
+	TransactionId,
+	TransferTransaction,
+} from '@hashgraph/sdk';
 import { writeLogFile } from '@/utils/helpers/write-log-file';
 export async function sendTinyBarToAlias(
 	accountId: AccountId,
@@ -11,29 +17,48 @@ export async function sendTinyBarToAlias(
 ) {
 	try {
 		console.log(`Running tinybar transaction ${accountId}, ${evmAddress}`);
-		const txId = TransactionId.generate(accountId);
+		const transactionId = TransactionId.generate(accountId);
 		const transaction = new TransferTransaction()
 			.addHbarTransfer(accountId, Hbar.fromTinybars(amountHBar).negated())
 			.addHbarTransfer(evmAddress, Hbar.fromTinybars(amountHBar))
-			.setTransactionId(txId)
+			.setTransactionId(transactionId)
 			.setNodeAccountIds([nodeAccountId])
 			.freeze();
 
 		// Execute the transaction
-		await new Promise(resolve => setTimeout(resolve, 1));
+		await new Promise((resolve) => setTimeout(resolve, 1));
 		await transaction.execute(client);
-		const txTimestamp = new Date().toISOString();
-		// TODO: uncomment when receipt API is ready
-		// sendTransactionInfoToReceiptApi(txId, evmAddress, currentBlock, "TRANSFER", txTimestamp);
+		const transactionTimestamp = new Date().toISOString();
+		await sendTransactionInfoToReceiptApi({
+			transactionId: transactionId,
+			evmAddress: evmAddress,
+			currentBlock: currentBlock,
+			transactionType: 'TRANSFER',
+			txTimestamp: transactionTimestamp,
+			ethereumTransactionHash: null,
+			hederaTransactionHash: '',
+		});
 	} catch (error: any) {
-		if (error.status && error.status === "DUPLICATE_TRANSACTION") {
+		if (error.status && error.status === 'DUPLICATE_TRANSACTION') {
 			console.error('Error sending tinyBar to alias:', error);
-			await writeLogFile(`logs/send-tiny-bar-to-alias-error.txt`, `I am rerunning transaction. Found error in block ${currentBlock} Transaction Type: TransferTransaction  \n ${JSON.stringify(error)} \n`);
-			sendTinyBarToAlias(accountId, evmAddress, amountHBar, client, currentBlock, nodeAccountId);
-		}
-		else {
+			await writeLogFile(
+				`logs/send-tiny-bar-to-alias-error.txt`,
+				`I am rerunning transaction. Found error in block ${currentBlock} Transaction Type: TransferTransaction  \n ${JSON.stringify(error)} \n`
+			);
+			await sendTinyBarToAlias(
+				accountId,
+				evmAddress,
+				amountHBar,
+				client,
+				currentBlock,
+				nodeAccountId
+			);
+		} else {
 			console.error('Error sending tinyBar to alias:', error);
-			await writeLogFile(`logs/send-tiny-bar-to-alias-error.txt`, `Found error in block ${currentBlock} Transaction Type: TransferTransaction  \n ${JSON.stringify(error)} \n`);
+			await writeLogFile(
+				`logs/send-tiny-bar-to-alias-error.txt`,
+				`Found error in block ${currentBlock} Transaction Type: TransferTransaction  \n ${JSON.stringify(error)} \n`
+			);
 		}
 	}
 }

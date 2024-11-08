@@ -1,6 +1,5 @@
-import frontier from '@/frontier.json';
 import genesis from '@/genesis_block_transactions.json';
-import { Account, Genesis } from '@/utils/types';
+import { Genesis } from '@/utils/types';
 
 export class GenesisData {
 	toAccount: string;
@@ -10,11 +9,6 @@ export class GenesisData {
 		this.toAccount = _toAccount;
 		this.amount = _amount;
 	}
-}
-
-export function getAllFrontierData() {
-	const accounts: Account = frontier.alloc;
-	return accounts;
 }
 
 export function getAllGenesisData() {
