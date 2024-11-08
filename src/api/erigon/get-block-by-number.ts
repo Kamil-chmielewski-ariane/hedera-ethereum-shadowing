@@ -1,9 +1,7 @@
 import { axiosInstanceErigon } from '@/api/config';
-import { isAxiosError } from 'axios';
+import { errorHandler } from '@/utils/helpers/api/error-handler';
 
-export async function getBlockByNumber(
-	blockNumber: string
-): Promise<any> {
+export async function getBlockByNumber(blockNumber: string): Promise<any> {
 	try {
 		const response = await axiosInstanceErigon.post('', {
 			method: 'eth_getBlockByNumber',
@@ -17,19 +15,6 @@ export async function getBlockByNumber(
 			return response.data.result;
 		}
 	} catch (error) {
-		if (isAxiosError(error)) {
-			console.error('Error fetching raw transaction:', error.response?.data);
-			throw new Error(
-				'Error fetching raw transaction: ' +
-					JSON.stringify(error.response?.data)
-			);
-		} else {
-			// if error not axios error, use generic error
-			console.error('Unknown error:', error);
-			throw new Error(
-				'Error fetching raw transaction: ' +
-					(error instanceof Error ? error.message : String(error))
-			);
-		}
+		errorHandler(error, 'error in getBlockByNumber');
 	}
 }

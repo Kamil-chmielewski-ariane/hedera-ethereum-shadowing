@@ -1,11 +1,11 @@
 import { axiosInstanceHederaRpcApi } from '@/api/config';
 import { errorHandler } from '@/utils/helpers/api/error-handler';
 
-export async function sendRawTransaction(txnHash: string) {
+export async function getBlockByHashHedera(blockHash: string): Promise<any> {
 	try {
 		const response = await axiosInstanceHederaRpcApi.post('', {
-			method: 'eth_sendRawTransaction',
-			params: [txnHash],
+			method: 'eth_getBlockByHash',
+			params: [`${blockHash}`, false],
 			id: 1,
 			jsonrpc: '2.0',
 		});
@@ -15,6 +15,6 @@ export async function sendRawTransaction(txnHash: string) {
 			return response.data.result;
 		}
 	} catch (error) {
-		errorHandler(error, 'Error in sendRawTransaction');
+		errorHandler(error, 'Error getBlockByHashHedera');
 	}
 }

@@ -1,4 +1,4 @@
-export type Account = Record<string, { balance: string }>;
+export type TransactionType = 'TRANSFER' | 'TRANSFER_TRANSACTION';
 
 export type Genesis = {
 	toAccount: string;

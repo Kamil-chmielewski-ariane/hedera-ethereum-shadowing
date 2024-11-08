@@ -22,10 +22,15 @@ export async function startNetworkReplicationProcess(
 			0,
 			nodeAccountId
 		);
-
 	}
 	const lastBlockNumber = await getLastBlockNumber();
 	const convertedBlockNumber = convertHexIntoDecimal(lastBlockNumber);
 
-	await getTransactionByBlock(1, convertedBlockNumber, accountId, client, nodeAccountId);
+	await getTransactionByBlock(
+		1,
+		convertedBlockNumber,
+		accountId,
+		client,
+		nodeAccountId
+	);
 }
