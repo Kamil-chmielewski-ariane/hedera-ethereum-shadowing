@@ -14,6 +14,8 @@ dotenv.config();
 
 const OPERATOR_PRIVATE = process.env.OPERATOR_PRIVATE;
 
+// Create a hedera transaction using a raw transaction Data from Erigon api. More info here
+// https://docs.hedera.com/hedera/sdks-and-apis/sdks/smart-contracts/ethereum-transaction
 export async function createEthereumTransaction(
 	transactionData: { txHash: string; gas: number },
 	accountId: AccountId,
@@ -38,6 +40,7 @@ export async function createEthereumTransaction(
 		const txResponse = await transaction.execute(client);
 		console.log(txResponse.toJSON());
 		const transactionTimestamp = new Date().toISOString();
+		// Sends transaction data to receipt api to check if this transaction is a smart contract
 		await sendTransactionInfoToReceiptApi({
 			transactionId: txId,
 			ethereumTransactionHash: null,

@@ -11,6 +11,7 @@ export async function startNetworkReplicationProcess(
 	client: Client,
 	nodeAccountId: AccountId
 ) {
+	// Create all accounts from the genesis block
 	for (const transaction of genesisTransactions) {
 		console.log('iterateThoughGenesisTransactions', transaction);
 
@@ -23,9 +24,12 @@ export async function startNetworkReplicationProcess(
 			nodeAccountId
 		);
 	}
+
+	// Get last block number from Erigon api
 	const lastBlockNumber = await getLastBlockNumber();
 	const convertedBlockNumber = convertHexIntoDecimal(lastBlockNumber);
 
+	// Iterate for all blocks in current net from start to end.
 	await getTransactionByBlock(
 		1,
 		convertedBlockNumber,

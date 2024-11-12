@@ -1,41 +1,81 @@
-A script was created using TypeScript and Node.js, whose purpose is to extract the raw transaction hex from a provided transaction hash (txn hash).
+[//]: # (## Setup tunnel to the Node VM)
 
-The function takes a parameter transactionToken, which represents the transaction hash (txn hash).
-Using the getTransaction function, we retrieve an object based on the provided transaction hash.
-We then assign the elements retrieved from the getTransaction function to two objects: unsignedTx and signature.
-Finally, using the serializeTransaction function, we serialize the unsignedTx and signature objects into a hex string format.
+[//]: # ()
+[//]: # (1. Set env variable with remote host)
 
-1. Initialize a Hedera local node based on the genesis block -> Create a function for minting tokens based on the balance of a given account -> The local Hedera node should have debugging enabled
+[//]: # (```bash)
 
-2. Fetch all transactions from block n
+[//]: # (export TUNNEL_HOST=user@IP_ADDR)
 
-3. For each transaction in the block, check if the account from which the transaction was executed exists:
-   - If no, create the account
-   - If yes, ignore
-4. Get the getRawTransactionBody from Erigon
-5. Send the getRawTransaction to the Hedera local node
-6. Handle the block reward
-7. Repeat for block n + 1
+[//]: # (```)
 
-- Check how to increase the gas price in the local node -> Priority, we cannot proceed without this.
-- Check if there are any issues with transactions after increasing the gas price.
-- Handle the refund of the fee after a transaction is executed.
-- Handle the distribution of the block reward after creating the next block.
-- Find an RPC method to check if a given account exists.
+[//]: # ()
+[//]: # (2. Setup SSH tunnel)
 
-## Setup tunnel to the Node VM
+[//]: # (```bash)
 
-1. Set env variable with remote host
-```bash
-export TUNNEL_HOST=user@IP_ADDR
+[//]: # (ssh -L  8080:localhost:8080 -fN $TUNNEL_HOST && \)
+
+[//]: # (ssh -L  9545:localhost:9545 -fN $TUNNEL_HOST && \)
+
+[//]: # (ssh -L  5600:localhost:5600 -fN $TUNNEL_HOST && \)
+
+[//]: # (ssh -L  5551:localhost:5551 -fN $TUNNEL_HOST && \)
+
+[//]: # (ssh -L  7546:localhost:7546 -fN $TUNNEL_HOST && \)
+
+[//]: # (ssh -L  50211:localhost:50211 -fN $TUNNEL_HOST)
+
+[//]: # (```)
+
+# Hedera Shadowing
+
+Goal of Hedera shadowing is research the Hedera EVM and Ethereum EVM equivalence.
+Script achieve this re-executing all Ethereum transacrtion on by one on local Hedea network. Each transaction is verified by states match 
+
+## Recommend tools
+* [Hedera local node ](https://github.com/hashgraph/hedera-local-node)
+* [Eirgon api](https://erigon.gitbook.io/erigon/basic-usage/getting-started)
+
+## Requirements
+* [Node.js](https://nodejs.org/en) >= 22.x
+* [PNPM](https://pnpm.io/) >= 9.x
+* [Docker](https://www.docker.com/) > 24.x
+* [Docker Compose](https://docs.docker.com/compose/) > 2.22.0
+* [PM2](https://pm2.keymetrics.io/) - Optional
+* Minimum 16GB RAM
+
+## Usage
+
+Create a ```.env``` file in the root of project and add all variables as in ```.env.example```. Api key for ```OPERATOR_PRIVATE``` is in this article
+[@hashgraph/sdk - client](https://docs.hedera.com/hedera/sdks-and-apis/sdks/client)
+
+````
+OPERATOR_PRIVATE="OPERATOR_PRIVATE"
+````
+
+## Instalation
+
+To run this project you have first download and install all require packages and turn on the hedera local node tool. Also connection to erigon api is required for the app to work.
+
+##### PNPM
+
+```
+pnpm install
 ```
 
-2. Setup SSH tunnel
-```bash
-ssh -L  8080:localhost:8080 -fN $TUNNEL_HOST && \
-ssh -L  9545:localhost:9545 -fN $TUNNEL_HOST && \
-ssh -L  5600:localhost:5600 -fN $TUNNEL_HOST && \
-ssh -L  5551:localhost:5551 -fN $TUNNEL_HOST && \
-ssh -L  7546:localhost:7546 -fN $TUNNEL_HOST && \
-ssh -L  50211:localhost:50211 -fN $TUNNEL_HOST
+```pnpm run dev``` to start shadowing app
+
+##### PM2 - Optional
+
+You can also run this app using pm2 tool. The config file is a ```ecosystem.config.js```
+
 ```
+pm2 start ecosystem.config.js
+```
+
+#### Creating logs
+
+The hedera shadowing app is always creating logs for
+   - Errors
+   - Blocks with transactions
