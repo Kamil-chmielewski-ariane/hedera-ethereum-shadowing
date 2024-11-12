@@ -7,8 +7,9 @@ import {
 } from '@hashgraph/sdk';
 import { sendTransactionInfoToReceiptApi } from '@/api/receipt/transaction-sender';
 import { writeLogFile } from '@/utils/helpers/write-log-file';
-import axios from 'axios';
 
+// Creates a hedera account using TransferTransaction function. More info here
+// https://docs.hedera.com/hedera/getting-started/transfer-hbar
 export async function sendHbarToAlias(
 	accountId: AccountId,
 	evmAddress: string,
@@ -31,6 +32,7 @@ export async function sendHbarToAlias(
 		await new Promise((resolve) => setTimeout(resolve, 1));
 		const txResponse = await transaction.execute(client);
 		const txTimestamp = new Date().toISOString();
+		// Sends transaction data to receipt api to check if this transaction is a smart contract
 		await sendTransactionInfoToReceiptApi({
 			ethereumTransactionHash: null,
 			hederaTransactionHash: txResponse.transactionHash,

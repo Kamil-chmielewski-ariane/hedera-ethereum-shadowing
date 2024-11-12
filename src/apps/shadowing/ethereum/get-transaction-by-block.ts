@@ -19,6 +19,7 @@ export async function getTransactionByBlock(
 			console.log('currentBlockNumber', startFromBlock);
 			let block = await getBlockByNumber(startFromBlock.toString(16));
 			const transactions = block.transactions;
+			// Sends block reward for the current miner, and uncles.
 			await sendBlockReward(
 				accountId,
 				client,
@@ -34,10 +35,13 @@ export async function getTransactionByBlock(
 					transactionsInBlock.push(transaction.hash);
 					const isAccountCreated = await getAccount(transaction.to);
 
+					//Checks if transaction.to is not a smart contract creation and is account exist in hedera mirror node
 					if (!isAccountCreated && transaction.to !== null) {
 						console.log(
 							'account not found, created new account and sending 1 hbar...'
 						);
+
+						// Create a hedera account.
 						await sendHbarToAlias(
 							accountId,
 							transaction.to,
@@ -50,6 +54,7 @@ export async function getTransactionByBlock(
 
 					if (transaction && transaction.hash) {
 						console.log(`transaction found ${transaction.hash}`);
+						//Create hedera transaction from ethereum transaction
 						await createEthereumTransaction(
 							{
 								txHash: transaction.hash,
@@ -70,6 +75,7 @@ export async function getTransactionByBlock(
 					},
 				};
 
+				// Add new block with transactions if there is more than 0
 				if (blockWithTransactions[startFromBlock].transactions.length > 0) {
 					await writeLogFile(
 						`logs/blocks-with-transactions.json`,

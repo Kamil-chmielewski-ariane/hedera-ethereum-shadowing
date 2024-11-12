@@ -3,6 +3,9 @@ import { Client, AccountId } from '@hashgraph/sdk';
 import dotenv from 'dotenv';
 import { startNetworkReplicationProcess } from '@/apps/shadowing/blockchain-utils/start-network-replication-process';
 dotenv.config();
+
+// Defining operator account with private key. More info here https://docs.hedera.com/hedera/sdks-and-apis/sdks/client
+
 const OPERATOR_PRIVATE = process.env.OPERATOR_PRIVATE;
 
 const HARDCODED_NUMBER_OF_BLOCKS = 100000;
