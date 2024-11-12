@@ -31,10 +31,10 @@
 # Hedera Shadowing
 
 Goal of Hedera shadowing is research the Hedera EVM and Ethereum EVM equivalence.
-Script achieve this re-executing all Ethereum transacrtion on by one on local Hedea network. Each transaction is verified by states match 
+Script achieve this re-executing all Ethereum transaction on by one on local Hedera network. Each transaction is verified by states match 
 
 ## Recommend tools
-* [Hedera local node ](https://github.com/hashgraph/hedera-local-node)
+* [Hedera local node](https://github.com/hashgraph/hedera-local-node)
 * [Eirgon api](https://erigon.gitbook.io/erigon/basic-usage/getting-started)
 
 ## Requirements
@@ -49,6 +49,8 @@ Script achieve this re-executing all Ethereum transacrtion on by one on local He
 
 Create a ```.env``` file in the root of project and add all variables as in ```.env.example```. Api key for ```OPERATOR_PRIVATE``` is in this article
 [@hashgraph/sdk - client](https://docs.hedera.com/hedera/sdks-and-apis/sdks/client)
+
+Add ```logs``` directory in the root of the project for logs
 
 ````
 OPERATOR_PRIVATE="OPERATOR_PRIVATE"
