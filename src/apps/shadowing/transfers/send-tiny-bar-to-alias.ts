@@ -7,6 +7,7 @@ import {
 	TransferTransaction,
 } from '@hashgraph/sdk';
 import { writeLogFile } from '@/utils/helpers/write-log-file';
+import shell from 'shelljs';
 export async function sendTinyBarToAlias(
 	accountId: AccountId,
 	evmAddress: string,
@@ -39,12 +40,23 @@ export async function sendTinyBarToAlias(
 			hederaTransactionHash: '',
 		});
 	} catch (error: any) {
-		if (error.status && error.status === 'DUPLICATE_TRANSACTION') {
+		if (error && error.status === 'DUPLICATE_TRANSACTION') {
 			console.error('Error sending tinyBar to alias:', error);
 			await writeLogFile(
 				`logs/send-tiny-bar-to-alias-error.txt`,
-				`I am rerunning transaction. Found error in block ${currentBlock} Transaction Type: TransferTransaction  \n ${JSON.stringify(error)} \n`
+				`I am rerunning transaction. Found error in block ${currentBlock} Transaction Type: TransferTransaction  \n ${error} \n`
 			);
+			await sendTinyBarToAlias(
+				accountId,
+				evmAddress,
+				amountHBar,
+				client,
+				currentBlock,
+				nodeAccountId
+			);
+		} else if (error && error.status === 'PLATFORM_NOT_ACTIVE') {
+			shell.exec('docker restart network-node');
+			await new Promise((resolve) => setTimeout(resolve, 30000));
 			await sendTinyBarToAlias(
 				accountId,
 				evmAddress,
