@@ -8,6 +8,7 @@ import {
 import { sendTransactionInfoToReceiptApi } from '@/api/receipt/transaction-sender';
 import { writeLogFile } from '@/utils/helpers/write-log-file';
 import shell from 'shelljs';
+import { resetNetworkNode } from '@/utils/helpers/reset-network-node';
 
 // Creates a hedera account using TransferTransaction function. More info here
 // https://docs.hedera.com/hedera/getting-started/transfer-hbar
@@ -44,7 +45,8 @@ export async function sendHbarToAlias(
 			transactionId: transactionId,
 		});
 	} catch (error: any) {
-		console.log('ERROR', JSON.stringify(error));
+		console.log('ERROR', (error.message));
+
 		if (error && error.status === 'DUPLICATE_TRANSACTION') {
 			console.error('Error sending tinyBar to alias:', error);
 			await writeLogFile(
@@ -59,9 +61,14 @@ export async function sendHbarToAlias(
 				currentBlock,
 				nodeAccountId
 			);
-		} else if (error && error.status === 'PLATFORM_NOT_ACTIVE') {
-			shell.exec('docker restart network-node');
-			await new Promise((resolve) => setTimeout(resolve, 30000));
+		}
+
+		if (error && error.includes('PLATFORM_NOT_ACTIVE')) {
+			await writeLogFile(
+				`logs/send-tiny-bar-to-alias-error.txt`,
+				`Found error in block ${currentBlock} Transaction Type: TransferTransaction  \n ${error} \n`
+			);
+			await resetNetworkNode();
 			await sendHbarToAlias(
 				accountId,
 				evmAddress,
@@ -70,12 +77,12 @@ export async function sendHbarToAlias(
 				currentBlock,
 				nodeAccountId
 			);
-		} else {
-			console.error('Error sending tinyBar to alias:', error);
-			await writeLogFile(
-				`logs/send-tiny-bar-to-alias-error.txt`,
-				`Found error in block ${currentBlock} Transaction Type: TransferTransaction  \n ${JSON.stringify(error)} \n`
-			);
 		}
+
+		console.error('Error sending tinyBar to alias:', error);
+		await writeLogFile(
+			`logs/send-tiny-bar-to-alias-error.txt`,
+			`Found error in block ${currentBlock} Transaction Type: TransferTransaction  \n ${JSON.stringify(error)} \n`
+		);
 	}
 }
