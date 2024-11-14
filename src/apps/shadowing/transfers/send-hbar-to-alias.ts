@@ -44,7 +44,6 @@ export async function sendHbarToAlias(
 			transactionId: transactionId,
 		});
 	} catch (error: any) {
-
 		if (error && error.status === 'DUPLICATE_TRANSACTION') {
 			console.error('Error sending tinyBar to alias:', error);
 			await writeLogFile(
