@@ -7,7 +7,6 @@ import {
 } from '@hashgraph/sdk';
 import { sendTransactionInfoToReceiptApi } from '@/api/receipt/transaction-sender';
 import { writeLogFile } from '@/utils/helpers/write-log-file';
-import shell from 'shelljs';
 import { resetNetworkNode } from '@/utils/helpers/reset-network-node';
 
 // Creates a hedera account using TransferTransaction function. More info here
