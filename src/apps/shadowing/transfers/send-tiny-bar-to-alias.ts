@@ -57,7 +57,7 @@ export async function sendTinyBarToAlias(
 			);
 		}
 
-		if (error && typeof error === 'string' && error.includes('PLATFORM_NOT_ACTIVE')) {
+		if (error && typeof error.message === 'string' && error.message.includes('PLATFORM_NOT_ACTIVE')) {
 			await writeLogFile(
 				`logs/send-tiny-bar-to-alias-error.txt`,
 				`Found error in block ${currentBlock} Transaction Type: TransferTransaction  \n ${error} \n`

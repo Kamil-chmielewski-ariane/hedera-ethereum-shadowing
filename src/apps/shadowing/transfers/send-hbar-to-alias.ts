@@ -4,6 +4,8 @@ import {
 	Hbar,
 	TransactionId,
 	TransferTransaction,
+	Status,
+	PrecheckStatusError,
 } from '@hashgraph/sdk';
 import { sendTransactionInfoToReceiptApi } from '@/api/receipt/transaction-sender';
 import { writeLogFile } from '@/utils/helpers/write-log-file';
@@ -44,7 +46,14 @@ export async function sendHbarToAlias(
 			transactionId: transactionId,
 		});
 	} catch (error: any) {
-		if (error && error.status === 'DUPLICATE_TRANSACTION') {
+		if (
+			error instanceof PrecheckStatusError &&
+			error.status === Status.DuplicateTransaction
+		) {
+			await writeLogFile(
+				`logs/send-tiny-bar-to-alias-error.txt`,
+				`GOT INSIDE DUPLICATE TRANSACTION`
+			);
 			console.error('Error sending tinyBar to alias:', error);
 			await writeLogFile(
 				`logs/send-tiny-bar-to-alias-error.txt`,
@@ -61,7 +70,12 @@ export async function sendHbarToAlias(
 			);
 		}
 
-		if (error && typeof error === 'string' && error.includes('PLATFORM_NOT_ACTIVE')) {
+		if (
+			error &&
+			typeof error.message === 'string' &&
+			error.message.includes('PLATFORM_NOT_ACTIVE')
+		) {
+			console.log('PLATFORM NOT ACTIVE ERROR INSIDE');
 			await writeLogFile(
 				`logs/send-tiny-bar-to-alias-error.txt`,
 				`Found error in block ${currentBlock} Transaction Type: TransferTransaction  \n ${error} \n`
