@@ -76,7 +76,7 @@ export async function sendTinyBarToAlias(
 		console.error('Error sending tinyBar to alias:', error);
 		await writeLogFile(
 			`logs/send-tiny-bar-to-alias-error.txt`,
-			`Found error in block ${currentBlock} Transaction Type: TransferTransaction  \n ${JSON.stringify(error)} \n`
+			`Found error in block ${currentBlock} Transaction Type: TransferTransaction  \n ${error} \n`
 		);
 	}
 }
