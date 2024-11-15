@@ -1,0 +1,24 @@
+version: '3.8'
+
+services:
+  hedera-shadowing:
+    env_file:
+      - .env
+    container_name: hedera-shadowing-container
+    build:
+      context: .
+      dockerfile: Dockerfile
+    networks:
+      - hedera-network-node
+      - hedera-cloud-storage
+      - hedera-mirror-node
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+networks:
+  hedera-mirror-node:
+    external: true
+  hedera-cloud-storage:
+    external: true
+  hedera-network-node:
+    external: true

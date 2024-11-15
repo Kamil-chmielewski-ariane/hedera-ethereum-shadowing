@@ -4,10 +4,9 @@
   "description": "",
   "main": "src/apps/shadowing/index.ts",
   "scripts": {
-    "test": "jest",
     "dev": "ts-node -r tsconfig-paths/register src/apps/shadowing/index.ts",
-    "websocket": "ts-node src/apps/shadowing-websocket/index.ts",
-    "issue": "ts-node -r tsconfig-paths/register src/apps/issues/index.ts"
+    "issue": "ts-node -r tsconfig-paths/register src/apps/issues/index.ts",
+    "test": "jest"
   },
   "private": true,
   "dependencies": {
