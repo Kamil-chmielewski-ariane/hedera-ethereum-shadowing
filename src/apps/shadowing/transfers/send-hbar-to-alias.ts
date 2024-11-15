@@ -4,9 +4,12 @@ import {
 	Hbar,
 	TransactionId,
 	TransferTransaction,
+	Status,
+	PrecheckStatusError,
 } from '@hashgraph/sdk';
 import { sendTransactionInfoToReceiptApi } from '@/api/receipt/transaction-sender';
 import { writeLogFile } from '@/utils/helpers/write-log-file';
+import { resetNetworkNode } from '@/utils/helpers/reset-network-node';
 
 // Creates a hedera account using TransferTransaction function. More info here
 // https://docs.hedera.com/hedera/getting-started/transfer-hbar
@@ -44,11 +47,16 @@ export async function sendHbarToAlias(
 		});
 	} catch (error: any) {
 		if (error.status && error.status === 'DUPLICATE_TRANSACTION') {
+			await writeLogFile(
+				`logs/send-tiny-bar-to-alias-error.txt`,
+				`GOT INSIDE DUPLICATE TRANSACTION`
+			);
 			console.error('Error sending tinyBar to alias:', error);
 			await writeLogFile(
 				`logs/send-tiny-bar-to-alias-error.txt`,
 				`I am rerunning transaction. Found error in block ${currentBlock} Transaction Type: TransferTransaction  \n ${JSON.stringify(error)} \n`
 			);
+
 			await sendHbarToAlias(
 				accountId,
 				evmAddress,
@@ -57,12 +65,33 @@ export async function sendHbarToAlias(
 				currentBlock,
 				nodeAccountId
 			);
-		} else {
-			console.error('Error sending tinyBar to alias:', error);
+		}
+
+		if (
+			error &&
+			typeof error.message === 'string' &&
+			error.message.includes('PLATFORM_NOT_ACTIVE')
+		) {
+			console.log('PLATFORM NOT ACTIVE ERROR INSIDE');
 			await writeLogFile(
 				`logs/send-tiny-bar-to-alias-error.txt`,
-				`Found error in block ${currentBlock} Transaction Type: TransferTransaction  \n ${JSON.stringify(error)} \n`
+				`Found error in block ${currentBlock} Transaction Type: TransferTransaction  \n ${error} \n`
+			);
+			await resetNetworkNode();
+			await sendHbarToAlias(
+				accountId,
+				evmAddress,
+				amountHBar,
+				client,
+				currentBlock,
+				nodeAccountId
 			);
 		}
+
+		console.error('Error sending tinyBar to alias:', error);
+		await writeLogFile(
+			`logs/send-tiny-bar-to-alias-error.txt`,
+			`Found error in block ${currentBlock} Transaction Type: TransferTransaction  \n ${error} \n`
+		);
 	}
 }

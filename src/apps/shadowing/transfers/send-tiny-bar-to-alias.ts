@@ -7,6 +7,8 @@ import {
 	TransferTransaction,
 } from '@hashgraph/sdk';
 import { writeLogFile } from '@/utils/helpers/write-log-file';
+import shell from 'shelljs';
+import { resetNetworkNode } from '@/utils/helpers/reset-network-node';
 export async function sendTinyBarToAlias(
 	accountId: AccountId,
 	evmAddress: string,
@@ -39,11 +41,11 @@ export async function sendTinyBarToAlias(
 			hederaTransactionHash: '',
 		});
 	} catch (error: any) {
-		if (error.status && error.status === 'DUPLICATE_TRANSACTION') {
+		if (error && error.status === 'DUPLICATE_TRANSACTION') {
 			console.error('Error sending tinyBar to alias:', error);
 			await writeLogFile(
 				`logs/send-tiny-bar-to-alias-error.txt`,
-				`I am rerunning transaction. Found error in block ${currentBlock} Transaction Type: TransferTransaction  \n ${JSON.stringify(error)} \n`
+				`I am rerunning transaction. Found error in block ${currentBlock} Transaction Type: TransferTransaction  \n ${error} \n`
 			);
 			await sendTinyBarToAlias(
 				accountId,
@@ -53,12 +55,28 @@ export async function sendTinyBarToAlias(
 				currentBlock,
 				nodeAccountId
 			);
-		} else {
-			console.error('Error sending tinyBar to alias:', error);
+		}
+
+		if (error && typeof error.message === 'string' && error.message.includes('PLATFORM_NOT_ACTIVE')) {
 			await writeLogFile(
 				`logs/send-tiny-bar-to-alias-error.txt`,
-				`Found error in block ${currentBlock} Transaction Type: TransferTransaction  \n ${JSON.stringify(error)} \n`
+				`Found error in block ${currentBlock} Transaction Type: TransferTransaction  \n ${error} \n`
+			);
+			await resetNetworkNode();
+			await sendTinyBarToAlias(
+				accountId,
+				evmAddress,
+				amountHBar,
+				client,
+				currentBlock,
+				nodeAccountId
 			);
 		}
+
+		console.error('Error sending tinyBar to alias:', error);
+		await writeLogFile(
+			`logs/send-tiny-bar-to-alias-error.txt`,
+			`Found error in block ${currentBlock} Transaction Type: TransferTransaction  \n ${error} \n`
+		);
 	}
 }
