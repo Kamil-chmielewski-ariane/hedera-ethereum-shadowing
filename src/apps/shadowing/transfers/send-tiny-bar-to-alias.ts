@@ -7,7 +7,6 @@ import {
 	TransferTransaction,
 } from '@hashgraph/sdk';
 import { writeLogFile } from '@/utils/helpers/write-log-file';
-import shell from 'shelljs';
 import { resetNetworkNode } from '@/utils/helpers/reset-network-node';
 export async function sendTinyBarToAlias(
 	accountId: AccountId,
