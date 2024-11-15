@@ -10,6 +10,8 @@ import {
 import dotenv from 'dotenv';
 import { writeLogFile } from '@/utils/helpers/write-log-file';
 import { sendTransactionInfoToReceiptApi } from '@/api/receipt/transaction-sender';
+import { resetNetworkNode } from '@/utils/helpers/reset-network-node';
+import { sendHbarToAlias } from '@/apps/shadowing/transfers/send-hbar-to-alias';
 dotenv.config();
 
 const OPERATOR_PRIVATE = process.env.OPERATOR_PRIVATE;
@@ -65,11 +67,31 @@ export async function createEthereumTransaction(
 				accountTo,
 				currentBlock
 			);
-		} else {
+		}
+
+		if (
+			error &&
+			typeof error.message === 'string' &&
+			error.message.includes('PLATFORM_NOT_ACTIVE')
+		) {
 			await writeLogFile(
-				`logs/create-ethereum-transaction-error.txt`,
-				`Found error at transaction ${transactionData.txHash} in block ${currentBlock} Transaction Type: EthereumTransaction \n ${JSON.stringify(error)} \n`
+				`logs/send-tiny-bar-to-alias-error.txt`,
+				`Found error in block ${currentBlock} Transaction Type: TransferTransaction  \n ${error} \n`
+			);
+			await resetNetworkNode();
+			await createEthereumTransaction(
+				transactionData,
+				accountId,
+				client,
+				nodeAccountId,
+				accountTo,
+				currentBlock
 			);
 		}
+
+		await writeLogFile(
+			`logs/create-ethereum-transaction-error.txt`,
+			`Found error at transaction ${transactionData.txHash} in block ${currentBlock} Transaction Type: EthereumTransaction \n ${JSON.stringify(error)} \n`
+		);
 	}
 }
