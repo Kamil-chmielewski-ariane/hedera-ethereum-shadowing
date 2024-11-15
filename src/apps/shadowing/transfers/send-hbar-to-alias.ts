@@ -46,10 +46,7 @@ export async function sendHbarToAlias(
 			transactionId: transactionId,
 		});
 	} catch (error: any) {
-		if (
-			error instanceof PrecheckStatusError &&
-			error.status === Status.DuplicateTransaction
-		) {
+		if (error.status && error.status === 'DUPLICATE_TRANSACTION') {
 			await writeLogFile(
 				`logs/send-tiny-bar-to-alias-error.txt`,
 				`GOT INSIDE DUPLICATE TRANSACTION`
