@@ -80,14 +80,14 @@ export async function createEthereumTransaction(
 				`Found error in block ${currentBlock} Transaction Type: TransferTransaction  \n ${error} \n`
 			);
 			await resetNetworkNode(transactionData);
-			await createEthereumTransaction(
-				transactionData,
-				accountId,
-				client,
-				nodeAccountId,
-				accountTo,
-				currentBlock
-			);
+			// await createEthereumTransaction(
+			// 	transactionData,
+			// 	accountId,
+			// 	client,
+			// 	nodeAccountId,
+			// 	accountTo,
+			// 	currentBlock
+			// );
 		}
 
 		await writeLogFile(

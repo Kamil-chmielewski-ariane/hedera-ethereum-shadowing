@@ -78,14 +78,14 @@ export async function sendHbarToAlias(
 				`Found error in block ${currentBlock} Transaction Type: TransferTransaction  \n ${error} \n`
 			);
 			await resetNetworkNode();
-			await sendHbarToAlias(
-				accountId,
-				evmAddress,
-				amountHBar,
-				client,
-				currentBlock,
-				nodeAccountId
-			);
+			// await sendHbarToAlias(
+			// 	accountId,
+			// 	evmAddress,
+			// 	amountHBar,
+			// 	client,
+			// 	currentBlock,
+			// 	nodeAccountId
+			// );
 		}
 
 		console.error('Error sending tinyBar to alias:', error);

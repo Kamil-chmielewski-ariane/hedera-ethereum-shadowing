@@ -62,14 +62,14 @@ export async function sendTinyBarToAlias(
 				`Found error in block ${currentBlock} Transaction Type: TransferTransaction  \n ${error} \n`
 			);
 			await resetNetworkNode();
-			await sendTinyBarToAlias(
-				accountId,
-				evmAddress,
-				amountHBar,
-				client,
-				currentBlock,
-				nodeAccountId
-			);
+			// await sendTinyBarToAlias(
+			// 	accountId,
+			// 	evmAddress,
+			// 	amountHBar,
+			// 	client,
+			// 	currentBlock,
+			// 	nodeAccountId
+			// );
 		}
 
 		console.error('Error sending tinyBar to alias:', error);
