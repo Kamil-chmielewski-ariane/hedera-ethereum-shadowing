@@ -12,6 +12,7 @@ import { writeLogFile } from '@/utils/helpers/write-log-file';
 import { sendTransactionInfoToReceiptApi } from '@/api/receipt/transaction-sender';
 import { resetNetworkNode } from '@/utils/helpers/reset-network-node';
 import { sendHbarToAlias } from '@/apps/shadowing/transfers/send-hbar-to-alias';
+import { TransactionData } from '@/utils/types';
 dotenv.config();
 
 const OPERATOR_PRIVATE = process.env.OPERATOR_PRIVATE;
@@ -19,7 +20,7 @@ const OPERATOR_PRIVATE = process.env.OPERATOR_PRIVATE;
 // Create a hedera transaction using a raw transaction Data from Erigon api. More info here
 // https://docs.hedera.com/hedera/sdks-and-apis/sdks/smart-contracts/ethereum-transaction
 export async function createEthereumTransaction(
-	transactionData: { txHash: string; gas: number },
+	transactionData: TransactionData,
 	accountId: AccountId,
 	client: Client,
 	nodeAccountId: AccountId,
@@ -78,7 +79,7 @@ export async function createEthereumTransaction(
 				`logs/send-tiny-bar-to-alias-error.txt`,
 				`Found error in block ${currentBlock} Transaction Type: TransferTransaction  \n ${error} \n`
 			);
-			await resetNetworkNode();
+			await resetNetworkNode(transactionData);
 			await createEthereumTransaction(
 				transactionData,
 				accountId,
