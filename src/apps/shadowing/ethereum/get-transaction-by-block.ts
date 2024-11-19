@@ -67,7 +67,9 @@ export async function getTransactionByBlock(
 						);
 						transactionsInBlock.push({
 							ethereumTransactionHash: transaction.hash,
-							hederaTransactionHash: hederaTransaction.transactionHash,
+							hederaTransactionHash: hederaTransaction
+								? hederaTransaction.transactionHash
+								: 'SOLIDITY 0 ADDRESS',
 						});
 					}
 				}
