@@ -11,3 +11,8 @@ export interface StateData {
 	timestamp: string;
 	address: string;
 }
+
+export interface TransactionData {
+	txHash: string;
+	gas: number;
+}

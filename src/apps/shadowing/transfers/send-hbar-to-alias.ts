@@ -9,7 +9,7 @@ import {
 } from '@hashgraph/sdk';
 import { sendTransactionInfoToReceiptApi } from '@/api/receipt/transaction-sender';
 import { writeLogFile } from '@/utils/helpers/write-log-file';
-import { resetNetworkNode } from '@/utils/helpers/reset-network-node';
+import { resetHederaLocalNode } from '@/utils/helpers/reset-hedera-local-node';
 
 // Creates a hedera account using TransferTransaction function. More info here
 // https://docs.hedera.com/hedera/getting-started/transfer-hbar
@@ -77,15 +77,15 @@ export async function sendHbarToAlias(
 				`logs/send-tiny-bar-to-alias-error.txt`,
 				`Found error in block ${currentBlock} Transaction Type: TransferTransaction  \n ${error} \n`
 			);
-			await resetNetworkNode();
-			await sendHbarToAlias(
-				accountId,
-				evmAddress,
-				amountHBar,
-				client,
-				currentBlock,
-				nodeAccountId
-			);
+			await resetHederaLocalNode();
+			// await sendHbarToAlias(
+			// 	accountId,
+			// 	evmAddress,
+			// 	amountHBar,
+			// 	client,
+			// 	currentBlock,
+			// 	nodeAccountId
+			// );
 		}
 
 		console.error('Error sending tinyBar to alias:', error);

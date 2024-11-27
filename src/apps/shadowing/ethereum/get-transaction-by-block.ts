@@ -32,7 +32,6 @@ export async function getTransactionByBlock(
 				console.log(`transacion in block ${startFromBlock} found...`);
 				console.log('preceding iterate through transfers...');
 				for (const transaction of transactions) {
-					transactionsInBlock.push(transaction.hash);
 					const isAccountCreated = await getAccount(transaction.to);
 
 					//Checks if transaction.to is not a smart contract creation and is account exist in hedera mirror node
@@ -55,7 +54,7 @@ export async function getTransactionByBlock(
 					if (transaction && transaction.hash) {
 						console.log(`transaction found ${transaction.hash}`);
 						//Create hedera transaction from ethereum transaction
-						await createEthereumTransaction(
+						const hederaTransaction = await createEthereumTransaction(
 							{
 								txHash: transaction.hash,
 								gas: 21000,
@@ -66,6 +65,12 @@ export async function getTransactionByBlock(
 							transaction.to,
 							startFromBlock
 						);
+						transactionsInBlock.push({
+							ethereumTransactionHash: transaction.hash,
+							hederaTransactionHash: hederaTransaction
+								? hederaTransaction.transactionHash
+								: 'SOLIDITY 0 ADDRESS',
+						});
 					}
 				}
 
