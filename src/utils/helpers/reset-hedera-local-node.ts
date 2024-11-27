@@ -7,8 +7,8 @@ export async function resetHederaLocalNode() {
 			`PLATFORM_NOT_ACTIVE Error appeared`
 		);
 
-	console.log('Resets network node...');
+	console.log('Resets hedera local node...');
 	shell.exec('hedera restart RELAY_CHAIN_ID=11155111 -d --dev -a --verbose --detached');
 	await new Promise((resolve) => setTimeout(resolve, 300000));
-	console.log('Network node is running');
+	console.log('hedera is running');
 }
