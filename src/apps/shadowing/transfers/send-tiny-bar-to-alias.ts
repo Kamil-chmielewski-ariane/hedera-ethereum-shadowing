@@ -7,7 +7,7 @@ import {
 	TransferTransaction,
 } from '@hashgraph/sdk';
 import { writeLogFile } from '@/utils/helpers/write-log-file';
-import { resetNetworkNode } from '@/utils/helpers/reset-network-node';
+import { resetHederaLocalNode } from '@/utils/helpers/reset-hedera-local-node';
 export async function sendTinyBarToAlias(
 	accountId: AccountId,
 	evmAddress: string,
@@ -61,7 +61,7 @@ export async function sendTinyBarToAlias(
 				`logs/send-tiny-bar-to-alias-error.txt`,
 				`Found error in block ${currentBlock} Transaction Type: TransferTransaction  \n ${error} \n`
 			);
-			await resetNetworkNode();
+			await resetHederaLocalNode();
 			// await sendTinyBarToAlias(
 			// 	accountId,
 			// 	evmAddress,
