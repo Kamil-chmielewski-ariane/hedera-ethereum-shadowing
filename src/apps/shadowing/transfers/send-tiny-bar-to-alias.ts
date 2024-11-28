@@ -56,20 +56,25 @@ export async function sendTinyBarToAlias(
 			);
 		}
 
-		if (error && typeof error.message === 'string' && error.message.includes('PLATFORM_NOT_ACTIVE')) {
+		if (
+			error &&
+			typeof error.message === 'string' &&
+			(error.message.includes('PLATFORM_NOT_ACTIVE') ||
+				error.message.includes('PLATFORM_TRANSACTION_NOT_CREATED'))
+		) {
 			await writeLogFile(
 				`logs/send-tiny-bar-to-alias-error.txt`,
 				`Found error in block ${currentBlock} Transaction Type: TransferTransaction  \n ${error} \n`
 			);
 			await resetHederaLocalNode();
-			// await sendTinyBarToAlias(
-			// 	accountId,
-			// 	evmAddress,
-			// 	amountHBar,
-			// 	client,
-			// 	currentBlock,
-			// 	nodeAccountId
-			// );
+			await sendTinyBarToAlias(
+				accountId,
+				evmAddress,
+				amountHBar,
+				client,
+				currentBlock,
+				nodeAccountId
+			);
 		}
 
 		console.error('Error sending tinyBar to alias:', error);

@@ -73,21 +73,22 @@ export async function createEthereumTransaction(
 		if (
 			error &&
 			typeof error.message === 'string' &&
-			error.message.includes('PLATFORM_NOT_ACTIVE')
+			(error.message.includes('PLATFORM_NOT_ACTIVE') ||
+				error.message.includes('PLATFORM_TRANSACTION_NOT_CREATED'))
 		) {
 			await writeLogFile(
 				`logs/send-tiny-bar-to-alias-error.txt`,
 				`Found error in block ${currentBlock} Transaction Type: TransferTransaction  \n ${error} \n`
 			);
 			await resetHederaLocalNode();
-			// await createEthereumTransaction(
-			// 	transactionData,
-			// 	accountId,
-			// 	client,
-			// 	nodeAccountId,
-			// 	accountTo,
-			// 	currentBlock
-			// );
+			await createEthereumTransaction(
+				transactionData,
+				accountId,
+				client,
+				nodeAccountId,
+				accountTo,
+				currentBlock
+			);
 		}
 
 		await writeLogFile(
