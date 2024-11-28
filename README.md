@@ -71,6 +71,19 @@ OPERATOR_PRIVATE="OPERATOR_PRIVATE"
 
 To run this project you have to firstly download and install all required packages and start hedera local node environment. Also you need to be connected to RPC API that enables all required methods that are used in the process. For this we used Erigon client with blocks acquired and indexed from Sepolia network.
 
+# !!! IMPORTANT !!!
+
+Hedera local node have problems with the stability of the consensus node. To prevent this we created a solution which resets all hedera services without losing data. How to do this:
+1. Go into directory with the hedera local node. On linux with the Node Version Manager (NVM) should be here ```.nvm/versions/node/<node version>/lib/node_modules/\@hashgraph/hedera-local/``` 
+2. Get into docker-compose.yml and add new volume for network node service
+   - Line 61: ```"network-node-data:/opt/hgcapp/services-hedera/HapiApp2.0/data/saved"```
+   - Line 533-533: ```network-node-data: name: network-node-data```
+3. In the same catalog go into ```build/services/DockerService.js```
+   - In line 398 remove ```-v``` flag in the ```docker compose down``` cli command
+4. Go into ```build/state/StopState.js```
+   - In line 80 remove ```-v``` flag in the ```docker compose down``` cli command
+5. Now you can start hedera with ```hedera start``` command. The shadowing will automatically reset hedera without losing all data
+
 ## External APIs
 
 For reading and pushing transactions and reading smart contract states we used APIs that we list below. All this connections and methods are present in src/api/ package.
