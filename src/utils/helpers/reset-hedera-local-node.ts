@@ -3,8 +3,8 @@ import { writeLogFile } from '@/utils/helpers/write-log-file';
 
 export async function resetHederaLocalNode() {
 		await writeLogFile(
-			`logs/platform_not_active_error_log.txt`,
-			`PLATFORM_NOT_ACTIVE Error appeared`
+			`logs/network_node_service_error_log.txt`,
+			`network node error appeared`
 		);
 
 	console.log('Resets hedera local node...');

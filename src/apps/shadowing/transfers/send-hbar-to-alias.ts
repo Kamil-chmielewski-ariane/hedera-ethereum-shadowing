@@ -70,7 +70,8 @@ export async function sendHbarToAlias(
 		if (
 			error &&
 			typeof error.message === 'string' &&
-			error.message.includes('PLATFORM_NOT_ACTIVE')
+			(error.message.includes('PLATFORM_NOT_ACTIVE') ||
+				error.message.includes('PLATFORM_TRANSACTION_NOT_CREATED'))
 		) {
 			console.log('PLATFORM NOT ACTIVE ERROR INSIDE');
 			await writeLogFile(
@@ -78,14 +79,14 @@ export async function sendHbarToAlias(
 				`Found error in block ${currentBlock} Transaction Type: TransferTransaction  \n ${error} \n`
 			);
 			await resetHederaLocalNode();
-			// await sendHbarToAlias(
-			// 	accountId,
-			// 	evmAddress,
-			// 	amountHBar,
-			// 	client,
-			// 	currentBlock,
-			// 	nodeAccountId
-			// );
+			await sendHbarToAlias(
+				accountId,
+				evmAddress,
+				amountHBar,
+				client,
+				currentBlock,
+				nodeAccountId
+			);
 		}
 
 		console.error('Error sending tinyBar to alias:', error);
