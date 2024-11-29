@@ -13,9 +13,12 @@ export async function getTransactionByBlock(
 	client: Client,
 	nodeAccountId: AccountId
 ) {
+	await writeLogFile(
+		`logs/blocks-with-transactions.csv`,
+		'BlockNumber,EthereumTransactioHash,HederaTransactionHash \r\n'
+	);
 	try {
 		for (; startFromBlock < numberOfBlocks; startFromBlock++) {
-			const transactionsInBlock = [];
 			console.log('currentBlockNumber', startFromBlock);
 			let block = await getBlockByNumber(startFromBlock.toString(16));
 			const transactions = block.transactions;
@@ -29,7 +32,7 @@ export async function getTransactionByBlock(
 			);
 
 			if (transactions.length > 0) {
-				console.log(`transacion in block ${startFromBlock} found...`);
+				console.log(`transaction in block ${startFromBlock} found...`);
 				console.log('preceding iterate through transfers...');
 				for (const transaction of transactions) {
 					const isAccountCreated = await getAccount(transaction.to);
@@ -65,27 +68,16 @@ export async function getTransactionByBlock(
 							transaction.to,
 							startFromBlock
 						);
-						transactionsInBlock.push({
-							ethereumTransactionHash: transaction.hash,
-							hederaTransactionHash: hederaTransaction
-								? hederaTransaction.transactionHash
-								: 'SOLIDITY 0 ADDRESS',
-						});
+
+						await writeLogFile(
+							`logs/blocks-with-transactions.csv`,
+							`${startFromBlock},${transaction.hash},${
+								hederaTransaction
+									? hederaTransaction.transactionHash
+									: 'SOLIDITY 0 ADDRESS'
+							} \r\n`
+						);
 					}
-				}
-
-				const blockWithTransactions = {
-					[startFromBlock]: {
-						transactions: transactionsInBlock,
-					},
-				};
-
-				// Add new block with transactions if there is more than 0
-				if (blockWithTransactions[startFromBlock].transactions.length > 0) {
-					await writeLogFile(
-						`logs/blocks-with-transactions.json`,
-						JSON.stringify(blockWithTransactions)
-					);
 				}
 			}
 		}
