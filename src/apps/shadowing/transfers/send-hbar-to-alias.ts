@@ -38,7 +38,7 @@ export async function sendHbarToAlias(
 		// Sends transaction data to receipt api to check if this transaction is a smart contract
 		await sendTransactionInfoToReceiptApi({
 			ethereumTransactionHash: null,
-			hederaTransactionHash: txResponse.transactionHash,
+			hederaTransactionHash: txResponse.toJSON().transactionHash,
 			currentBlock: currentBlock,
 			evmAddress: evmAddress,
 			txTimestamp: txTimestamp,
