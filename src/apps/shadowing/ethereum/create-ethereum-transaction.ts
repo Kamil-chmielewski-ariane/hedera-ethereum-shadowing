@@ -47,7 +47,7 @@ export async function createEthereumTransaction(
 		await sendTransactionInfoToReceiptApi({
 			transactionId: txId,
 			ethereumTransactionHash: null,
-			hederaTransactionHash: txResponse.transactionHash,
+			hederaTransactionHash: txResponse.toJSON().transactionHash,
 			transactionType: 'TRANSFER_TRANSACTION',
 			currentBlock: currentBlock,
 			evmAddress: accountTo,
