@@ -3,8 +3,8 @@ import { writeLogFile } from '@/utils/helpers/write-log-file';
 
 export async function resetHederaLocalNode() {
 	await writeLogFile(
-		`logs/network_node_service_error_log.txt \r\n`,
-		'Network Node Error Appeared'
+		`logs/network_node_service_error_log.txt`,
+		'Network Node Error Appeared \r\n'
 	);
 
 	console.log(
@@ -16,7 +16,7 @@ export async function resetHederaLocalNode() {
 	await new Promise((resolve) => setTimeout(resolve, 300000));
 	console.log('hedera is running');
 	await writeLogFile(
-		`logs/network_node_service_error_log.txt \r\n`,
-		'Network Node is Running again'
+		`logs/network_node_service_error_log.txt`,
+		'Network Node is Running again \r\n'
 	);
 }
