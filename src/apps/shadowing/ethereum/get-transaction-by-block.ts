@@ -15,7 +15,8 @@ export async function getTransactionByBlock(
 ) {
 	await writeLogFile(
 		`logs/blocks-with-transactions.csv`,
-		'BlockNumber,EthereumTransactioHash,HederaTransactionHash \r\n'
+		'BlockNumber,EthereumTransactioHash,HederaTransactionHash \r\n',
+		false
 	);
 	try {
 		for (; startFromBlock < numberOfBlocks; startFromBlock++) {
@@ -75,7 +76,8 @@ export async function getTransactionByBlock(
 								hederaTransaction
 									? hederaTransaction.transactionHash
 									: 'SOLIDITY 0 ADDRESS'
-							} \r\n`
+							} \r\n`,
+							false
 						);
 					}
 				}
