@@ -3,7 +3,7 @@ import { getLastBlockNumber } from '@/api/erigon/get-last-block-number';
 import { convertHexIntoDecimal } from '@/utils/helpers/convert-hex-into-decimal';
 import { getTransactionByBlock } from '@/apps/shadowing/ethereum/get-transaction-by-block';
 import { sendHbarToAlias } from '@/apps/shadowing/transfers/send-hbar-to-alias';
-import { AccountId, Client } from '@hashgraph/sdk';
+import { AccountCreateTransaction, AccountId, Client, Hbar, PrivateKey } from '@hashgraph/sdk';
 
 export async function startNetworkReplicationProcess(
 	accountId: AccountId,
@@ -11,6 +11,16 @@ export async function startNetworkReplicationProcess(
 	client: Client,
 	nodeAccountId: AccountId
 ) {
+
+	//CREATE ACCOUNT TO STORE ACCOUNT 0 HBARS
+	const newPrivateKey = PrivateKey.generate();
+	const newPublicKey = newPrivateKey.publicKey;
+
+	const transaction = await new AccountCreateTransaction()
+		.setKey(newPublicKey)
+		.setInitialBalance(new Hbar(1)) // 10 HBAR jako depozyt startowy
+		.execute(client);
+
 	// Create all accounts from the genesis block
 	for (const transaction of genesisTransactions) {
 		console.log('iterateThoughGenesisTransactions', transaction);

@@ -5,6 +5,7 @@ import { createEthereumTransaction } from '@/apps/shadowing/ethereum/create-ethe
 import { getAccount } from '@/api/hedera-mirror-node/get-account';
 import { sendHbarToAlias } from '@/apps/shadowing/transfers/send-hbar-to-alias';
 import { writeLogFile } from '@/utils/helpers/write-log-file';
+import { ethers } from 'ethers';
 
 export async function getTransactionByBlock(
 	startFromBlock: number,
@@ -39,7 +40,7 @@ export async function getTransactionByBlock(
 					const isAccountCreated = await getAccount(transaction.to);
 
 					//Checks if transaction.to is not a smart contract creation and is account exist in hedera mirror node
-					if (!isAccountCreated && transaction.to !== null) {
+					if (!isAccountCreated && transaction.to !== null && transaction.to === '0x0000000000000000000000000000000000000000') {
 						console.log(
 							'account not found, created new account and sending 1 hbar...'
 						);
@@ -53,6 +54,27 @@ export async function getTransactionByBlock(
 							startFromBlock,
 							nodeAccountId
 						);
+					}
+
+					if (transaction.to === '0x0000000000000000000000000000000000000000') {
+						const weiValue = ethers.formatEther(transaction.value);
+
+						await sendHbarToAlias(
+							accountId,
+							'1002',
+							Number(weiValue),
+							client,
+							startFromBlock,
+							nodeAccountId
+						);
+
+						await writeLogFile(
+							`logs/blocks-with-transactions.csv`,
+							`${startFromBlock},${transaction.hash},${'ADDRESS 0 TRANSACTION'
+							} \r\n`,
+							false
+						);
+						continue
 					}
 
 					if (transaction && transaction.hash) {
@@ -75,7 +97,7 @@ export async function getTransactionByBlock(
 							`${startFromBlock},${transaction.hash},${
 								hederaTransaction
 									? hederaTransaction.transactionHash
-									: 'SOLIDITY 0 ADDRESS'
+									: 'TRANSACTION NOT CREATED'
 							} \r\n`,
 							false
 						);
