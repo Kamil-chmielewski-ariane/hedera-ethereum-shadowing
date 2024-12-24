@@ -16,7 +16,7 @@ export async function getTransactionByBlock(
 ) {
 	await writeLogFile(
 		`logs/blocks-with-transactions.csv`,
-		'BlockNumber,EthereumTransactioHash,HederaTransactionHash \r\n',
+		'BlockNumber,EthereumTransactionHash,HederaTransactionHash \r\n',
 		false
 	);
 	try {
@@ -40,7 +40,7 @@ export async function getTransactionByBlock(
 					const isAccountCreated = await getAccount(transaction.to);
 
 					//Checks if transaction.to is not a smart contract creation and is account exist in hedera mirror node
-					if (!isAccountCreated && transaction.to !== null && transaction.to === '0x0000000000000000000000000000000000000000') {
+					if (!isAccountCreated && transaction.to !== null && transaction.to !== '0x0000000000000000000000000000000000000000') {
 						console.log(
 							'account not found, created new account and sending 1 hbar...'
 						);
@@ -56,6 +56,7 @@ export async function getTransactionByBlock(
 						);
 					}
 
+					//When address 0 appear in transactions, send amount to the wallet hedera account
 					if (transaction.to === '0x0000000000000000000000000000000000000000') {
 						const weiValue = ethers.formatEther(transaction.value);
 
