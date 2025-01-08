@@ -46,7 +46,7 @@ export async function createEthereumTransaction(
 		// Sends transaction data to receipt api to check if this transaction is a smart contract
 		await sendTransactionInfoToReceiptApi({
 			transactionId: txId,
-			ethereumTransactionHash: null,
+			ethereumTransactionHash: transactionData.txHash,
 			hederaTransactionHash: txResponse.toJSON().transactionHash,
 			transactionType: 'TRANSFER_TRANSACTION',
 			currentBlock: currentBlock,

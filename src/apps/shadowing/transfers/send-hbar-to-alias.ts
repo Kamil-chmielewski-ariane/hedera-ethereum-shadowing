@@ -36,15 +36,15 @@ export async function sendHbarToAlias(
 		const txResponse = await transaction.execute(client);
 		const txTimestamp = new Date().toISOString();
 		// Sends transaction data to receipt api to check if this transaction is a smart contract
-		await sendTransactionInfoToReceiptApi({
-			ethereumTransactionHash: null,
-			hederaTransactionHash: txResponse.toJSON().transactionHash,
-			currentBlock: currentBlock,
-			evmAddress: evmAddress,
-			txTimestamp: txTimestamp,
-			transactionType: 'TRANSFER_TRANSACTION',
-			transactionId: transactionId,
-		});
+		// await sendTransactionInfoToReceiptApi({
+		// 	ethereumTransactionHash: null,
+		// 	hederaTransactionHash: txResponse.toJSON().transactionHash,
+		// 	currentBlock: currentBlock,
+		// 	evmAddress: evmAddress,
+		// 	txTimestamp: txTimestamp,
+		// 	transactionType: 'TRANSFER_TRANSACTION',
+		// 	transactionId: transactionId,
+		// });
 	} catch (error: any) {
 		if (error.status && error.status === 'DUPLICATE_TRANSACTION') {
 			await writeLogFile(
