@@ -1,2 +1,0 @@
-2025-01-08 15:52: Found error at transaction 0xefb026ba0449cce083bf5bf5c1113937ccbcf4ab79c78f80f9893fbbbe458376 in block 126407 Transaction Type: EthereumTransaction 
- {"code":2,"details":"Application error processing RPC","metadata":{"content-type":["application/grpc"]},"progress":"PROCESSED"} 

@@ -1,2 +1,0 @@
-2025-01-08 15:52: Found error in block 126407 Transaction Type: TransferTransaction  
- Error: 2 UNKNOWN: Application error processing RPC 
