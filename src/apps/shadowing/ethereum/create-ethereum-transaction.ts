@@ -11,7 +11,6 @@ import dotenv from 'dotenv';
 import { writeLogFile } from '@/utils/helpers/write-log-file';
 import { sendTransactionInfoToReceiptApi } from '@/api/receipt/transaction-sender';
 import { resetHederaLocalNode } from '@/utils/helpers/reset-hedera-local-node';
-import { sendHbarToAlias } from '@/apps/shadowing/transfers/send-hbar-to-alias';
 import { TransactionData } from '@/utils/types';
 dotenv.config();
 
