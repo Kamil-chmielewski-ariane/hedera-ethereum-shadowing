@@ -5,6 +5,7 @@ import { createEthereumTransaction } from '@/apps/shadowing/ethereum/create-ethe
 import { getAccount } from '@/api/hedera-mirror-node/get-account';
 import { sendHbarToAlias } from '@/apps/shadowing/transfers/send-hbar-to-alias';
 import { writeLogFile } from '@/utils/helpers/write-log-file';
+import {resetHederaLocalNode} from "@/utils/helpers/reset-hedera-local-node";
 
 export async function getTransactionByBlock(
 	startFromBlock: number,
@@ -13,13 +14,27 @@ export async function getTransactionByBlock(
 	client: Client,
 	nodeAccountId: AccountId
 ) {
+	let fileNumber = 10
 	await writeLogFile(
-		`logs/blocks-with-transactions.csv`,
-		'BlockNumber,EthereumTransactioHash,HederaTransactionHash \r\n',
-		false
+		`logs/blocks-with-transactions-${fileNumber}.csv`,
+		'Timestamp,BlockNumber,EthereumTransactioHash,HederaTransactionHash \r\n',
 	);
 	try {
 		for (; startFromBlock < numberOfBlocks; startFromBlock++) {
+
+			if (startFromBlock % 200000 === 0) {
+				fileNumber +=1
+				await writeLogFile(
+					`logs/blocks-with-transactions-${fileNumber}.csv`,
+					'Timestamp,BlockNumber,EthereumTransactioHash,HederaTransactionHash \r\n',
+					false
+				);
+			}
+
+			if (startFromBlock % 100000 === 0 && startFromBlock !== 0) {
+				await resetHederaLocalNode();
+			}
+
 			console.log('currentBlockNumber', startFromBlock);
 			let block = await getBlockByNumber(startFromBlock.toString(16));
 			const transactions = block.transactions;
@@ -71,13 +86,12 @@ export async function getTransactionByBlock(
 						);
 
 						await writeLogFile(
-							`logs/blocks-with-transactions.csv`,
+							`logs/blocks-with-transactions-${fileNumber}.csv`,
 							`${startFromBlock},${transaction.hash},${
 								hederaTransaction
 									? hederaTransaction.transactionHash
-									: 'SOLIDITY 0 ADDRESS'
+									: 'TRANSACTION NOT CREATED'
 							} \r\n`,
-							false
 						);
 					}
 				}
