@@ -11,7 +11,6 @@ import dotenv from 'dotenv';
 import { writeLogFile } from '@/utils/helpers/write-log-file';
 import { sendTransactionInfoToReceiptApi } from '@/api/receipt/transaction-sender';
 import { resetHederaLocalNode } from '@/utils/helpers/reset-hedera-local-node';
-import { sendHbarToAlias } from '@/apps/shadowing/transfers/send-hbar-to-alias';
 import { TransactionData } from '@/utils/types';
 dotenv.config();
 
@@ -46,7 +45,7 @@ export async function createEthereumTransaction(
 		// Sends transaction data to receipt api to check if this transaction is a smart contract
 		await sendTransactionInfoToReceiptApi({
 			transactionId: txId,
-			ethereumTransactionHash: null,
+			ethereumTransactionHash: transactionData.txHash,
 			hederaTransactionHash: txResponse.toJSON().transactionHash,
 			transactionType: 'TRANSFER_TRANSACTION',
 			currentBlock: currentBlock,

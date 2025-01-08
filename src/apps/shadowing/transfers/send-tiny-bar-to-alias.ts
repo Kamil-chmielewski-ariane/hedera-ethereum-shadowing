@@ -1,4 +1,3 @@
-import { sendTransactionInfoToReceiptApi } from '@/api/receipt/transaction-sender';
 import {
 	AccountId,
 	Client,
@@ -29,16 +28,6 @@ export async function sendTinyBarToAlias(
 		// Execute the transaction
 		await new Promise((resolve) => setTimeout(resolve, 1));
 		await transaction.execute(client);
-		const transactionTimestamp = new Date().toISOString();
-		await sendTransactionInfoToReceiptApi({
-			transactionId: transactionId,
-			evmAddress: evmAddress,
-			currentBlock: currentBlock,
-			transactionType: 'TRANSFER',
-			txTimestamp: transactionTimestamp,
-			ethereumTransactionHash: null,
-			hederaTransactionHash: '',
-		});
 	} catch (error: any) {
 		if (error && error.status === 'DUPLICATE_TRANSACTION') {
 			console.error('Error sending tinyBar to alias:', error);
