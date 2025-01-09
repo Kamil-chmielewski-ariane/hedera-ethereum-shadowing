@@ -55,9 +55,11 @@ export async function createEthereumTransaction(
 		return txResponse.toJSON();
 	} catch (error: any) {
 		if (error.status && error.status === 'DUPLICATE_TRANSACTION') {
-			await writeLogFile(
-				`logs/create-ethereum-transaction-error.txt`,
-				`DUPLICATE TRASNSACTION: \nFound error at transaction ${transactionData.txHash} in block ${currentBlock} Transaction Type: EthereumTransaction \n ${JSON.stringify(error)} \n`
+			writeLogFile(
+				`logs/create-ethereum-transaction-error`,
+				`DUPLICATE TRASNSACTION: \nFound error at transaction ${transactionData.txHash} in block ${currentBlock} Transaction Type: EthereumTransaction \n ${JSON.stringify(error)} \n`,
+				true,
+				'txt'
 			);
 			await createEthereumTransaction(
 				transactionData,
@@ -75,9 +77,11 @@ export async function createEthereumTransaction(
 			(error.message.includes('PLATFORM_NOT_ACTIVE') ||
 				error.message.includes('PLATFORM_TRANSACTION_NOT_CREATED'))
 		) {
-			await writeLogFile(
+			writeLogFile(
 				`logs/send-tiny-bar-to-alias-error.txt`,
-				`Found error in block ${currentBlock} Transaction Type: TransferTransaction  \n ${error} \n`
+				`Found error in block ${currentBlock} Transaction Type: TransferTransaction  \n ${error} \n`,
+				true,
+				'txt'
 			);
 			await resetHederaLocalNode();
 			await createEthereumTransaction(
@@ -90,9 +94,11 @@ export async function createEthereumTransaction(
 			);
 		}
 
-		await writeLogFile(
+		writeLogFile(
 			`logs/create-ethereum-transaction-error.txt`,
-			`Found error at transaction ${transactionData.txHash} in block ${currentBlock} Transaction Type: EthereumTransaction \n ${JSON.stringify(error)} \n`
+			`Found error at transaction ${transactionData.txHash} in block ${currentBlock} Transaction Type: EthereumTransaction \n ${JSON.stringify(error)} \n`,
+			true,
+			'txt'
 		);
 	}
 }

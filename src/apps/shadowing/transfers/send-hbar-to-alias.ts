@@ -36,14 +36,18 @@ export async function sendHbarToAlias(
 		await transaction.execute(client);
 	} catch (error: any) {
 		if (error.status && error.status === 'DUPLICATE_TRANSACTION') {
-			await writeLogFile(
-				`logs/send-tiny-bar-to-alias-error.txt`,
-				`GOT INSIDE DUPLICATE TRANSACTION`
+			writeLogFile(
+				`logs/send-tiny-bar-to-alias-error`,
+				`GOT INSIDE DUPLICATE TRANSACTION`,
+				true,
+				'txt'
 			);
 			console.error('Error sending tinyBar to alias:', error);
-			await writeLogFile(
-				`logs/send-tiny-bar-to-alias-error.txt`,
-				`I am rerunning transaction. Found error in block ${currentBlock} Transaction Type: TransferTransaction  \n ${JSON.stringify(error)} \n`
+			writeLogFile(
+				`logs/send-tiny-bar-to-alias-error`,
+				`I am rerunning transaction. Found error in block ${currentBlock} Transaction Type: TransferTransaction  \n ${JSON.stringify(error)} \n`,
+				true,
+				'txt'
 			);
 
 			await sendHbarToAlias(
@@ -63,9 +67,11 @@ export async function sendHbarToAlias(
 				error.message.includes('PLATFORM_TRANSACTION_NOT_CREATED'))
 		) {
 			console.log('PLATFORM NOT ACTIVE ERROR INSIDE');
-			await writeLogFile(
-				`logs/send-tiny-bar-to-alias-error.txt`,
-				`Found error in block ${currentBlock} Transaction Type: TransferTransaction  \n ${error} \n`
+			writeLogFile(
+				`logs/send-tiny-bar-to-alias-error`,
+				`Found error in block ${currentBlock} Transaction Type: TransferTransaction  \n ${error} \n`,
+				true,
+				'txt'
 			);
 			await resetHederaLocalNode();
 			await sendHbarToAlias(
@@ -79,9 +85,11 @@ export async function sendHbarToAlias(
 		}
 
 		console.error('Error sending tinyBar to alias:', error);
-		await writeLogFile(
+		writeLogFile(
 			`logs/send-tiny-bar-to-alias-error.txt`,
-			`Found error in block ${currentBlock} Transaction Type: TransferTransaction  \n ${error} \n`
+			`Found error in block ${currentBlock} Transaction Type: TransferTransaction  \n ${error} \n`,
+			true,
+			'txt'
 		);
 	}
 }
