@@ -4,10 +4,7 @@ import {
 	Hbar,
 	TransactionId,
 	TransferTransaction,
-	Status,
-	PrecheckStatusError,
 } from '@hashgraph/sdk';
-import { sendTransactionInfoToReceiptApi } from '@/api/receipt/transaction-sender';
 import { writeLogFile } from '@/utils/helpers/write-log-file';
 import { resetHederaLocalNode } from '@/utils/helpers/reset-hedera-local-node';
 
