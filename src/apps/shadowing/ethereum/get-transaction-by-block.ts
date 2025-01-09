@@ -18,7 +18,7 @@ export async function getTransactionByBlock(
 	writeLogFile(
 		`logs/blocks-with-transactions`,
 		'Timestamp,BlockNumber,EthereumTransactioHash,HederaTransactionHash \r\n',
-		true,
+		false,
 		'csv',
 		fileNumber
 	);
@@ -29,7 +29,7 @@ export async function getTransactionByBlock(
 				writeLogFile(
 					`logs/blocks-with-transactions`,
 					'Timestamp,BlockNumber,EthereumTransactioHash,HederaTransactionHash \r\n',
-					true,
+					false,
 					'csv',
 					fileNumber
 				);
