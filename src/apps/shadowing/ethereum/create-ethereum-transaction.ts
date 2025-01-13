@@ -74,8 +74,7 @@ export async function createEthereumTransaction(
 		if (
 			error &&
 			typeof error.message === 'string' &&
-			(error.message.includes('PLATFORM_NOT_ACTIVE') ||
-				error.message.includes('PLATFORM_TRANSACTION_NOT_CREATED'))
+			error.message.includes('PLATFORM_NOT_ACTIVE')
 		) {
 			writeLogFile(
 				`logs/send-tiny-bar-to-alias-error.txt`,
@@ -92,6 +91,19 @@ export async function createEthereumTransaction(
 				accountTo,
 				currentBlock
 			);
+		} else if (
+			error &&
+			typeof error.message === 'string' &&
+			// TODO Currenty we have platform transaction not created error when we are executing contract transaction on later blocks from 1879240 and later "https://sepolia.etherscan.io/tx/0xd8637b677add1f4a3735259bc1cae4015be7d829e0375b54d217f1d3af6cdcc5"
+			error.message.includes('PLATFORM_TRANSACTION_NOT_CREATED')
+		) {
+			writeLogFile(
+				`logs/send-tiny-bar-to-alias-error.txt`,
+				`Found error in block ${currentBlock} PLATFORM_TRANSACTION_NOT_CREATED ERROR  \n ${error} \n`,
+				true,
+				'txt'
+			);
+			await resetHederaLocalNode();
 		}
 
 		writeLogFile(

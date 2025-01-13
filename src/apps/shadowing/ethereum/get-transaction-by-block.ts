@@ -14,26 +14,8 @@ export async function getTransactionByBlock(
 	client: Client,
 	nodeAccountId: AccountId
 ) {
-	let fileNumber = 1;
-	writeLogFile(
-		`logs/blocks-with-transactions`,
-		'Timestamp,BlockNumber,EthereumTransactioHash,HederaTransactionHash \r\n',
-		false,
-		'csv',
-		fileNumber
-	);
 	try {
 		for (; startFromBlock < numberOfBlocks; startFromBlock++) {
-			if (startFromBlock % 200000 === 0) {
-				fileNumber += 1;
-				writeLogFile(
-					`logs/blocks-with-transactions`,
-					'Timestamp,BlockNumber,EthereumTransactioHash,HederaTransactionHash \r\n',
-					false,
-					'csv',
-					fileNumber
-				);
-			}
 
 			if (startFromBlock % 100000 === 0 && startFromBlock !== 0) {
 				await resetHederaLocalNode();
@@ -87,18 +69,6 @@ export async function getTransactionByBlock(
 							nodeAccountId,
 							transaction.to,
 							startFromBlock
-						);
-
-						writeLogFile(
-							`logs/blocks-with-transactions`,
-							`${startFromBlock},${transaction.hash},${
-								hederaTransaction
-									? hederaTransaction.transactionHash
-									: 'TRANSACTION NOT CREATED'
-							} \r\n`,
-							true,
-							'csv',
-							fileNumber
 						);
 					}
 				}
