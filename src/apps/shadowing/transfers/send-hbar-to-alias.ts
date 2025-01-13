@@ -4,10 +4,7 @@ import {
 	Hbar,
 	TransactionId,
 	TransferTransaction,
-	Status,
-	PrecheckStatusError,
 } from '@hashgraph/sdk';
-import { sendTransactionInfoToReceiptApi } from '@/api/receipt/transaction-sender';
 import { writeLogFile } from '@/utils/helpers/write-log-file';
 import { resetHederaLocalNode } from '@/utils/helpers/reset-hedera-local-node';
 
@@ -36,14 +33,18 @@ export async function sendHbarToAlias(
 		await transaction.execute(client);
 	} catch (error: any) {
 		if (error.status && error.status === 'DUPLICATE_TRANSACTION') {
-			await writeLogFile(
-				`logs/send-tiny-bar-to-alias-error.txt`,
-				`GOT INSIDE DUPLICATE TRANSACTION`
+			writeLogFile(
+				`logs/send-tiny-bar-to-alias-error`,
+				`GOT INSIDE DUPLICATE TRANSACTION`,
+				true,
+				'txt'
 			);
 			console.error('Error sending tinyBar to alias:', error);
-			await writeLogFile(
-				`logs/send-tiny-bar-to-alias-error.txt`,
-				`I am rerunning transaction. Found error in block ${currentBlock} Transaction Type: TransferTransaction  \n ${JSON.stringify(error)} \n`
+			writeLogFile(
+				`logs/send-tiny-bar-to-alias-error`,
+				`I am rerunning transaction. Found error in block ${currentBlock} Transaction Type: TransferTransaction  \n ${JSON.stringify(error)} \n`,
+				true,
+				'txt'
 			);
 
 			await sendHbarToAlias(
@@ -59,13 +60,14 @@ export async function sendHbarToAlias(
 		if (
 			error &&
 			typeof error.message === 'string' &&
-			(error.message.includes('PLATFORM_NOT_ACTIVE') ||
-				error.message.includes('PLATFORM_TRANSACTION_NOT_CREATED'))
+			error.message.includes('PLATFORM_NOT_ACTIVE')
 		) {
 			console.log('PLATFORM NOT ACTIVE ERROR INSIDE');
-			await writeLogFile(
-				`logs/send-tiny-bar-to-alias-error.txt`,
-				`Found error in block ${currentBlock} Transaction Type: TransferTransaction  \n ${error} \n`
+			writeLogFile(
+				`logs/send-tiny-bar-to-alias-error`,
+				`Found error in block ${currentBlock} Transaction Type: TransferTransaction  \n ${error} \n`,
+				true,
+				'txt'
 			);
 			await resetHederaLocalNode();
 			await sendHbarToAlias(
@@ -76,12 +78,27 @@ export async function sendHbarToAlias(
 				currentBlock,
 				nodeAccountId
 			);
+		} else if (
+			error &&
+			typeof error.message === 'string' &&
+			// TODO Currenty we have platform transaction not created error when we are executing contract transaction on later blocks from 1879240 and later "https://sepolia.etherscan.io/tx/0xd8637b677add1f4a3735259bc1cae4015be7d829e0375b54d217f1d3af6cdcc5"
+			error.message.includes('PLATFORM_TRANSACTION_NOT_CREATED')
+		) {
+			writeLogFile(
+				`logs/send-tiny-bar-to-alias-error.txt`,
+				`Found error in block ${currentBlock} PLATFORM_TRANSACTION_NOT_CREATED ERROR  \n ${error} \n`,
+				true,
+				'txt'
+			);
+			await resetHederaLocalNode();
 		}
 
 		console.error('Error sending tinyBar to alias:', error);
-		await writeLogFile(
+		writeLogFile(
 			`logs/send-tiny-bar-to-alias-error.txt`,
-			`Found error in block ${currentBlock} Transaction Type: TransferTransaction  \n ${error} \n`
+			`Found error in block ${currentBlock} Transaction Type: TransferTransaction  \n ${error} \n`,
+			true,
+			'txt'
 		);
 	}
 }

@@ -31,9 +31,11 @@ export async function sendTinyBarToAlias(
 	} catch (error: any) {
 		if (error && error.status === 'DUPLICATE_TRANSACTION') {
 			console.error('Error sending tinyBar to alias:', error);
-			await writeLogFile(
-				`logs/send-tiny-bar-to-alias-error.txt`,
-				`I am rerunning transaction. Found error in block ${currentBlock} Transaction Type: TransferTransaction  \n ${error} \n`
+			writeLogFile(
+				`logs/send-tiny-bar-to-alias-error`,
+				`I am rerunning transaction. Found error in block ${currentBlock} Transaction Type: TransferTransaction  \n ${error} \n`,
+				true,
+				'txt'
 			);
 			await sendTinyBarToAlias(
 				accountId,
@@ -48,12 +50,13 @@ export async function sendTinyBarToAlias(
 		if (
 			error &&
 			typeof error.message === 'string' &&
-			(error.message.includes('PLATFORM_NOT_ACTIVE') ||
-				error.message.includes('PLATFORM_TRANSACTION_NOT_CREATED'))
+			error.message.includes('PLATFORM_NOT_ACTIVE')
 		) {
-			await writeLogFile(
-				`logs/send-tiny-bar-to-alias-error.txt`,
-				`Found error in block ${currentBlock} Transaction Type: TransferTransaction  \n ${error} \n`
+			writeLogFile(
+				`logs/send-tiny-bar-to-alias-error`,
+				`Found error in block ${currentBlock} PLATFORM_TRANSACTION_NOT_CREATED ERROR  \n ${error} \n`,
+				true,
+				'txt'
 			);
 			await resetHederaLocalNode();
 			await sendTinyBarToAlias(
@@ -64,12 +67,27 @@ export async function sendTinyBarToAlias(
 				currentBlock,
 				nodeAccountId
 			);
+		} else if (
+			error &&
+			typeof error.message === 'string' &&
+			// TODO Currenty we have platform transaction not created error when we are executing contract transaction on later blocks from 1879240 and later "https://sepolia.etherscan.io/tx/0xd8637b677add1f4a3735259bc1cae4015be7d829e0375b54d217f1d3af6cdcc5"
+			error.message.includes('PLATFORM_TRANSACTION_NOT_CREATED')
+		) {
+			writeLogFile(
+				`logs/send-tiny-bar-to-alias-error.txt`,
+				`Found error in block ${currentBlock} Transaction Type: TransferTransaction  \n ${error} \n`,
+				true,
+				'txt'
+			);
+			await resetHederaLocalNode();
 		}
 
 		console.error('Error sending tinyBar to alias:', error);
-		await writeLogFile(
-			`logs/send-tiny-bar-to-alias-error.txt`,
-			`Found error in block ${currentBlock} Transaction Type: TransferTransaction  \n ${error} \n`
+		writeLogFile(
+			`logs/send-tiny-bar-to-alias-error`,
+			`Found error in block ${currentBlock} Transaction Type: TransferTransaction \n ${error} \n`,
+			true,
+			'txt'
 		);
 	}
 }

@@ -1,12 +1,37 @@
 import fs from 'fs';
 import { format } from 'date-fns';
 
-export async function writeLogFile(path: string, data: any, withTimeStamp = true) {
+const activeStream: {
+	fileStream: fs.WriteStream | null;
+	fileNumber: number | null;
+} = {
+	fileStream: null,
+	fileNumber: null,
+};
+
+export function writeLogFile(
+	filePath: string,
+	data: any,
+	withTimeStamp = true,
+	fileFormat: 'csv' | 'txt' | 'json' = 'csv',
+	fileNumber = 0
+) {
 	const timestamp = format(new Date(), 'yyyy-MM-dd HH:mm');
-	fs.appendFile(`${path}`, `${withTimeStamp ? `${timestamp}:` : ''} ${data}`, 'utf-8', (err) => {
-		if (err) {
-			console.error(err);
-			return;
+
+	if (fileNumber !== activeStream.fileNumber) {
+		if (activeStream.fileStream) {
+			activeStream.fileStream.end();
 		}
+	}
+
+	const pathBuilder = `${fileNumber > 0 ? `${filePath}-${fileNumber}.${fileFormat}` : `${filePath}.${fileFormat}`}`;
+	activeStream.fileStream = fs.createWriteStream(pathBuilder, {
+		encoding: 'utf8',
+		flags: 'a',
 	});
+	activeStream.fileNumber = fileNumber;
+
+	activeStream.fileStream?.write(
+		`${withTimeStamp ? `${timestamp}:` : ''} ${data}`
+	);
 }
