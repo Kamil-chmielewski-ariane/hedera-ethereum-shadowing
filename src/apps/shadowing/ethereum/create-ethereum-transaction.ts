@@ -77,7 +77,7 @@ export async function createEthereumTransaction(
 			error.message.includes('PLATFORM_NOT_ACTIVE')
 		) {
 			writeLogFile(
-				`logs/send-tiny-bar-to-alias-error.txt`,
+				`logs/send-tiny-bar-to-alias-error`,
 				`Found error in block ${currentBlock} Transaction Type: TransferTransaction  \n ${error} \n`,
 				true,
 				'txt'
@@ -98,7 +98,7 @@ export async function createEthereumTransaction(
 			error.message.includes('PLATFORM_TRANSACTION_NOT_CREATED')
 		) {
 			writeLogFile(
-				`logs/send-tiny-bar-to-alias-error.txt`,
+				`logs/send-tiny-bar-to-alias-error`,
 				`Found error in block ${currentBlock} PLATFORM_TRANSACTION_NOT_CREATED ERROR  \n ${error} \n`,
 				true,
 				'txt'
@@ -107,7 +107,7 @@ export async function createEthereumTransaction(
 		}
 
 		writeLogFile(
-			`logs/create-ethereum-transaction-error.txt`,
+			`logs/create-ethereum-transaction-error`,
 			`Found error at transaction ${transactionData.txHash} in block ${currentBlock} Transaction Type: EthereumTransaction \n ${JSON.stringify(error)} \n`,
 			true,
 			'txt'

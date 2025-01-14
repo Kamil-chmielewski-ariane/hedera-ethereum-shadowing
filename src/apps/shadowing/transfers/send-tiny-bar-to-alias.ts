@@ -74,7 +74,7 @@ export async function sendTinyBarToAlias(
 			error.message.includes('PLATFORM_TRANSACTION_NOT_CREATED')
 		) {
 			writeLogFile(
-				`logs/send-tiny-bar-to-alias-error.txt`,
+				`logs/send-tiny-bar-to-alias-error`,
 				`Found error in block ${currentBlock} Transaction Type: TransferTransaction  \n ${error} \n`,
 				true,
 				'txt'
