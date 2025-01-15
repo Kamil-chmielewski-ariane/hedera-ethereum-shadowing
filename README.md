@@ -71,31 +71,31 @@ OPERATOR_PRIVATE="OPERATOR_PRIVATE"
 
 Please first download these two apps and read documentation
 
-- Hedera Shadowing smart contract comparision -> https://github.com/Kamil-chmielewski-ariane/hedera-shadowing-smart-contract-comparison
-- Transaction checker -> https://github.com/misiekp/transaction-checker
+- [Hedera Shadowing smart contract comparision](https://github.com/Kamil-chmielewski-ariane/hedera-shadowing-smart-contract-comparison)
+- [Transaction checker](https://github.com/misiekp/transaction-checker)
 
 To run this project you have to firstly download and install all required packages and start hedera local node environment. Also you need to be connected to RPC API that enables all required methods that are used in the process.
 For this we used Erigon client with blocks acquired and indexed from Sepolia network.
 
 1. You have to run a hedera local node on the 11155111 chain. To do this go into ```.nvm/versions/node/<node version>/lib/node_modules/@hashgraph/hedera-local/build/configuration/originalNodeConfiguration.json``` 
-2. and change ```contracts.chainId``` value to ```11155111```
+and change ```contracts.chainId``` value to ```11155111```
 
 2. Original Hedera local node network_node service have problems with creating transactions on the CHAIN_ID 11155111. We make a fix for this issue.
 To apply it just paste the both images in the ```.nvm/versions/node/<node version>/lib/node_modules/\@hashgraph/hedera-local/docker-compose.yml``` file and change service images with
 
-havaged = ```us-docker.pkg.dev/swirlds-registry/local-node/network-node-haveged:0.54.0-shadowing-wip-new-changes-0.54.0-alhpa.5.x06fa4a3```
-network-node = ```us-docker.pkg.dev/swirlds-registry/local-node/main-network-node:0.54.0-shadowing-wip-new-changes-0.54.0-alhpa.5.x06fa4a3```
+   havaged ```us-docker.pkg.dev/swirlds-registry/local-node/network-node-haveged:0.54.0-shadowing-wip-new-changes-0.54.0-alhpa.5.x06fa4a3```\
+   network-node ```us-docker.pkg.dev/swirlds-registry/local-node/main-network-node:0.54.0-shadowing-wip-new-changes-0.54.0-alhpa.5.x06fa4a3```
 
 3. Hedera local node have problems with the stability of the consensus node. To prevent this we created a solution which resets all hedera services without losing data. How to do this:
-3.1. Go into directory with the hedera local node. On linux with the Node Version Manager (NVM) should be here ```.nvm/versions/node/<node version>/lib/node_modules/@hashgraph/hedera-local/``` 
-3.2. Get into docker-compose.yml and add new volume for network node service
+4. Go into directory with the hedera local node. On linux with the Node Version Manager (NVM) should be here ```.nvm/versions/node/<node version>/lib/node_modules/@hashgraph/hedera-local/```
+5. Get into docker-compose.yml and add new volume for network node service 
    - Line 61: ```"network-node-data:/opt/hgcapp/services-hedera/HapiApp2.0/data/saved"```
    - Line 533-533: ```network-node-data: name: network-node-data```
-3.3. In the same catalog go into ```build/services/DockerService.js```
+6. In the same catalog go into ```build/services/DockerService.js``` 
    - In line 398 remove ```-v``` flag in the ```docker compose down``` cli command
-3.4. Go into ```build/state/StopState.js```
-   - In line 80 remove ```-v``` flag in the ```docker compose down``` cli command
-3.5. Now you can start hedera with ```RELAY_CHAIN_ID=11155111 hedera start``` command. The shadowing will automatically reset hedera without losing all data
+7. Go into ```build/state/StopState.js```
+   - In line 80 remove ```-v``` flag in the ```docker compose down``` cli command 
+8. Now you can start hedera with ```RELAY_CHAIN_ID=11155111 hedera start``` command. The shadowing will automatically reset hedera without losing all data
 
 ## External APIs
 
@@ -174,4 +174,4 @@ pm2 start ecosystem.config.js
 Running with this method shadowing will create a pm2 logs with errors and output.
 
 #### Creating logs
-To make more logs like transaction statuses and smart contract value comparision please download a Hedera Shadowing smart contract comparision and  transaction checker apps
+To make more logs like transaction statuses and smart contract value comparison please download a Hedera Shadowing smart contract comparison and transaction checker apps
