@@ -13,3 +13,10 @@ export const axiosInstanceHederaRpcApi = axios.create({
 		'Content-Type': 'application/json',
 	},
 });
+
+export const axiosReceiptApi = axios.create({
+	baseURL: 'http://localhost:8081/',
+	headers: {
+		'Content-Type': 'application/json',
+	},
+});

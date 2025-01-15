@@ -1,11 +1,14 @@
 import { axiosInstanceErigon } from '@/api/config';
 import { errorHandler } from '@/utils/helpers/api/error-handler';
 
-export async function getLastBlockNumber(): Promise<any> {
+export async function getUncleByBlockNumberAndIndex(
+	blockNumber: string,
+	index: string
+): Promise<any> {
 	try {
 		const response = await axiosInstanceErigon.post('', {
-			method: 'eth_blockNumber',
-			params: [],
+			method: 'eth_getUncleByBlockNumberAndIndex',
+			params: ['0x' + blockNumber, '0x' + index],
 			id: 1,
 			jsonrpc: '2.0',
 		});
@@ -14,6 +17,6 @@ export async function getLastBlockNumber(): Promise<any> {
 			return response.data.result;
 		}
 	} catch (error) {
-		errorHandler(error, 'Error fetching last block number');
+		errorHandler(error, 'Error in getUncleByBlockNumberAndIndex');
 	}
 }
