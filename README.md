@@ -40,7 +40,7 @@ I will describe process of out script execution below:
 2. After this we read last block from Sepolia and starting from first block we iterate to the last in the loop.
 3. For current block firstly we read its miners and uncles and after calculating the block reward we send this reward to account in Hedera with method TransferTransaction from Hashgraph SDK.
 4. After sending reward for block mining is finished for each transaction present in block, first we send transfer to tranasction recipient evm address that does not exist in Hedera node. After this we read transaction raw body from Sepolia by using RPC API provided by Erigon and send it with EthereumTransaction method from Hedera SDK to Hedera Consensus Node.
-5. If no error was present all transactions that we put to Hedera in step 4. are asynchronously send to [Receipt API](#receipt-api) that will check if transactions were successful. 
+5. If no error was present all transactions that we put to Hedera in step 4. are asynchronously send to transaction checker api that will check if transactions were successful. 
 6. In the background we listen to out connection from Receipt API and wait for response. After it comes we compare state root of contract if there were present in current block. This step is done by making API call to `GET /api/v1/contracts/${contractAddress}/state?timestamp=${timestamp}` in Hedera Mirror Node REST API where contractAddress is tranasction to address and timestamp is Hedera transaction timestamp. If states on this address were present, for each state we check with RPC API call to `eth_getStorageAt` method provided from Erigon and compare if values on the same address were equal. If they weren't we log this occurence to separate file.
 7. We repeat steps 2-5, as mentioned above step 6 is run in the background.
 
@@ -103,7 +103,7 @@ For reading and pushing transactions and reading smart contract states we used A
 
 ### Ethereum RPC API
 
-As mentioned above in section [Installation](#installation) to use this script you need to have Ethereum client (we recommend Erigon) which implements these methods:
+As mentioned above in section installation to use this script you need to have Ethereum client (we recommend Erigon) which implements these methods:
 
 - [eth_getBalance](https://www.quicknode.com/docs/ethereum/eth_getBalance)
 
