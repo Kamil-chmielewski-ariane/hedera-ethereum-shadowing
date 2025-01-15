@@ -67,22 +67,35 @@ Add ```logs``` directory in the root of the project for logs
 OPERATOR_PRIVATE="OPERATOR_PRIVATE"
 ````
 
-## Instalation
-
-To run this project you have to firstly download and install all required packages and start hedera local node environment. Also you need to be connected to RPC API that enables all required methods that are used in the process. For this we used Erigon client with blocks acquired and indexed from Sepolia network.
-
 # !!! IMPORTANT !!!
 
-Hedera local node have problems with the stability of the consensus node. To prevent this we created a solution which resets all hedera services without losing data. How to do this:
-1. Go into directory with the hedera local node. On linux with the Node Version Manager (NVM) should be here ```.nvm/versions/node/<node version>/lib/node_modules/\@hashgraph/hedera-local/``` 
-2. Get into docker-compose.yml and add new volume for network node service
+Please first download these two apps and read documentation
+
+- Hedera Shadowing smart contract comparision -> https://github.com/Kamil-chmielewski-ariane/hedera-shadowing-smart-contract-comparison
+- Transaction checker -> https://github.com/misiekp/transaction-checker
+
+To run this project you have to firstly download and install all required packages and start hedera local node environment. Also you need to be connected to RPC API that enables all required methods that are used in the process.
+For this we used Erigon client with blocks acquired and indexed from Sepolia network.
+
+1. You have to run a hedera local node on the 11155111 chain. To do this go into ```.nvm/versions/node/<node version>/lib/node_modules/@hashgraph/hedera-local/build/configuration/originalNodeConfiguration.json``` 
+2. and change ```contracts.chainId``` value to ```11155111```
+
+2. Original Hedera local node network_node service have problems with creating transactions on the CHAIN_ID 11155111. We make a fix for this issue.
+To apply it just paste the both images in the ```.nvm/versions/node/<node version>/lib/node_modules/\@hashgraph/hedera-local/docker-compose.yml``` file and change service images with
+
+havaged = ```us-docker.pkg.dev/swirlds-registry/local-node/network-node-haveged:0.54.0-shadowing-wip-new-changes-0.54.0-alhpa.5.x06fa4a3```
+network-node = ```us-docker.pkg.dev/swirlds-registry/local-node/main-network-node:0.54.0-shadowing-wip-new-changes-0.54.0-alhpa.5.x06fa4a3```
+
+3. Hedera local node have problems with the stability of the consensus node. To prevent this we created a solution which resets all hedera services without losing data. How to do this:
+3.1. Go into directory with the hedera local node. On linux with the Node Version Manager (NVM) should be here ```.nvm/versions/node/<node version>/lib/node_modules/@hashgraph/hedera-local/``` 
+3.2. Get into docker-compose.yml and add new volume for network node service
    - Line 61: ```"network-node-data:/opt/hgcapp/services-hedera/HapiApp2.0/data/saved"```
    - Line 533-533: ```network-node-data: name: network-node-data```
-3. In the same catalog go into ```build/services/DockerService.js```
+3.3. In the same catalog go into ```build/services/DockerService.js```
    - In line 398 remove ```-v``` flag in the ```docker compose down``` cli command
-4. Go into ```build/state/StopState.js```
+3.4. Go into ```build/state/StopState.js```
    - In line 80 remove ```-v``` flag in the ```docker compose down``` cli command
-5. Now you can start hedera with ```hedera start``` command. The shadowing will automatically reset hedera without losing all data
+3.5. Now you can start hedera with ```RELAY_CHAIN_ID=11155111 hedera start``` command. The shadowing will automatically reset hedera without losing all data
 
 ## External APIs
 
@@ -132,28 +145,33 @@ For test purpose we also use Hedera RPC API provided with Hedera node and these 
 
 - [eth_sendRawTransaction](https://www.quicknode.com/docs/ethereum/eth_sendRawTransaction)
 
-### Receipt API
+### Transaction Checker API
 
-Receipt API (as we call it in this project) is an REST app implemented by our team (//TODO out the link here) that we use to send transaction information for asynchronous check for the transaction status that we are pushing to Hedera consensus node via transfer transaction or EthereumTransaction method. Also after the check is completed in there a response is send to our application to check smart contract states between Hedera and Sepolia.
+Receipt API (as we call it in this project) is an REST app implemented by our team that we use to send transaction information for asynchronous check for the transaction status that we are pushing to 
+Hedera consensus node via transfer transaction or EthereumTransaction method. Also after the check is completed in there a response is send to our other application (hedera-shadowing-smart-contract-comparison) to check smart contract states between Hedera and Sepolia.
 
 ##### PNPM
-
 ```
 pnpm install
 ```
 
 ```pnpm run dev``` to start shadowing app
 
+##### NPM
+```
+npm install
+```
+
+```npm run dev``` to start shadowing app
+
 ##### PM2 - Optional
 
 You can also run this app using pm2 tool. The config file is a ```ecosystem.config.js```
-
 ```
 pm2 start ecosystem.config.js
 ```
 
-#### Creating logs
+Running with this method shadowing will create a pm2 logs with errors and output.
 
-The hedera shadowing app is always creating logs for
-   - Errors
-   - Blocks with transactions
+#### Creating logs
+To make more logs like transaction statuses and smart contract value comparision please download a Hedera Shadowing smart contract comparision and  transaction checker apps
