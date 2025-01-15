@@ -40,7 +40,7 @@ I will describe process of out script execution below:
 2. After this we read last block from Sepolia and starting from first block we iterate to the last in the loop.
 3. For current block firstly we read its miners and uncles and after calculating the block reward we send this reward to account in Hedera with method TransferTransaction from Hashgraph SDK.
 4. After sending reward for block mining is finished for each transaction present in block, first we send transfer to tranasction recipient evm address that does not exist in Hedera node. After this we read transaction raw body from Sepolia by using RPC API provided by Erigon and send it with EthereumTransaction method from Hedera SDK to Hedera Consensus Node.
-5. If no error was present all transactions that we put to Hedera in step 4. are asynchronously send to [Receipt API](#receipt-api) that will check if transactions were successful. 
+5. If no error was present all transactions that we put to Hedera in step 4. are asynchronously send to transaction checker api that will check if transactions were successful. 
 6. In the background we listen to out connection from Receipt API and wait for response. After it comes we compare state root of contract if there were present in current block. This step is done by making API call to `GET /api/v1/contracts/${contractAddress}/state?timestamp=${timestamp}` in Hedera Mirror Node REST API where contractAddress is tranasction to address and timestamp is Hedera transaction timestamp. If states on this address were present, for each state we check with RPC API call to `eth_getStorageAt` method provided from Erigon and compare if values on the same address were equal. If they weren't we log this occurence to separate file.
 7. We repeat steps 2-5, as mentioned above step 6 is run in the background.
 
@@ -71,31 +71,34 @@ OPERATOR_PRIVATE="OPERATOR_PRIVATE"
 
 Please first download these two apps and read documentation
 
-- Hedera Shadowing smart contract comparision -> https://github.com/Kamil-chmielewski-ariane/hedera-shadowing-smart-contract-comparison
-- Transaction checker -> https://github.com/misiekp/transaction-checker
+- [Hedera Shadowing smart contract comparision](https://github.com/Kamil-chmielewski-ariane/hedera-shadowing-smart-contract-comparison)
+- [Transaction checker](https://github.com/Kamil-chmielewski-ariane/transaction-checker)
 
 To run this project you have to firstly download and install all required packages and start hedera local node environment. Also you need to be connected to RPC API that enables all required methods that are used in the process.
 For this we used Erigon client with blocks acquired and indexed from Sepolia network.
 
 1. You have to run a hedera local node on the 11155111 chain. To do this go into ```.nvm/versions/node/<node version>/lib/node_modules/@hashgraph/hedera-local/build/configuration/originalNodeConfiguration.json``` 
-2. and change ```contracts.chainId``` value to ```11155111```
+and change ```contracts.chainId``` value to ```11155111```
+2. Change the selected variables in the .env file inside ``.nvm/versions/node/<node version>/lib/node_modules/@hashgraph/hedera-local`` To make through the sepolia and mainnet you need memory.
+   - ``NETWORK_NODE_MEM_LIMIT=16gb``
+   - ``PLATFORM_JAVA_HEAP_MAX=12g``
 
-2. Original Hedera local node network_node service have problems with creating transactions on the CHAIN_ID 11155111. We make a fix for this issue.
+3. Original Hedera local node network_node service have problems with creating transactions on the CHAIN_ID 11155111. We make a fix for this issue.
 To apply it just paste the both images in the ```.nvm/versions/node/<node version>/lib/node_modules/\@hashgraph/hedera-local/docker-compose.yml``` file and change service images with
 
-havaged = ```us-docker.pkg.dev/swirlds-registry/local-node/network-node-haveged:0.54.0-shadowing-wip-new-changes-0.54.0-alhpa.5.x06fa4a3```
-network-node = ```us-docker.pkg.dev/swirlds-registry/local-node/main-network-node:0.54.0-shadowing-wip-new-changes-0.54.0-alhpa.5.x06fa4a3```
+   havaged ```us-docker.pkg.dev/swirlds-registry/local-node/network-node-haveged:0.54.0-shadowing-wip-new-changes-0.54.0-alhpa.5.x06fa4a3```\
+   network-node ```us-docker.pkg.dev/swirlds-registry/local-node/main-network-node:0.54.0-shadowing-wip-new-changes-0.54.0-alhpa.5.x06fa4a3```
 
-3. Hedera local node have problems with the stability of the consensus node. To prevent this we created a solution which resets all hedera services without losing data. How to do this:
-3.1. Go into directory with the hedera local node. On linux with the Node Version Manager (NVM) should be here ```.nvm/versions/node/<node version>/lib/node_modules/@hashgraph/hedera-local/``` 
-3.2. Get into docker-compose.yml and add new volume for network node service
+4. Hedera local node have problems with the stability of the consensus node. To prevent this we created a solution which resets all hedera services without losing data. How to do this:
+5. Go into directory with the hedera local node. On linux with the Node Version Manager (NVM) should be here ```.nvm/versions/node/<node version>/lib/node_modules/@hashgraph/hedera-local/```
+6. Get into docker-compose.yml and add new volume for network node service 
    - Line 61: ```"network-node-data:/opt/hgcapp/services-hedera/HapiApp2.0/data/saved"```
    - Line 533-533: ```network-node-data: name: network-node-data```
-3.3. In the same catalog go into ```build/services/DockerService.js```
+7. In the same catalog go into ```build/services/DockerService.js``` 
    - In line 398 remove ```-v``` flag in the ```docker compose down``` cli command
-3.4. Go into ```build/state/StopState.js```
-   - In line 80 remove ```-v``` flag in the ```docker compose down``` cli command
-3.5. Now you can start hedera with ```RELAY_CHAIN_ID=11155111 hedera start``` command. The shadowing will automatically reset hedera without losing all data
+8. Go into ```build/state/StopState.js```
+   - In line 80 remove ```-v``` flag in the ```docker compose down``` cli command 
+9. Now you can start hedera with ```RELAY_CHAIN_ID=11155111 hedera start``` command. The shadowing will automatically reset hedera without losing all data
 
 ## External APIs
 
@@ -103,7 +106,7 @@ For reading and pushing transactions and reading smart contract states we used A
 
 ### Ethereum RPC API
 
-As mentioned above in section [Installation](#installation) to use this script you need to have Ethereum client (we recommend Erigon) which implements these methods:
+As mentioned above in section installation to use this script you need to have Ethereum client (we recommend Erigon) which implements these methods:
 
 - [eth_getBalance](https://www.quicknode.com/docs/ethereum/eth_getBalance)
 
@@ -145,10 +148,11 @@ For test purpose we also use Hedera RPC API provided with Hedera node and these 
 
 - [eth_sendRawTransaction](https://www.quicknode.com/docs/ethereum/eth_sendRawTransaction)
 
-### Transaction Checker API
-
-Receipt API (as we call it in this project) is an REST app implemented by our team that we use to send transaction information for asynchronous check for the transaction status that we are pushing to 
-Hedera consensus node via transfer transaction or EthereumTransaction method. Also after the check is completed in there a response is send to our other application (hedera-shadowing-smart-contract-comparison) to check smart contract states between Hedera and Sepolia.
+# Running 
+Before start this app - make sure that these apps are running
+- Hedera local node
+- Hedera Shadowing smart contract comparision
+- transaction checker
 
 ##### PNPM
 ```
@@ -164,14 +168,17 @@ npm install
 
 ```npm run dev``` to start shadowing app
 
-##### PM2 - Optional
-
+##### PM2 - Recommended
 You can also run this app using pm2 tool. The config file is a ```ecosystem.config.js```
+```
+npm install
+```
 ```
 pm2 start ecosystem.config.js
 ```
+fell free to change the ecosystem.config.js file. More info here [pm2 configuration](https://pm2.keymetrics.io/docs/usage/application-declaration/)
 
-Running with this method shadowing will create a pm2 logs with errors and output.
+Running with this method shadowing will create inside log directory a pm2 directory with errors and output from the pm2.
 
 #### Creating logs
-To make more logs like transaction statuses and smart contract value comparision please download a Hedera Shadowing smart contract comparision and  transaction checker apps
+To make more logs like transaction statuses and smart contract value comparison please download a Hedera Shadowing smart contract comparison and transaction checker apps
