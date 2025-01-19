@@ -25,8 +25,9 @@ export async function startNetworkReplicationProcess(
 		);
 	}
 
-	// Get last block number from Erigon api
+	// Get last block number from Erigon with RPC API call to with eth_getBlockNumber
 	const lastBlockNumber = await getLastBlockNumber();
+	// Convert hex value of lastBlockNumber to decimal values that we use later on
 	const convertedBlockNumber = convertHexIntoDecimal(lastBlockNumber);
 
 	// Iterate for all blocks in current net from start to end.

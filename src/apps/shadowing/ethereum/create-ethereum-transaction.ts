@@ -17,6 +17,7 @@ dotenv.config();
 const OPERATOR_PRIVATE = process.env.OPERATOR_PRIVATE;
 
 // Create a hedera transaction using a raw transaction Data from Erigon api. More info here
+// All the logs that are created here can be found in logs/ directory
 // https://docs.hedera.com/hedera/sdks-and-apis/sdks/smart-contracts/ethereum-transaction
 export async function createEthereumTransaction(
 	transactionData: TransactionData,
@@ -27,8 +28,14 @@ export async function createEthereumTransaction(
 	currentBlock: number
 ): Promise<any> {
 	try {
+		// RPC API call to Erigon to get raw transaction body we will user later on. 
+		// See for more information about this method https://docs.chainstack.com/reference/base-getrawtransactionbyhash
 		const rawBody = await getRawTransaction(transactionData.txHash);
 		const txId = TransactionId.generate(accountId);
+		// https://docs.hedera.com/hedera/sdks-and-apis/sdks/smart-contracts/ethereum-transaction
+		// We construct the EtheruemTransaction with raw transaction body that we got above
+		// The transaction ID that we generated above is passed because we received many DUPLICATE_TRANSACTION errors when this was generated automatically
+		// we need to freeze the transaction and sign it with Account ID 0.0.2 private key for it to be properly executed
 		const transaction = await new EthereumTransaction()
 			.setTransactionId(txId)
 			.setEthereumData(
@@ -54,6 +61,8 @@ export async function createEthereumTransaction(
 		});
 		return txResponse.toJSON();
 	} catch (error: any) {
+		// Sometimes we would catch DUPLICATE_TRANSACTION error that was thrown when Transaction ID was duplicated. 
+		// We minimalized this risk by generating it manually but when sometimes this happens you need to process this transaction one more time
 		if (error.status && error.status === 'DUPLICATE_TRANSACTION') {
 			writeLogFile(
 				`logs/create-ethereum-transaction-error`,
@@ -70,7 +79,10 @@ export async function createEthereumTransaction(
 				currentBlock
 			);
 		}
-
+		// PLATFORM_NOT_ACTIVE is an error that we precisely do not know why is happening. 
+		// We know that after some time when hedera local node is running it will generate this error and after this error is thrown all next transaction will result the same
+		// So to this a workaround to this problem. When this error happens we reset hedera local node with function resetHederaLocalNode() and then we hit createEthereumTrasanction one more time with same data for it to process transaction
+		// To prevent this behaviour we also reset hedera after processing 100000 blocks in iteration
 		if (
 			error &&
 			typeof error.message === 'string' &&

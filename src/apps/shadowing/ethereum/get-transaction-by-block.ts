@@ -17,14 +17,19 @@ export async function getTransactionByBlock(
 	try {
 		for (; startFromBlock < numberOfBlocks; startFromBlock++) {
 
+			// We reset hedera local node after hitting 100000
 			if (startFromBlock % 100000 === 0 && startFromBlock !== 0) {
 				await resetHederaLocalNode();
 			}
 
 			console.log('currentBlockNumber', startFromBlock);
+
+			// Retrieve all block information with RPC API call to Erigon https://www.quicknode.com/docs/ethereum/eth_getBlockByNumber
 			let block = await getBlockByNumber(startFromBlock.toString(16));
 			const transactions = block.transactions;
 			// Sends block reward for the current miner, and uncles.
+			// We need to send block reward for the account to match current balance in block
+			// Proceed with this method to learn more
 			await sendBlockReward(
 				accountId,
 				client,
@@ -58,7 +63,7 @@ export async function getTransactionByBlock(
 
 					if (transaction && transaction.hash) {
 						console.log(`transaction found ${transaction.hash}`);
-						//Create hedera transaction from ethereum transaction
+						//Create hedera transaction with function createEthereumTransaction that uses Hashgraph SDK EthereumTransaction
 						const hederaTransaction = await createEthereumTransaction(
 							{
 								txHash: transaction.hash,
