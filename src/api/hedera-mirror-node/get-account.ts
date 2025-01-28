@@ -7,7 +7,6 @@ export async function getAccount(evmAddress: string) {
 		const response = await axios.get(url);
 		return response.data;
 	} catch (error) {
-		// if there is 404 error, return false
 		return false;
 	}
 }

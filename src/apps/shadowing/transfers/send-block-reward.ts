@@ -20,10 +20,10 @@ export async function sendBlockReward(
 
 	// miners contain balance of miners accounts in previous and current block
 	// we need to implement here proper block reward with this simple solution
-	// firsly we count the difference between current block and previous block
+	// firstly we count the difference between current block and previous block
 	// then we check transaction from current block
-	// if there were transactions that were sent to miner account we subtract the amount of transfered ETH from the difference
-	// also if there were transactions that were sent from miner account we add the amount of transfered ETH from the difference
+	// if there were transactions that were sent to miner account we subtract the amount of transferred ETH from the difference
+	// also if there were transactions that were sent from miner account we add the amount of transferred ETH from the difference
 	// the result will be block reward for all the miners and uncles
 	for (const miner of miners) {
 		if (miner.id && miner.balanceBefore && miner.balanceAfter) {

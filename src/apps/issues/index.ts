@@ -2,9 +2,7 @@ import { transactionNoGas } from '@/apps/issues/transaction-no-gas';
 import { AccountId, Client } from '@hashgraph/sdk';
 import dotenv from 'dotenv';
 import { sendTransactionAsEthereum } from '@/apps/issues/send-transaction-as-ethereum';
-import { getBlockByNumber } from '@/api/erigon/get-block-by-number';
 import { testForSmartContracts } from './send-transaction-for-contracts';
-import { replicatePlatformNotActiveError } from './platfrom-not-active-error';
 import { compareContractRootStates } from './compare-contract-state-root';
 dotenv.config();
 const OPERATOR_PRIVATE = process.env.OPERATOR_PRIVATE;
@@ -16,7 +14,7 @@ client.setOperator(accountId, OPERATOR_PRIVATE || '');
 (() => {
 	// No gass error issue
 	// transactionNoGas(accountId, client);
-
+	//
 	// WRONG_CHAIN_ID issue
 	// sendTransactionAsEthereum(
 	// 	{
@@ -30,10 +28,10 @@ client.setOperator(accountId, OPERATOR_PRIVATE || '');
 	// 	client,
 	// 	OPERATOR_PRIVATE || ''
 	// );
-
+	//
 	// GET BLOCK REWARD
 	// findAndSendBlockReward(accountId, client, 6714960);
-
+	//
 	// INVALID_ETHEREUM_TRANSACTION issue
 	// sendTransactionAsEthereum(
 	// 	{
@@ -48,9 +46,7 @@ client.setOperator(accountId, OPERATOR_PRIVATE || '');
 	// 	OPERATOR_PRIVATE || ''
 	// );
 	//
-	//BAD CONTRACT VALUES TEST FOR CONTRACT 0xbdf6a09235fa130c5e5ddb60a3c06852e7943475
+	// BAD CONTRACT VALUES TEST FOR CONTRACT 0xbdf6a09235fa130c5e5ddb60a3c06852e7943475
 	// testForSmartContracts(new AccountId(2), client, new AccountId(3), OPERATOR_PRIVATE || '');
-	//PLATFORM_NOT_ACTIVE error
-	// replicatePlatformNotActiveError(new AccountId(2), client, OPERATOR_PRIVATE || '');
-	compareContractRootStates(new AccountId(2), client, new AccountId(3));
+	// compareContractRootStates(new AccountId(2), client, new AccountId(3));
 })();
