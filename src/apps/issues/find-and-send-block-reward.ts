@@ -13,6 +13,6 @@ export async function findAndSendBlockReward(accountId: AccountId, client: Clien
 	const miners = await getMinersForBlock(result);
 	console.log("MINERS: ", miners);
 	for (const miner of miners) {
-		await sendHbarToAlias(accountId, miner, 6, client);
+		await sendHbarToAlias(accountId, miner, 6, client, 0, new AccountId(3));
 	}
 }

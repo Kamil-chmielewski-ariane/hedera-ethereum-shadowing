@@ -9,7 +9,7 @@ import {
 	TransactionId,
 } from '@hashgraph/sdk';
 
-//This function should add a new ethereum transaction but on the hedera exploler should display WRONG_CHAIN_ID
+//This function should add a new ethereum transaction but on the hedera explorer should display WRONG_CHAIN_ID
 export async function sendTransactionAsEthereum(
 	transactionData: {
 		txHash: string;

@@ -1,6 +1,5 @@
 import { TransactionId } from '@hashgraph/sdk';
 import { axiosReceiptApi } from '../config';
-import { AxiosError, isAxiosError } from 'axios';
 import { TransactionType } from '@/utils/types';
 import { errorHandler } from '@/utils/helpers/api/error-handler';
 

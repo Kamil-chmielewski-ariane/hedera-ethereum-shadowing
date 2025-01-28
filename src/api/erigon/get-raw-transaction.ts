@@ -1,7 +1,6 @@
 import { axiosInstanceErigon } from '@/api/config';
 import { errorHandler } from '@/utils/helpers/api/error-handler';
 
-// TODO to type promise response objects
 export async function getRawTransaction(txnHash: string): Promise<any> {
 	try {
 		const response = await axiosInstanceErigon.post('', {
@@ -12,7 +11,6 @@ export async function getRawTransaction(txnHash: string): Promise<any> {
 		});
 
 		if (response.data && response.data.result) {
-			// console.log(response.data.result);
 			return response.data.result;
 		} else {
 			throw new Error('No result found in response');

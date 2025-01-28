@@ -1,7 +1,6 @@
 import { axiosInstanceHederaRpcApi } from '@/api/config';
 import { errorHandler } from '@/utils/helpers/api/error-handler';
 
-// TODO to type promise response objects
 export async function getTransaction(txnHash: string): Promise<any> {
 	try {
 		const response = await axiosInstanceHederaRpcApi.post('', {
